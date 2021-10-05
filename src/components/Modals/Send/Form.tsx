@@ -55,6 +55,7 @@ export const Form = () => {
   })
 
   const handleClick = () => {
+    console.log("Clicked input asset! input: ")
     history.push('/send/details')
   }
 

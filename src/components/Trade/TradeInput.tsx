@@ -49,9 +49,15 @@ export const TradeInput = ({ history }: RouterProps) => {
     history.push('/trade/confirm')
   }
 
+  const onMax = () => {
+    console.log("onMax called!")
+    console.log("balance: ",getValues('sellAsset.currency.balance'))
+    let value = getValues('value')
+    console.log("value: ",value)
+  }
+
   return (
     <SlideTransition>
-      <h2>input asset: {pioneer?.assetContext}</h2>
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
         <FormControl isInvalid={!!errors.fiatAmount}>
           <Controller
@@ -96,12 +102,13 @@ export const TradeInput = ({ history }: RouterProps) => {
                 size='sm'
                 variant='ghost'
                 colorScheme='blue'
-                onClick={() => console.info('max')}
+                onClick={onMax}
               >
                 Max
               </Button>
             }
           />
+          <small>max: {getValues('sellAsset.currency.symbol')}: {parseInt(getValues('sellAsset.currency.balance'))?.toLocaleString()} {getValues('sellAsset.currency.valueUsd')?.toLocaleString()}(USD)</small>
         </FormControl>
         <FormControl
           rounded=''
@@ -114,7 +121,7 @@ export const TradeInput = ({ history }: RouterProps) => {
         >
           <IconButton aria-label='Switch' isRound icon={<ArrowDownIcon />} />
           <Box display='flex' alignItems='center' color='gray.500'>
-            <Text fontSize='sm'>1 BTC = 40,100.45 USDC</Text>
+            <Text fontSize='sm'>{getValues('sellAsset.currency.priceUsd')}</Text>
             <HelperToolTip label='The price is ' />
           </Box>
         </FormControl>
@@ -136,7 +143,7 @@ export const TradeInput = ({ history }: RouterProps) => {
           type='submit'
           size='lg'
           width='full'
-          colorScheme='blue'
+          colorScheme='green'
           isDisabled={!isDirty || !isValid}
         >
           Preview Trade

@@ -29,23 +29,9 @@ export const AssetSearch = ({ onClick }: AssetSearchProps) => {
 
   const fetchTokens = useCallback(async () => {
     try {
-
-      //const data = await getAssetList()
       let data:any = {}
-      console.log("data: ",data)
-      console.log("pioneer: ",pioneer.App)
-      console.log("pioneer.balances: ",pioneer.App.balances)
-      console.log("pioneer.pubkeys: ",pioneer.App.pubkeys)
-      await pioneer.refresh()
+      //pioneer.refresh()
       data.tokens = pioneer.App.balances
-      // data.tokens = [{
-      //   "chainId": 1,
-      //   "address": "0x41efc0253ee7ea44400abb5f907fdbfdebc82bec",
-      //   "name": " AAPL",
-      //   "symbol": "AAPL",
-      //   "decimals": 18,
-      //   "logoURI": "https://assets.coingecko.com/coins/images/12367/thumb/oF1_9R1K_400x400.jpg?1599345463"
-      // }]
       const sorted = sortBy(data?.tokens, ['name', 'symbol'])
       setSortedAssets(sorted)
     } catch (e) {
@@ -55,7 +41,6 @@ export const AssetSearch = ({ onClick }: AssetSearchProps) => {
 
   useEffect(() => {
     fetchTokens()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

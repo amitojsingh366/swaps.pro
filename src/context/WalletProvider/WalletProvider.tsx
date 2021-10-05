@@ -258,12 +258,12 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           pioneer.assetContext = ASSET
 
           //let thorVault = poolInfo.filter((e:any) => e.chain === 'BCH')
-          let walletContext = pioneer?.wallets.filter((e:any) => e.context === pioneer.context)
-          walletContext = walletContext[0]
+          // let walletContext = pioneer?.wallets.filter((e:any) => e.context === pioneer.context)
+          // walletContext = walletContext[0]
           //console.log("walletContext: ",walletContext)
 
-          pioneer.assetBalanceNativeContext = walletContext?.balances[pioneer.assetContext]
-          pioneer.assetBalanceUsdValueContext = walletContext?.values[pioneer.assetContext]
+          // pioneer.assetBalanceNativeContext = walletContext?.balances[pioneer.assetContext]
+          // pioneer.assetBalanceUsdValueContext = walletContext?.values[pioneer.assetContext]
 
           // pioneer.assetBalanceNativeContext = pioneer?.wallets[pioneer.context]?.balances[pioneer.assetContext]
           // pioneer.assetBalanceUsdValueContext = pioneer?.wallets[pioneer.context]?.values[pioneer.assetContext]
