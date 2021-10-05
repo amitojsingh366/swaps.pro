@@ -165,7 +165,23 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   let [username, setUsername] = useState<string | null>(null)
   const [routePath, setRoutePath] = useState<string | readonly string[] | undefined>()
 
-
+  const connect = useCallback(async () => {
+    try {
+      const selected = await state.onboard?.walletSelect()
+      if (selected) {
+        const ready = await state.onboard?.walletCheck()
+        if (ready) {
+          //console.log("Onboard state: ",state.onboard?.getState())
+          dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+        } else {
+          dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
+          window.localStorage.removeItem('selectedWallet')
+        }
+      }
+    } catch (error) {
+      //console.log(error)
+    }
+  }, [state?.onboard])
 
   //TODO move to module?
   const onStartPioneer = async function(){
@@ -277,27 +293,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       },
       [state.keyring]
   )
-
-  /**
-   * temp logging data here for dev use
-   */
-  const connect = useCallback(async () => {
-    try {
-      const selected = await state.onboard?.walletSelect()
-      if (selected) {
-        const ready = await state.onboard?.walletCheck()
-        if (ready) {
-          //console.log("Onboard state: ",state.onboard?.getState())
-          dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
-        } else {
-          dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
-          window.localStorage.removeItem('selectedWallet')
-        }
-      }
-    } catch (error) {
-      //console.log(error)
-    }
-  }, [state?.onboard])
 
   const disconnect = useCallback(() => {
     setType(null)

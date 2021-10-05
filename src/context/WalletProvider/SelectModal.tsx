@@ -9,8 +9,6 @@ export const SelectModal = ({ connect }: { connect: (adapter: string) => Promise
       <ModalHeader>Connect a wallet</ModalHeader>
       <ModalBody>
         <RawText mb={6} color='gray.500'>
-          By connecting a wallet, you agree to ShapeShifts’ Terms of Service and acknowledge that
-          you have read and understand the ShapeShift disclaimer.
         </RawText>
         <Stack mb={6}>
             {console.log(SUPPORTED_WALLETS)}
@@ -18,7 +16,8 @@ export const SelectModal = ({ connect }: { connect: (adapter: string) => Promise
             const option = SUPPORTED_WALLETS[key]
             return (
               <>
-                <Button
+                  <small>type: {option.type}</small>
+                  <Button
                   variant='ghost-filled'
                   colorScheme='blue'
                   key={key}
@@ -29,8 +28,21 @@ export const SelectModal = ({ connect }: { connect: (adapter: string) => Promise
                   justifyContent='space-between'
                   onClick={() => connect(key)}
                 >
-                  <Text fontWeight='semibold'>{option.name}</Text>
-                  <Image maxH={10} maxW={20} src={option.icon} />
+                  <div>
+                      <Text fontWeight='semibold'>{option.name}</Text>
+                  </div>
+                  <div>
+                  {option.support ? (
+                      <small>{option.support.map((entry:any, i:any) => {
+                          return (<small>Supports: <br/><Image maxH={7} maxW={10} src={entry.icon} />{entry.name}</small>)
+                      })}</small>
+                  ) : (
+                      <small></small>
+                  )}
+                  </div>
+                      <div>
+                          <Image maxH={10} maxW={20} src={option.icon} />
+                      </div>
                 </Button>
               </>
             )

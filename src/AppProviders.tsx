@@ -1,6 +1,5 @@
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { translations } from 'assets/translations'
-import { ChainAdaptersProvider } from 'context/ChainAdaptersProvider/ChainAdaptersProvider'
 import { ModalProvider } from 'context/ModalProvider/ModalProvider'
 import { WalletProvider } from 'context/WalletProvider/WalletProvider'
 import React from 'react'
@@ -30,9 +29,7 @@ export function AppProviders({ children }: ProvidersProps) {
           <I18n locale={locale} messages={messages}>
             <ModalProvider>
               <WalletProvider>
-                <ChainAdaptersProvider unchainedUrls={unchainedUrls}>
-                  {children}
-                </ChainAdaptersProvider>
+                {children}
               </WalletProvider>
             </ModalProvider>
           </I18n>
