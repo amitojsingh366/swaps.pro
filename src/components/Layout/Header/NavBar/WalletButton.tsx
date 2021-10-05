@@ -28,6 +28,7 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from '@chakra-ui/react'
+import { shortenAddress } from 'utils/helpers'
 import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 import { FC } from 'react'
 import { OnboardButton } from './OnboardButton'
@@ -70,7 +71,7 @@ export const WalletButton: FC<FlexProps> = () => {
         rightIcon={<TriangleDownIcon h={3} w={3} />}
         mr={6}
       >
-        {pioneer.username}
+        {pioneer.username.substring(0, 28)}...
       </MenuButton>
       <MenuList minW='300px'>
         <MenuGroup title='Wallet Overview'>
