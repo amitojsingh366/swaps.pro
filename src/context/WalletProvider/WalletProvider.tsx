@@ -325,6 +325,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             }
           }
         })
+        dispatch({ type: WalletActions.SET_ONBOARD, payload: onboard })
+
         console.log("initOnboard: ",onboard)
         const selected = await onboard.walletSelect()
         console.log('selected: ',selected)
@@ -381,12 +383,54 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   //   dispatch({ type: WalletActions.SET_ONBOARD, payload: onboard })
   // }, []) // we explicitly only want this to happen once
 
-
   const disconnect = useCallback(() => {
     setType(null)
     setRoutePath(undefined)
     dispatch({ type: WalletActions.RESET_STATE })
   }, [])
+
+  const connectPrevious = useCallback(
+      async (previous: string) => {
+        try {
+          console.log("CHECKPOINT *** connectPrevious")
+          const selected = await state.onboard?.walletSelect(previous)
+          if (!selected) {
+            console.log("CHECKOINT 1 NOT SELECTED")
+            dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+          }
+          if (selected && state?.onboard?.walletCheck) {
+            const ready = await state.onboard.walletCheck()
+            if (ready) {
+              //console.log("Onboard state: ",state.onboard.getState())
+              //console.log("Onboard state: ",state)
+              dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+              dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+            } else {
+              dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
+              dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+              window.localStorage.removeItem('selectedWallet')
+            }
+          }
+        } catch (error) {
+          console.warn(error)
+          dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+          disconnect()
+          window.localStorage.removeItem('selectedWallet')
+        }
+      },
+      [disconnect, state.onboard]
+  )
+
+  useEffect(() => {
+    const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
+    if (previouslySelectedWallet && state.onboard && !state.active) {
+      console.log("CHECKOINT 2 NOT SELECTED and not active, previouslySelectedWallet")
+      void connectPrevious(previouslySelectedWallet)
+    } else if (!previouslySelectedWallet && state.onboard) {
+      console.log("CHECKOINT 2 NOT SELECTED")
+      dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+    }
+  }, [state.onboard, disconnect, state.active, connectPrevious])
 
   const value: IWalletContext = useMemo(
     () => ({ state, pioneer, username, assetContext, dispatch, connect, disconnect, setAssetContext }),

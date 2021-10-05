@@ -25,8 +25,9 @@ export function getLibrary(provider: any): Web3Provider {
 }
 
 const wallets = [
-  { walletName: 'detectedwallet', preferred: true },
-  {
+    { walletName: 'metamask',
+      preferred: true },
+    {
     walletName: 'keepkey',
     preferred: true,
     rpcUrl: RPC_URL,
@@ -38,7 +39,6 @@ const wallets = [
     preferred: true,
     label: 'Portis By ShapeShift'
   },
-  { walletName: 'metamask', preferred: true },
   {
     walletName: 'walletConnect',
     rpc: {
