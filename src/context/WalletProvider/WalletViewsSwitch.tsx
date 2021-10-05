@@ -14,7 +14,6 @@ import React, { useEffect } from 'react'
 import { Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-router-dom'
 
 import { SUPPORTED_WALLETS } from './config'
-import { NativePasswordRequired } from './NativeWallet/NativePasswordRequired'
 import { SelectModal } from './SelectModal'
 import { useWallet, WalletActions } from './WalletProvider'
 import { WalletViewProps } from './WalletViewsRouter'
@@ -42,11 +41,6 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
 
   return (
     <>
-      <NativePasswordRequired
-        onConnect={() => {
-          dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
-        }}
-      />
       <Modal isOpen={props.modalOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent justifyContent='center' px={3} pt={3} pb={6}>

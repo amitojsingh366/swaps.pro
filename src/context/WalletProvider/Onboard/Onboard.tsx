@@ -1,13 +1,9 @@
 import {ModalBody, ModalHeader, Stack, Button, Image, useClipboard, Flex, HStack, Text} from '@chakra-ui/react'
-import { RawText } from 'components/Text'
-import { useWallet } from 'context/WalletProvider/OnboardWalletProvider'
+import { useWallet } from 'context/WalletProvider/WalletProvider'
 import React, {useEffect, useState} from 'react'
 import PIONEER_ICON from 'assets/png/pioneer.png'
 
 import { NativeSetupProps } from './setup'
-import {NativeAdapter, NativeHDWallet} from "@shapeshiftoss/hdwallet-native";
-import {useLocalStorage} from "hooks/useLocalStorage/useLocalStorage";
-import { EncryptedWallet } from '@shapeshiftoss/hdwallet-native/dist/crypto'
 import {shortenAddress} from "../../../utils/helpers";
 import {ChevronDownIcon, ChevronRightIcon} from "@chakra-ui/icons";
 
@@ -17,9 +13,6 @@ export const Onboard = ({ history, location }: NativeSetupProps) => {
   const { isConnected, wallet, account } = state
 
   useEffect(() => {
-    //console.log("Pair use Affect Called")
-    //console.log("state: ",state)
-    //console.log("username: ",username)
   }, [])
 
   return (
@@ -34,7 +27,6 @@ export const Onboard = ({ history, location }: NativeSetupProps) => {
                 p={1}
                 color='white'
                 alignItems='center'
-                onClick={connect}
                 _hover={{ cursor: 'pointer', bg: 'whiteAlpha.500' }}
             >
                 {isConnected ? (
