@@ -10,10 +10,10 @@ const POLLING_INTERVAL = 15000
 // it is the free version.
 const FORTMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY
 const PORTIS_KEY = process.env.REACT_APP_PORTIS_DAPP_ID
-const CONTACT_EMAIL = 'support@shapeshift.com'
-const APP_URL = 'https://shapeshift.com'
+const CONTACT_EMAIL = 'support@swaps.pro'
+const APP_URL = 'https://swaps.pro'
 const RPC_URL = process.env.REACT_APP_RPC_URL
-const APP_NAME = 'FOX Token Benefits'
+const APP_NAME = 'Swaps.pro'
 
 // @ts-ignore
 const hasWebUSB = !!navigator.usb
@@ -102,9 +102,7 @@ export function initOnboard(subscriptions: Subscriptions) {
     walletSelect: {
       wallets: wallets,
       agreement: {
-        version: '1.0',
-        termsUrl: 'https://shapeshift.com/terms-of-service',
-        privacyUrl: 'https://shapeshift.com/privacy'
+        version: '1.0'
       }
     },
     walletCheck,

@@ -163,25 +163,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   const [state, dispatch] = useReducer(reducer, initialState)
   const [type, setType] = useState<string | null>(null)
   let [username, setUsername] = useState<string | null>(null)
+  const [network, setNetwork] = useState<number | null>(null)
   const [routePath, setRoutePath] = useState<string | readonly string[] | undefined>()
-
-  const connect = useCallback(async () => {
-    try {
-      const selected = await state.onboard?.walletSelect()
-      if (selected) {
-        const ready = await state.onboard?.walletCheck()
-        if (ready) {
-          //console.log("Onboard state: ",state.onboard?.getState())
-          dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
-        } else {
-          dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
-          window.localStorage.removeItem('selectedWallet')
-        }
-      }
-    } catch (error) {
-      //console.log(error)
-    }
-  }, [state?.onboard])
 
   //TODO move to module?
   const onStartPioneer = async function(){
@@ -293,6 +276,111 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       },
       [state.keyring]
   )
+
+  /**
+   * temp logging data here for dev use
+   */
+  const connect = useCallback(async (type: string) => {
+    setType(type)
+    console.log("type: ",type)
+    switch (type) {
+      case 'pioneer':
+        console.log('Pioneer connect selected!')
+        setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
+        onStartPioneer()
+        break
+      case 'native':
+        console.log('ShapeShift connect selected!')
+        break
+      case 'kepler':
+        console.log('Kepler connect selected!')
+        break
+      case 'keepkey':
+        console.log('keepkey connect selected!')
+        break
+      case 'onboard':
+        dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+        console.log('OnBoard.js connect selected!')
+        const onboard = initOnboard({
+          network: network => {
+            setNetwork(network)
+          },
+          address: address => {
+            let pairWalletOnboard:any = {
+              name:state?.wallet?.name,
+              network,
+              initialized:state.initialized,
+              address:state.account
+            }
+            console.log("Onboard state: FINAL ",pairWalletOnboard)
+            dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
+          },
+          wallet: (wallet: Wallet) => {
+            if (wallet.provider) {
+              dispatch({ type: WalletActions.SET_WALLET, payload: wallet })
+              dispatch({ type: WalletActions.SET_PROVIDER, payload: getLibrary(wallet.provider) })
+              window.localStorage.setItem('selectedWallet', wallet.name as string)
+            } else {
+              disconnect()
+            }
+          }
+        })
+        console.log("initOnboard: ",onboard)
+        const selected = await onboard.walletSelect()
+        console.log('selected: ',selected)
+        if (selected) {
+          const ready = await onboard?.walletCheck()
+          console.log('ready: ',ready)
+          if (ready) {
+            console.log("Onboard state: ",onboard?.getState())
+            dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+          } else {
+            dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
+            window.localStorage.removeItem('selectedWallet')
+          }
+        } else {
+          console.log("No Onboard Wallet selected!")
+          if (!selected) dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+        }
+        break
+      case 'xdefi':
+        console.log('xdefi connect selected!')
+        break
+      default:
+        throw Error('Wallet not supported: ' + type)
+    }
+  }, [])
+
+  // useEffect(() => {
+  //   console.log("initOnboard: ")
+  //   const onboard = initOnboard({
+  //     network: network => {
+  //       setNetwork(network)
+  //     },
+  //     address: address => {
+  //       let pairWalletOnboard:any = {
+  //         name:state?.wallet?.name,
+  //         network,
+  //         initialized:state.initialized,
+  //         address:state.account
+  //       }
+  //       console.log("Onboard state: FINAL ",pairWalletOnboard)
+  //       dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
+  //     },
+  //     wallet: (wallet: Wallet) => {
+  //       if (wallet.provider) {
+  //         dispatch({ type: WalletActions.SET_WALLET, payload: wallet })
+  //         dispatch({ type: WalletActions.SET_PROVIDER, payload: getLibrary(wallet.provider) })
+  //         window.localStorage.setItem('selectedWallet', wallet.name as string)
+  //       } else {
+  //         disconnect()
+  //       }
+  //     }
+  //   })
+  //   console.log("initOnboard: ",onboard)
+  //   dispatch({ type: WalletActions.SET_ONBOARD, payload: onboard })
+  // }, []) // we explicitly only want this to happen once
+
 
   const disconnect = useCallback(() => {
     setType(null)

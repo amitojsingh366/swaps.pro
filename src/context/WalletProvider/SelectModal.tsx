@@ -11,7 +11,6 @@ export const SelectModal = ({ connect }: { connect: (adapter: string) => Promise
         <RawText mb={6} color='gray.500'>
         </RawText>
         <Stack mb={6}>
-            {console.log(SUPPORTED_WALLETS)}
           {Object.keys(SUPPORTED_WALLETS).map(key => {
             const option = SUPPORTED_WALLETS[key]
             return (
