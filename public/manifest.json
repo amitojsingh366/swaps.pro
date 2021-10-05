@@ -8,12 +8,12 @@
       "type": "image/x-icon"
     },
     {
-      "src": "FOX_Icon_white.svg",
+      "src": "assets_img_thorchain-logo.svg",
       "type": "image/png",
       "sizes": "230x208"
     },
     {
-      "src": "FOX_Icon_white.png",
+      "src": "assets_img_thorchain-logo.png",
       "type": "image/png",
       "sizes": "500x500"
     }

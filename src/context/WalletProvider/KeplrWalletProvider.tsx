@@ -1,5 +1,3 @@
-const { SigningCosmosClient } = require("@cosmjs/launchpad");
-
 import React, {
     createContext,
     useCallback,
@@ -9,6 +7,8 @@ import React, {
     useReducer,
     useState
 } from 'react'
+
+const { SigningCosmosClient } = require("@cosmjs/launchpad");
 
 const SUPPORTED_NETWORKS = [1]
 
