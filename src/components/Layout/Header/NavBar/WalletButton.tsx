@@ -32,6 +32,7 @@ import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/W
 import { FC } from 'react'
 import { OnboardButton } from './OnboardButton'
 import { KeplrButton } from './KeplrButton'
+import { PioneerButton } from './PioneerButton'
 type WalletImageProps = {
   isConnected: Boolean
 } & Pick<InitialState, 'walletInfo'>
@@ -99,6 +100,20 @@ export const WalletButton: FC<FlexProps> = () => {
               </h2>
               <AccordionPanel pb={4}>
                 *keplr wallet info
+              </AccordionPanel>
+            </AccordionItem>
+
+            <AccordionItem>
+              <h2>
+                <AccordionButton>
+                  <Box flex="1" textAlign="left">
+                    pioneer: <PioneerButton />
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4}>
+                *pioneer wallet info
               </AccordionPanel>
             </AccordionItem>
           </Accordion>

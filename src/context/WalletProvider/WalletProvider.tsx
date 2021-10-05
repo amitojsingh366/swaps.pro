@@ -368,7 +368,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:type, icon:'Metamask'} })
             //SET_IS_CONNECTED
             // dispatch({ type: WalletActions.SET_WALLET, payload: {} })
-            dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
+            // dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
           } else {
             dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
             window.localStorage.removeItem('selectedWallet')
