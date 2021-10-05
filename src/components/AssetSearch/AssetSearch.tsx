@@ -33,9 +33,11 @@ export const AssetSearch = ({ onClick }: AssetSearchProps) => {
       //const data = await getAssetList()
       let data:any = {}
       console.log("data: ",data)
-      console.log("pioneer: ",pioneer)
-      console.log("pioneer.balances: ",pioneer.balances)
-      data.tokens = pioneer.balances
+      console.log("pioneer: ",pioneer.App)
+      console.log("pioneer.balances: ",pioneer.App.balances)
+      console.log("pioneer.pubkeys: ",pioneer.App.pubkeys)
+      await pioneer.refresh()
+      data.tokens = pioneer.App.balances
       // data.tokens = [{
       //   "chainId": 1,
       //   "address": "0x41efc0253ee7ea44400abb5f907fdbfdebc82bec",

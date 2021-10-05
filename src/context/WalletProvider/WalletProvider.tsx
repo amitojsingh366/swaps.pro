@@ -184,6 +184,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           //open modal
           dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
         } else if (initResult) {
+          //get user info
+          let userInfo = await pioneer.refresh()
+          console.log('userInfo: ', userInfo)
+
           //dispatch({ type: WalletActions.SET_LOADING, payload: false })
           //console.log('Paired!')
           //console.log('Pioneer User: ', initResult)
@@ -205,7 +209,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
           //SET_IS_CONNECTED
           // dispatch({ type: WalletActions.SET_WALLET, payload: {} })
-          dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
+          // dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
         }
         /*
           Pioneer events
@@ -306,13 +310,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             setNetwork(network)
           },
           address: address => {
-            let pairWalletOnboard:any = {
-              name:state?.wallet?.name,
-              network,
-              initialized:state.initialized,
-              address:state.account
-            }
-            console.log("Onboard state: FINAL ",pairWalletOnboard)
             dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
           },
           wallet: (wallet: Wallet) => {
@@ -333,9 +330,45 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         if (selected) {
           const ready = await onboard?.walletCheck()
           console.log('ready: ',ready)
+          console.log('onboard: ',onboard)
           if (ready) {
+            // let pairWalletOnboard:any = {
+            //   name:type,
+            //   network:1,
+            //   initialized:true,
+            //   address:onboard.address
+            // }
+            // console.log("Onboard state: FINAL ",pairWalletOnboard)
+            // pioneer.registerWallet(pairWalletOnboard)
+
+            setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
+            let state = onboard?.getState()
             console.log("Onboard state: ",onboard?.getState())
+            let pairWalletOnboard:any = {
+              name:type,
+              network:1,
+              initialized:true,
+              address:state.address
+            }
+            console.log("Onboard state: FINAL ",pairWalletOnboard)
+            pioneer.registerWallet(pairWalletOnboard)
             dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+
+            //if username
+            console.log("username: ",pioneer.username)
+
+            //console.log("username: ",username)
+            //console.log("assetContext: ",assetContext)
+            //init wallet button
+            dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+            if(pioneer.username){
+              dispatch({ type: WalletActions.SET_USERNAME, username })
+            }
+            //console.log("username: ",username)
+            dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:type, icon:'Metamask'} })
+            //SET_IS_CONNECTED
+            // dispatch({ type: WalletActions.SET_WALLET, payload: {} })
+            dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
           } else {
             dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
             window.localStorage.removeItem('selectedWallet')
@@ -352,36 +385,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         throw Error('Wallet not supported: ' + type)
     }
   }, [])
-
-  // useEffect(() => {
-  //   console.log("initOnboard: ")
-  //   const onboard = initOnboard({
-  //     network: network => {
-  //       setNetwork(network)
-  //     },
-  //     address: address => {
-  //       let pairWalletOnboard:any = {
-  //         name:state?.wallet?.name,
-  //         network,
-  //         initialized:state.initialized,
-  //         address:state.account
-  //       }
-  //       console.log("Onboard state: FINAL ",pairWalletOnboard)
-  //       dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
-  //     },
-  //     wallet: (wallet: Wallet) => {
-  //       if (wallet.provider) {
-  //         dispatch({ type: WalletActions.SET_WALLET, payload: wallet })
-  //         dispatch({ type: WalletActions.SET_PROVIDER, payload: getLibrary(wallet.provider) })
-  //         window.localStorage.setItem('selectedWallet', wallet.name as string)
-  //       } else {
-  //         disconnect()
-  //       }
-  //     }
-  //   })
-  //   console.log("initOnboard: ",onboard)
-  //   dispatch({ type: WalletActions.SET_ONBOARD, payload: onboard })
-  // }, []) // we explicitly only want this to happen once
 
   const disconnect = useCallback(() => {
     setType(null)
@@ -423,6 +426,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   useEffect(() => {
     const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
+    console.log("previouslySelectedWallet: ",previouslySelectedWallet)
     if (previouslySelectedWallet && state.onboard && !state.active) {
       console.log("CHECKOINT 2 NOT SELECTED and not active, previouslySelectedWallet")
       void connectPrevious(previouslySelectedWallet)

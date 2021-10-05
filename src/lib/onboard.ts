@@ -29,7 +29,6 @@ const wallets = [
       preferred: true },
     {
     walletName: 'keepkey',
-    preferred: true,
     rpcUrl: RPC_URL,
     label: hasWebUSB ? undefined : 'Supported on Chrome or Brave'
   },
@@ -63,15 +62,14 @@ const wallets = [
   { walletName: 'trust', preferred: true, rpcUrl: RPC_URL },
   {
     walletName: 'fortmatic',
-    apiKey: FORTMATIC_KEY,
-    preferred: true
+    apiKey: FORTMATIC_KEY
   },
   { walletName: 'opera' },
   { walletName: 'operaTouch' },
-  { walletName: 'torus', preferred: true },
+  { walletName: 'torus' },
   { walletName: 'status' },
   { walletName: 'trust' },
-  { walletName: 'walletLink', rpcUrl: RPC_URL, appName: APP_NAME, preferred: true },
+  { walletName: 'walletLink', rpcUrl: RPC_URL, appName: APP_NAME },
   { walletName: 'imToken', rpcUrl: RPC_URL },
   { walletName: 'meetone' },
   { walletName: 'mykey', rpcUrl: RPC_URL },

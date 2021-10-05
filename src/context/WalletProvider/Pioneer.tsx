@@ -213,10 +213,10 @@ export class PioneerService {
       service: 'shapeshift',
       url: 'https://beta.shapeshift.com/',
       queryKey: this.queryKey,
-      // wss: 'wss://pioneers.dev',
-      wss: 'ws://127.0.0.1:9001',
-      // spec: 'https://pioneers.dev/spec/swagger.json'
-      spec: 'http://127.0.0.1:9001/spec/swagger.json'
+      wss: 'wss://pioneers.dev',
+      // wss: 'ws://127.0.0.1:9001',
+      spec: 'https://pioneers.dev/spec/swagger.json'
+      // spec: 'http://127.0.0.1:9001/spec/swagger.json'
     }
     if (this.username) {
       config.username = this.username
@@ -307,9 +307,9 @@ export class PioneerService {
        */
       //set context
       if (contextInfo) {
-        this.assetContext = 'ATOM'
-        this.assetBalanceNativeContext = contextInfo.balances[this.assetContext]
-        this.assetBalanceUsdValueContext = contextInfo.values[this.assetContext]
+        // this.assetContext = 'ATOM'
+        // this.assetBalanceNativeContext = contextInfo.balances[this.assetContext]
+        // this.assetBalanceUsdValueContext = contextInfo.values[this.assetContext]
       }
 
       this.events.emit('context', {
@@ -399,9 +399,32 @@ export class PioneerService {
     if (info && !info.error) {
       //console.log('INFO: ', info)
       const userParams = await this.App.getUserParams()
+      this.balances = this.App.balances
       this.context = info.context
       // this.valueUsdContext = info.totalValueUsd;
       this.wallets = info.wallets
+      // this.valueUsdContext = userInfo.valueUsdContext;
+      this.totalValueUsd = info.totalValueUsd
+      if(info.username)this.username = info.username
+      return userParams
+    } else {
+      //console.log('no user data found!')
+      return {
+        success: false,
+        error: 'No user info for key'
+      }
+    }
+  }
+
+  async refresh(): Promise<any> {
+    const info = await this.App.getUserInfo()
+    if (info && !info.error) {
+      //console.log('INFO: ', info)
+      const userParams = await this.App.getUserParams()
+      this.context = info.context
+      // this.valueUsdContext = info.totalValueUsd;
+      this.wallets = info.wallets
+      this.balances = this.App.balances
       // this.valueUsdContext = userInfo.valueUsdContext;
       this.totalValueUsd = info.totalValueUsd
       if(info.username)this.username = info.username

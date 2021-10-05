@@ -35,8 +35,8 @@ export const Form = () => {
   const { pioneer } = useWallet()
   const location = useLocation()
   const history = useHistory()
-  const toast = useToast()
-  const modal = useModal()
+  // const toast = useToast()
+  // const modal = useModal()
 
   const methods = useForm<SendInput>({
     mode: 'onChange',
