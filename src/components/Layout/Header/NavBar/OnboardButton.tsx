@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { ChevronRightIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import { Flex, Text, Image, HStack, FlexProps } from '@chakra-ui/react'
 import { shortenAddress } from 'utils/helpers'
-import { useWallet } from 'context/WalletProvider/WalletProvider'
+import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 
 export const OnboardButton: FC<FlexProps> = props => {
     const { state, connect } = useWallet()
@@ -17,8 +17,6 @@ export const OnboardButton: FC<FlexProps> = props => {
             p={1}
             color='white'
             alignItems='center'
-            // @ts-ignore
-            onClick={connect}
             _hover={{ cursor: 'pointer', bg: 'whiteAlpha.500' }}
             {...props}
         >

@@ -31,15 +31,11 @@ export function AppProviders({ children }: ProvidersProps) {
         <BrowserRouter>
           <I18n locale={locale} messages={messages}>
             <ModalProvider>
-              <KeplrWalletProvider>
-                <OnBoardWalletProvider>
-                  <WalletProvider>
-                    <ChainAdaptersProvider unchainedUrls={unchainedUrls}>
-                      {children}
-                    </ChainAdaptersProvider>
-                  </WalletProvider>
-                </OnBoardWalletProvider>
-              </KeplrWalletProvider>
+              <WalletProvider>
+                <ChainAdaptersProvider unchainedUrls={unchainedUrls}>
+                  {children}
+                </ChainAdaptersProvider>
+              </WalletProvider>
             </ModalProvider>
           </I18n>
         </BrowserRouter>
