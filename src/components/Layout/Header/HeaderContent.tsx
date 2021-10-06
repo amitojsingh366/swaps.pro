@@ -59,7 +59,7 @@ export const HeaderContent = ({ route }: { route: Route }) => {
         <NavBar display={{ base: 'none', md: 'flex' }} />
         <Flex alignItems='center' justifyContent='flex-end' flex={2}>
           <HStack alignItems={'center'}>
-            <AssetButton />
+            {/*<AssetButton />*/}
             {/*<KeplrButton />*/}
             {/*<OnboardButton />*/}
             <WalletButton />

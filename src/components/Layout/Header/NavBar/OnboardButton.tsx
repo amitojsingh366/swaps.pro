@@ -5,7 +5,7 @@ import { shortenAddress } from 'utils/helpers'
 import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 
 export const OnboardButton: FC<FlexProps> = props => {
-    const { state, connect } = useWallet()
+    const { state, connect, pioneer } = useWallet()
     const { isConnected, wallet, account } = state
 
 
@@ -20,7 +20,7 @@ export const OnboardButton: FC<FlexProps> = props => {
             _hover={{ cursor: 'pointer', bg: 'whiteAlpha.500' }}
             {...props}
         >
-            {isConnected ? (
+            {account ? (
                 <HStack>
                     <Image
                         maxW='28px'

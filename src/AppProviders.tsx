@@ -16,10 +16,6 @@ type ProvidersProps = {
   children: React.ReactNode
 }
 
-const unchainedUrls = {
-  ethereum: 'http://localhost:31300/api/v1'
-}
-
 export function AppProviders({ children }: ProvidersProps) {
   return (
     <ReduxProvider store={store}>

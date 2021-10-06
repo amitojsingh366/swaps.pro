@@ -25,10 +25,10 @@ export function getLibrary(provider: any): Web3Provider {
 }
 
 const wallets = [
-    { walletName: 'metamask',
-      preferred: true },
-    {
+  { walletName: 'detectedwallet', preferred: true },
+  {
     walletName: 'keepkey',
+    preferred: true,
     rpcUrl: RPC_URL,
     label: hasWebUSB ? undefined : 'Supported on Chrome or Brave'
   },
@@ -38,6 +38,7 @@ const wallets = [
     preferred: true,
     label: 'Portis By ShapeShift'
   },
+  { walletName: 'metamask', preferred: true },
   {
     walletName: 'walletConnect',
     rpc: {
@@ -62,14 +63,15 @@ const wallets = [
   { walletName: 'trust', preferred: true, rpcUrl: RPC_URL },
   {
     walletName: 'fortmatic',
-    apiKey: FORTMATIC_KEY
+    apiKey: FORTMATIC_KEY,
+    preferred: true
   },
   { walletName: 'opera' },
   { walletName: 'operaTouch' },
-  { walletName: 'torus' },
+  { walletName: 'torus', preferred: true },
   { walletName: 'status' },
   { walletName: 'trust' },
-  { walletName: 'walletLink', rpcUrl: RPC_URL, appName: APP_NAME },
+  { walletName: 'walletLink', rpcUrl: RPC_URL, appName: APP_NAME, preferred: true },
   { walletName: 'imToken', rpcUrl: RPC_URL },
   { walletName: 'meetone' },
   { walletName: 'mykey', rpcUrl: RPC_URL },
@@ -96,7 +98,7 @@ export function initOnboard(subscriptions: Subscriptions) {
   return Onboard({
     networkId: 1,
     blockPollingInterval: POLLING_INTERVAL,
-    hideBranding: true,
+    hideBranding: false,
     walletSelect: {
       wallets: wallets,
       agreement: {

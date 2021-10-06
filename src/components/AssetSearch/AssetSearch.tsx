@@ -1,6 +1,6 @@
 import { SearchIcon } from '@chakra-ui/icons'
 import { Box, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
-import { getAssetList, SwapCurrency } from '@shapeshiftoss/market-service'
+import { SwapCurrency } from '@shapeshiftoss/market-service'
 import sortBy from 'lodash/sortBy'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -14,7 +14,7 @@ type AssetSearchProps = {
 }
 
 export const AssetSearch = ({ onClick }: AssetSearchProps) => {
-  const { state, username, pioneer } = useWallet()
+  const { pioneer } = useWallet()
   const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
   const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])
   const { register, watch } = useForm<{ search: string }>({

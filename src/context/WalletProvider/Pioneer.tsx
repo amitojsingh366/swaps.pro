@@ -33,7 +33,7 @@ export class PioneerService {
   private App: any
   private Api: any
   private queryKey: string
-  private username: string | undefined
+  public username: string | undefined
   private pairingCode: string | undefined
   public context: string | undefined
   public assetContext: string | undefined

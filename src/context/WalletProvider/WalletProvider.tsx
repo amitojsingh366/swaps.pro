@@ -156,21 +156,301 @@ const reducer = (state: InitialState, action: ActionTypes) => {
 const WalletContext = createContext<IWalletContext | null>(null)
 let isPioneerStarted: boolean = false
 
-let pioneer: any
-let assetContext: string
-
 export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const [type, setType] = useState<string | null>(null)
   let [username, setUsername] = useState<string | null>(null)
   const [network, setNetwork] = useState<number | null>(null)
   const [routePath, setRoutePath] = useState<string | readonly string[] | undefined>()
+  let pioneer = new PioneerService()
+  let assetContext: string = "ETH"
+  let onboard: OnboardAPI
+  useEffect(() => {
+    //console.log("Use Effect Called! state: ",state)
+    dispatch({ type: WalletActions.SET_USERNAME, username })
+  }, [])
 
-  //TODO move to module?
+  const setAssetContext = useCallback(
+      async (ASSET:string) => {
+        //dispatch({ type: WalletActions.SELECT_MODAL, payload: false })
+        try {
+          //set asset context
+          pioneer.assetContext = ASSET
+          pioneer.setAssetContext(ASSET)
+          //dispatch?
+          return true
+        } catch (error) {
+          console.warn(error)
+        }
+      },
+      [state.keyring]
+  )
+
+  // /**
+  //  * temp logging data here for dev use
+  //  */
+  // const connect = useCallback(async (type: string) => {
+  //   setType(type)
+  //   console.log("type: ",type)
+  //   switch (type) {
+  //     case 'pioneer':
+  //       console.log('Pioneer connect selected!')
+  //       setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
+  //       //onStartPioneer()
+  //       break
+  //     case 'native':
+  //       console.log('ShapeShift connect selected!')
+  //       break
+  //     case 'kepler':
+  //       console.log('Kepler connect selected!')
+  //       break
+  //     case 'keepkey':
+  //       console.log('keepkey connect selected!')
+  //       break
+  //     case 'onboard':
+  //       dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+  //       console.log('OnBoard.js connect selected!')
+  //       const onboard = initOnboard({
+  //         network: network => {
+  //           setNetwork(network)
+  //         },
+  //         address: address => {
+  //           dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
+  //         },
+  //         wallet: (wallet: Wallet) => {
+  //           if (wallet.provider) {
+  //             dispatch({ type: WalletActions.SET_WALLET, payload: wallet })
+  //             dispatch({ type: WalletActions.SET_PROVIDER, payload: getLibrary(wallet.provider) })
+  //             window.localStorage.setItem('selectedWallet', wallet.name as string)
+  //           } else {
+  //             disconnect()
+  //           }
+  //         }
+  //       })
+  //       dispatch({ type: WalletActions.SET_ONBOARD, payload: onboard })
+  //
+  //       console.log("initOnboard: ",onboard)
+  //       const selected = await onboard.walletSelect()
+  //       console.log('selected: ',selected)
+  //       if (selected) {
+  //         const ready = await onboard?.walletCheck()
+  //         console.log('ready: ',ready)
+  //         console.log('onboard: ',onboard)
+  //         if (ready) {
+  //           // let pairWalletOnboard:any = {
+  //           //   name:type,
+  //           //   network:1,
+  //           //   initialized:true,
+  //           //   address:onboard.address
+  //           // }
+  //           // console.log("Onboard state: FINAL ",pairWalletOnboard)
+  //           // pioneer.registerWallet(pairWalletOnboard)
+  //
+  //           setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
+  //           let state = onboard?.getState()
+  //           console.log("Onboard state: ",onboard?.getState())
+  //           let pairWalletOnboard:any = {
+  //             name:type,
+  //             network:1,
+  //             initialized:true,
+  //             address:state.address
+  //           }
+  //           console.log("Onboard state: FINAL ",pairWalletOnboard)
+  //           pioneer.registerWallet(pairWalletOnboard)
+  //           dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+  //
+  //           //if username
+  //           console.log("username: ",pioneer.username)
+  //
+  //           //console.log("username: ",username)
+  //           //console.log("assetContext: ",assetContext)
+  //           //init wallet button
+  //           dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+  //           if(pioneer.username){
+  //             dispatch({ type: WalletActions.SET_USERNAME, username })
+  //           }
+  //           //console.log("username: ",username)
+  //           dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:type, icon:'Metamask'} })
+  //           //SET_IS_CONNECTED
+  //           // dispatch({ type: WalletActions.SET_WALLET, payload: {} })
+  //           // dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
+  //         } else {
+  //           dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
+  //           window.localStorage.removeItem('selectedWallet')
+  //         }
+  //       } else {
+  //         console.log("No Onboard Wallet selected!")
+  //         if (!selected) dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+  //       }
+  //       break
+  //     case 'xdefi':
+  //       console.log('xdefi connect selected!')
+  //       break
+  //     default:
+  //       throw Error('Wallet not supported: ' + type)
+  //   }
+  // }, [])
+
+  const connect = useCallback(async () => {
+    try {
+      console.log("connect called")
+      // const selected = await state.onboard?.walletSelect()
+      // if (selected) {
+      //   const ready = await state.onboard?.walletCheck()
+      //   if (ready) {
+      //     dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+      //   } else {
+      //     dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
+      //     window.localStorage.removeItem('selectedWallet')
+      //   }
+      // }
+
+      //pioneer
+
+    } catch (error) {
+      console.log(error)
+    }
+  }, [state?.onboard])
+
+  const disconnect = useCallback(() => {
+    setType(null)
+    setRoutePath(undefined)
+    dispatch({ type: WalletActions.RESET_STATE })
+  }, [])
+
+  const connectPrevious = useCallback(
+      async (previous: string) => {
+        try {
+          // console.log("CHECKPOINT *** connectPrevious")
+          // const selected = await state.onboard?.walletSelect(previous)
+          // if (!selected) {
+          //   console.log("CHECKOINT 1 NOT SELECTED")
+          //   dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+          // }
+          // if (selected && state?.onboard?.walletCheck) {
+          //   const ready = await state.onboard.walletCheck()
+          //   if (ready) {
+          //     let stateOnboard = state?.onboard?.getState()
+          //     console.log("stateOnboard ",stateOnboard)
+          //
+          //     let pairWalletOnboard:any = {
+          //       name:stateOnboard?.wallet?.name,
+          //       network:1,
+          //       initialized:true,
+          //       address:stateOnboard?.address
+          //     }
+          //     console.log("Onboard state: FINAL ",pairWalletOnboard)
+          //     let initResult = await pioneer.init()
+          //     let resultRegister = await pioneer.registerWallet(pairWalletOnboard)
+          //     console.log("resultRegister: ",pairWalletOnboard)
+          //     if(pioneer.balances){
+          //       //TODO dispatch balances
+          //       console.log("pioneer.balances: ",pioneer.balances)
+          //     }
+          //     if(pioneer.username){
+          //       dispatch({ type: WalletActions.SET_USERNAME, username: initResult.username })
+          //     }
+          //
+          //     dispatch({ type: WalletActions.SET_PIONEER, pioneer: pioneer })
+          //     dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+          //
+          //     //console.log("Onboard state: ",state.onboard.getState())
+          //     //console.log("Onboard state: ",state)
+          //     dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+          //     dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+          //     dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
+          //   } else {
+          //     dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
+          //     dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+          //     window.localStorage.removeItem('selectedWallet')
+          //   }
+          // }
+        } catch (error) {
+          console.warn(error)
+          dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+          disconnect()
+          window.localStorage.removeItem('selectedWallet')
+        }
+      },
+      [disconnect, state.onboard]
+  )
+
+  useEffect(() => {
+    console.log("start onboard!")
+    onboard = initOnboard({
+      network: network => {
+        setNetwork(network)
+      },
+      address: address => {
+        console.log("ADDRESS SET! ",address)
+        dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
+      },
+      wallet: (wallet: Wallet) => {
+        if (wallet.provider) {
+          dispatch({ type: WalletActions.SET_WALLET, payload: wallet })
+          dispatch({ type: WalletActions.SET_PROVIDER, payload: getLibrary(wallet.provider) })
+          window.localStorage.setItem('selectedWallet', wallet.name as string)
+        } else {
+          disconnect()
+        }
+      }
+    })
+    dispatch({ type: WalletActions.SET_ONBOARD, payload: onboard })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // we explicitly only want this to happen once
+
+  useEffect(() => {
+    const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
+    console.log("previouslySelectedWallet: ",previouslySelectedWallet)
+    if (previouslySelectedWallet && state.onboard && !state.active) {
+      console.log("CHECKOINT 2 NOT SELECTED and not active, previouslySelectedWallet")
+      void connectPrevious(previouslySelectedWallet)
+    } else if (!previouslySelectedWallet && state.onboard) {
+      console.log("CHECKOINT 2 NOT SELECTED")
+      connect()
+      dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+    }
+  }, [state.onboard, disconnect, state.active, connectPrevious])
+
+  const setBlockNumber = useCallback(
+      (blockNumber: number) => {
+        if (state?.provider && blockNumber !== state.blockNumber) {
+          dispatch({ type: WalletActions.SET_BLOCK_NUMBER, payload: blockNumber })
+        }
+      },
+      [state.blockNumber, state?.provider]
+  )
+
+  useEffect(() => {
+    const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
+    if (previouslySelectedWallet && state.onboard && !state.active) {
+      void connectPrevious(previouslySelectedWallet)
+    } else if (!previouslySelectedWallet && state.onboard) {
+      dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+    }
+  }, [state.onboard, disconnect, state.active, connectPrevious])
+
+  useEffect(() => {
+    if (state.wallet && state.active && state.account) {
+      dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
+    } else {
+      dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: false })
+    }
+  }, [state.account, state.active, state.wallet])
+
+  useEffect(() => {
+    if (network && state.active && state.wallet && !SUPPORTED_NETWORKS.includes(network)) {
+      disconnect()
+    }
+  }, [network, state.active, state.wallet, disconnect])
+
   const onStartPioneer = async function(){
     try{
       // does the user have pioneer?
       if(!isPioneerStarted){
+        //onboard
+        let lastConnect = window.localStorage.getItem('selectedWallet')
+        console.log('lastConnect: ', lastConnect)
         //only start once!
         isPioneerStarted = true
         pioneer = new PioneerService()
@@ -237,205 +517,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       console.error(e)
     }
   }
-  onStartPioneer()
+  //onStartPioneer()
 
-  useEffect(() => {
-    //console.log("Use Effect Called! state: ",state)
-    dispatch({ type: WalletActions.SET_USERNAME, username })
-  }, [])
 
-  const setAssetContext = useCallback(
-      async (ASSET:string) => {
-        //dispatch({ type: WalletActions.SELECT_MODAL, payload: false })
-        try {
-          //console.log("setting asset context!",{ASSET})
-
-          //
-          //console.log("pioneer.context: ",pioneer.context)
-          //console.log("pioneer?.wallets: ",pioneer?.wallets)
-
-          //set asset context
-          pioneer.assetContext = ASSET
-
-          //let thorVault = poolInfo.filter((e:any) => e.chain === 'BCH')
-          // let walletContext = pioneer?.wallets.filter((e:any) => e.context === pioneer.context)
-          // walletContext = walletContext[0]
-          //console.log("walletContext: ",walletContext)
-
-          // pioneer.assetBalanceNativeContext = walletContext?.balances[pioneer.assetContext]
-          // pioneer.assetBalanceUsdValueContext = walletContext?.values[pioneer.assetContext]
-
-          // pioneer.assetBalanceNativeContext = pioneer?.wallets[pioneer.context]?.balances[pioneer.assetContext]
-          // pioneer.assetBalanceUsdValueContext = pioneer?.wallets[pioneer.context]?.values[pioneer.assetContext]
-
-          //console.log("pioneer.assetBalanceNativeContext: ",pioneer.assetBalanceNativeContext)
-          //console.log("pioneer.assetBalanceUsdValueContext: ",pioneer.assetBalanceUsdValueContext)
-
-          pioneer.setAssetContext(ASSET)
-          //dispatch?
-          return true
-        } catch (error) {
-          console.warn(error)
-        }
-      },
-      [state.keyring]
-  )
-
-  /**
-   * temp logging data here for dev use
-   */
-  const connect = useCallback(async (type: string) => {
-    setType(type)
-    console.log("type: ",type)
-    switch (type) {
-      case 'pioneer':
-        console.log('Pioneer connect selected!')
-        setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
-        onStartPioneer()
-        break
-      case 'native':
-        console.log('ShapeShift connect selected!')
-        break
-      case 'kepler':
-        console.log('Kepler connect selected!')
-        break
-      case 'keepkey':
-        console.log('keepkey connect selected!')
-        break
-      case 'onboard':
-        dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-        console.log('OnBoard.js connect selected!')
-        const onboard = initOnboard({
-          network: network => {
-            setNetwork(network)
-          },
-          address: address => {
-            dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
-          },
-          wallet: (wallet: Wallet) => {
-            if (wallet.provider) {
-              dispatch({ type: WalletActions.SET_WALLET, payload: wallet })
-              dispatch({ type: WalletActions.SET_PROVIDER, payload: getLibrary(wallet.provider) })
-              window.localStorage.setItem('selectedWallet', wallet.name as string)
-            } else {
-              disconnect()
-            }
-          }
-        })
-        dispatch({ type: WalletActions.SET_ONBOARD, payload: onboard })
-
-        console.log("initOnboard: ",onboard)
-        const selected = await onboard.walletSelect()
-        console.log('selected: ',selected)
-        if (selected) {
-          const ready = await onboard?.walletCheck()
-          console.log('ready: ',ready)
-          console.log('onboard: ',onboard)
-          if (ready) {
-            // let pairWalletOnboard:any = {
-            //   name:type,
-            //   network:1,
-            //   initialized:true,
-            //   address:onboard.address
-            // }
-            // console.log("Onboard state: FINAL ",pairWalletOnboard)
-            // pioneer.registerWallet(pairWalletOnboard)
-
-            setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
-            let state = onboard?.getState()
-            console.log("Onboard state: ",onboard?.getState())
-            let pairWalletOnboard:any = {
-              name:type,
-              network:1,
-              initialized:true,
-              address:state.address
-            }
-            console.log("Onboard state: FINAL ",pairWalletOnboard)
-            pioneer.registerWallet(pairWalletOnboard)
-            dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
-
-            //if username
-            console.log("username: ",pioneer.username)
-
-            //console.log("username: ",username)
-            //console.log("assetContext: ",assetContext)
-            //init wallet button
-            dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-            if(pioneer.username){
-              dispatch({ type: WalletActions.SET_USERNAME, username })
-            }
-            //console.log("username: ",username)
-            dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:type, icon:'Metamask'} })
-            //SET_IS_CONNECTED
-            // dispatch({ type: WalletActions.SET_WALLET, payload: {} })
-            // dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
-          } else {
-            dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
-            window.localStorage.removeItem('selectedWallet')
-          }
-        } else {
-          console.log("No Onboard Wallet selected!")
-          if (!selected) dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-        }
-        break
-      case 'xdefi':
-        console.log('xdefi connect selected!')
-        break
-      default:
-        throw Error('Wallet not supported: ' + type)
-    }
-  }, [])
-
-  const disconnect = useCallback(() => {
-    setType(null)
-    setRoutePath(undefined)
-    dispatch({ type: WalletActions.RESET_STATE })
-  }, [])
-
-  const connectPrevious = useCallback(
-      async (previous: string) => {
-        try {
-          console.log("CHECKPOINT *** connectPrevious")
-          const selected = await state.onboard?.walletSelect(previous)
-          if (!selected) {
-            console.log("CHECKOINT 1 NOT SELECTED")
-            dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-          }
-          if (selected && state?.onboard?.walletCheck) {
-            const ready = await state.onboard.walletCheck()
-            if (ready) {
-              //console.log("Onboard state: ",state.onboard.getState())
-              //console.log("Onboard state: ",state)
-              dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
-              dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-            } else {
-              dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
-              dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-              window.localStorage.removeItem('selectedWallet')
-            }
-          }
-        } catch (error) {
-          console.warn(error)
-          dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-          disconnect()
-          window.localStorage.removeItem('selectedWallet')
-        }
-      },
-      [disconnect, state.onboard]
-  )
-
-  useEffect(() => {
-    const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
-    console.log("previouslySelectedWallet: ",previouslySelectedWallet)
-    if (previouslySelectedWallet && state.onboard && !state.active) {
-      console.log("CHECKOINT 2 NOT SELECTED and not active, previouslySelectedWallet")
-      void connectPrevious(previouslySelectedWallet)
-    } else if (!previouslySelectedWallet && state.onboard) {
-      console.log("CHECKOINT 2 NOT SELECTED")
-      dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-    }
-  }, [state.onboard, disconnect, state.active, connectPrevious])
-
+  //end
   const value: IWalletContext = useMemo(
     () => ({ state, pioneer, username, assetContext, dispatch, connect, disconnect, setAssetContext }),
     [state, pioneer, username, assetContext, connect, disconnect, setAssetContext]
