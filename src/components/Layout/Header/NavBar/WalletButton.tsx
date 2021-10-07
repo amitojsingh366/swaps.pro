@@ -52,9 +52,9 @@ const WalletImage: React.FC<WalletImageProps> = ({ isConnected, walletInfo }) =>
 
 export const WalletButton: FC<FlexProps> = () => {
   const { state, dispatch, disconnect, pioneer } = useWallet()
-  const { isConnected, walletInfo } = state
+  const { isConnected, walletInfo, username } = state
 
-  return !pioneer.username ? (
+  return !username ? (
     <Button
       onClick={() => dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })}
       leftIcon={<WalletImage isConnected={isConnected} walletInfo={pioneer.walletInfo} />}
@@ -67,11 +67,11 @@ export const WalletButton: FC<FlexProps> = () => {
     <Menu gutter={4}>
       <MenuButton
         as={Button}
-        leftIcon={<WalletImage isConnected={isConnected} walletInfo={pioneer.walletInfo} />}
+        // leftIcon={<WalletImage isConnected={isConnected} walletInfo={pioneer.walletInfo} />}
         rightIcon={<TriangleDownIcon h={3} w={3} />}
         mr={6}
       >
-        {pioneer.username.substring(0, 28)}...
+        {username.substring(0, 28)}...
       </MenuButton>
       <MenuList minW='300px'>
         <MenuGroup title='Wallet Overview'>
