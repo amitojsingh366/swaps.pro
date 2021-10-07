@@ -475,6 +475,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         //only start once!
         isPioneerStarted = true
         pioneer = new PioneerService()
+      try{
+        let initResult = await pioneer.init()
+      }catch(e){
+          console.error(e)
+      }
         // let initResult = await pioneer.init()
         // console.log('Pioneer initResult: ', initResult)
         // //pairing code

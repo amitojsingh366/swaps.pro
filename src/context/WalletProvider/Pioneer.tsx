@@ -87,7 +87,6 @@ export class PioneerService {
     return true
   }
 
-
   // async setSendToFiat(fiat: any): Promise<any> {
   //   //console.log('fiat: ', fiat)
   //
@@ -221,6 +220,7 @@ export class PioneerService {
     if (this.username) {
       config.username = this.username
     }
+    console.log("config: ",config)
     this.App = new SDK(config.spec, config)
     const seedChains = [
       'bitcoin',

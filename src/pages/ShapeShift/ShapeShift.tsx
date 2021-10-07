@@ -16,8 +16,8 @@ export interface MatchParams {
 }
 
 export const ShapeShift = () => {
-  const { state, username, pioneer } = useWallet()
-  const { code, isConnected } = state
+  const { state, pioneer } = useWallet()
+  const { code, isConnected, username } = state
   const [asset, setAsset] = useState<AssetData>()
   // const [loading, setLoading] = useState<boolean>(false)
   let { network, address } = useParams<MatchParams>()
@@ -29,7 +29,7 @@ export const ShapeShift = () => {
       //console.log("username: ",username)
   }, [network, address])
 
-  if (!pioneer?.username)
+  if (!username)
     return (
         <Box d='flex' width='full' justifyContent='center' alignItems='center'>
           <h2>Connect A wallet!</h2>
