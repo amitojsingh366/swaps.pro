@@ -17,7 +17,7 @@ import { useLocaleFormatter } from 'hooks/useLocaleFormatter/useLocaleFormatter'
 import { Controller, useFormContext } from 'react-hook-form'
 import NumberFormat from 'react-number-format'
 import { RouterProps } from 'react-router-dom'
-import {useWallet} from "../../context/WalletProvider/WalletProvider";
+import { useWallet } from "../../context/WalletProvider/WalletProvider";
 
 const FiatInput = (props: InputProps) => (
   <Input
