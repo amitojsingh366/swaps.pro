@@ -75,6 +75,7 @@ export const WalletButton: FC<FlexProps> = () => {
       </MenuButton>
       <MenuList minW='300px'>
         <MenuGroup title='Wallet Overview'>
+          context: {pioneer.context}
           <Accordion>
             <AccordionItem>
               <h2>

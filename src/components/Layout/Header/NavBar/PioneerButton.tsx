@@ -5,7 +5,7 @@ import { shortenAddress } from 'utils/helpers'
 import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 
 export const PioneerButton: FC<FlexProps> = props => {
-    const { state } = useWallet()
+    const { state, pioneer } = useWallet()
     const { isConnected, account } = state
 
     return (
@@ -16,17 +16,18 @@ export const PioneerButton: FC<FlexProps> = props => {
             p={1}
             color='white'
             alignItems='center'
+            onClick={() => {}}
             _hover={{ cursor: 'pointer', bg: 'whiteAlpha.500' }}
             {...props}
         >
-            {isConnected ? (
+            {pioneer.context ? (
                 <HStack>
                     <Image
                         maxW='28px'
                         maxH='28px'
                         ml={2}
                     />
-                    <Text fontSize='sm'>{account && shortenAddress(account, 4)}</Text>
+                    <Text fontSize='sm'>{pioneer.context && shortenAddress(pioneer.context, 4)}</Text>
                     <ChevronDownIcon h={8} w={8} />
                 </HStack>
             ) : (

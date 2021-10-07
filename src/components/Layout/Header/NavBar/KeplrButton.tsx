@@ -19,14 +19,14 @@ export const KeplrButton: FC<FlexProps> = props => {
             _hover={{ cursor: 'pointer', bg: 'whiteAlpha.500' }}
             {...props}
         >
-            {isConnected ? (
+            {false ? (
                 <HStack>
                     <Image
                         maxW='28px'
                         maxH='28px'
                         ml={2}
                     />
-                    <Text fontSize='sm'>{account && shortenAddress(account, 4)}</Text>
+                    <Text fontSize='sm'>{"" && shortenAddress("", 4)}</Text>
                     <ChevronDownIcon h={8} w={8} />
                 </HStack>
             ) : (
