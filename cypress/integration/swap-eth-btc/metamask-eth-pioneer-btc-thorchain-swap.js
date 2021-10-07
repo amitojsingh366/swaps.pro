@@ -15,7 +15,7 @@ describe('First Web Test', () => {
         cy.get('.bn-onboard-modal-terms-of-service > span').click()
         cy.get('div.svelte-q1527 > .bn-onboard-custom').click()
         cy.get(':nth-child(10) > .bn-onboard-custom').click()
-        // cy.get('.bn-onboard-modal-select-wallets > :nth-child(5) > .bn-onboard-custom').click()
+        cy.get('#chakra-modal--body-2 > .chakra-stack > :nth-child(2)').click()
     })
 
 })
