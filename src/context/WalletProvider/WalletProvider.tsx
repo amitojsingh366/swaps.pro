@@ -475,69 +475,49 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         //only start once!
         isPioneerStarted = true
         pioneer = new PioneerService()
-      try{
+
         let initResult = await pioneer.init()
-      }catch(e){
-          console.error(e)
-      }
-        // let initResult = await pioneer.init()
-        // console.log('Pioneer initResult: ', initResult)
-        // //pairing code
-        // if (initResult && initResult.code) {
-        //   //console.log('wallet not paired! code: ', initResult)
-        //   //set code
-        //   dispatch({ type: WalletActions.SET_PAIRING_CODE, code: initResult.code })
-        //   //open modal
-        //   dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
-        // } else if (initResult) {
-        //   //get user info
-        //   let userInfo = await pioneer.refresh()
-        //   console.log('userInfo: ', userInfo)
-        //
-        //   //dispatch({ type: WalletActions.SET_LOADING, payload: false })
-        //   //console.log('Paired!')
-        //   //console.log('Pioneer User: ', initResult)
-        //   //console.log('Pioneer pioneer: ', pioneer)
-        //   //console.log('Pioneer pioneer user: ', initResult.username)
-        //   //console.log('Pioneer context user: ', initResult.context)
-        //   //console.log('Pioneer asset context user: ', initResult.assetContext)
-        //   username = initResult.username
-        //   assetContext = initResult.assetContext
-        //   setUsername(initResult.username)
-        //
-        //   //console.log("username: ",username)
-        //   //console.log("assetContext: ",assetContext)
-        //   //init wallet button
-        //   dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-        //   dispatch({ type: WalletActions.SET_USERNAME, username })
-        //   //console.log("username: ",username)
-        //   dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
-        //   dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-        //   //SET_IS_CONNECTED
-        //   // dispatch({ type: WalletActions.SET_WALLET, payload: {} })
-        //   // dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
-        // }
-        // /*
-        //   Pioneer events
-        // * */
-        // pioneer.events.on('message', async (event: any) => {
-        //   //console.log('pioneer event: ', event)
-        //   switch (event.type) {
-        //     case 'context':
-        //       // code block
-        //       break
-        //     case 'pairing':
-        //       //console.log('pairing event!: ', event.username)
-        //       dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-        //       dispatch({ type: WalletActions.SET_USERNAME, username: initResult.username })
-        //       dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
-        //       dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-        //       dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-        //       break
-        //     default:
-        //       console.error(' message unknown type:',event)
-        //   }
-        // })
+        console.log('Pioneer initResult: ', initResult)
+        //pairing code
+        if (initResult && initResult.code) {
+          //console.log('wallet not paired! code: ', initResult)
+          //set code
+          dispatch({ type: WalletActions.SET_PAIRING_CODE, code: initResult.code })
+          //open modal
+          dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+        } else if (initResult) {
+          //get user info
+          let userInfo = await pioneer.refresh()
+          console.log('userInfo: ', userInfo)
+          username = initResult.username
+          assetContext = initResult.assetContext
+          setUsername(initResult.username)
+          dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+          dispatch({ type: WalletActions.SET_USERNAME, username })
+          dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
+          dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+        }
+        /*
+          Pioneer events
+        * */
+        pioneer.events.on('message', async (event: any) => {
+          //console.log('pioneer event: ', event)
+          switch (event.type) {
+            case 'context':
+              // code block
+              break
+            case 'pairing':
+              //console.log('pairing event!: ', event.username)
+              dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+              dispatch({ type: WalletActions.SET_USERNAME, username: initResult.username })
+              dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
+              dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+              dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+              break
+            default:
+              console.error(' message unknown type:',event)
+          }
+        })
     }catch(e){
       console.error(e)
     }
