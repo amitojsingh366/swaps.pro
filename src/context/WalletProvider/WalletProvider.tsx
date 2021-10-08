@@ -30,6 +30,7 @@ export enum WalletActions {
   SET_ACTIVE = 'SET_ACTIVE',
   SET_ADAPTERS = 'SET_ADAPTERS',
   SET_PIONEER = 'SET_PIONEER',
+  SET_BALANCES = 'SET_BALANCES',
   SET_PAIRING_CODE = 'SET_PAIRING_CODE',
   SET_USERNAME = 'SET_USERNAME',
   SET_WALLET_INFO = 'SET_WALLET_INFO',
@@ -47,6 +48,7 @@ export interface InitialState {
   provider: Web3Provider | null
   blockNumber: number | null
   wallet: Wallet | null
+  balances: any | null
   active: boolean
   keyring: Keyring
   adapters: Record<string, unknown> | null
@@ -65,6 +67,7 @@ const initialState: InitialState = {
   account: null,
   provider: null,
   wallet: null,
+  balances: null,
   active: false,
   keyring: new Keyring(),
   adapters: null,
@@ -105,6 +108,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_ACCOUNT; payload: string }
   | { type: WalletActions.SET_PROVIDER; payload: Web3Provider }
   | { type: WalletActions.SET_WALLET; payload: Wallet }
+  | { type: WalletActions.SET_BALANCES; payload: any }
   | { type: WalletActions.SET_ACTIVE; payload: boolean }
 
 const reducer = (state: InitialState, action: ActionTypes) => {
@@ -119,6 +123,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, provider: action.payload }
     case WalletActions.SET_WALLET:
       return { ...state, wallet: action.payload }
+    case WalletActions.SET_BALANCES:
+      return { ...state, balances: action.payload }
     case WalletActions.SET_ACTIVE:
       return { ...state, active: action.payload }
     case WalletActions.SET_ADAPTERS:
@@ -146,7 +152,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         isConnected: false,
         username: null,
         setAssetContext: null,
-        pioneer: null
+        pioneer: null,
+        balances: null
       }
     default:
       return state
@@ -254,7 +261,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
               console.log("initResult: ",initResult)
               if(pioneer.balances){
                 //TODO dispatch balances
-                console.log("pioneer.balances: ",pioneer.balances)
+                console.log("** pioneer.balances: ",pioneer.balances)
+                dispatch({ type: WalletActions.SET_BALANCES, payload: pioneer.balances })
               }
               if(pioneer.username){
                 dispatch({ type: WalletActions.SET_USERNAME, username: 'metamask' })

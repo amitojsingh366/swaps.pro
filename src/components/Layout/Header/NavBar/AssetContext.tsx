@@ -59,11 +59,11 @@ export const AssetButton: FC<FlexProps> = props => {
             </MenuButton>
             <MenuList>
                 <MenuGroup title='asset selection'>
-                    {Object.keys(pioneer?.wallets[0]?.balances).map((key)=>(
+                    {Object.keys(pioneer?.balances).map((key)=>(
                         <MenuItem
                             onClick={() => onSelect('ASSET_CONTEXT', {ASSET:key})}
                         >
-                            {key} balance: {pioneer?.wallets[0]?.balances[key]} {pioneer?.wallets[0]?.values[key]}
+                            {key} balance: {pioneer?.balances[key]} {pioneer?.balances[key]?.valueUsd[key]}
                         </MenuItem>
                     ))}
                 </MenuGroup>

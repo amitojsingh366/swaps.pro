@@ -14,7 +14,8 @@ type AssetSearchProps = {
 }
 
 export const AssetSearch = ({ onClick }: AssetSearchProps) => {
-  const { pioneer } = useWallet()
+  const { state, pioneer } = useWallet()
+  const { balances } = state
   const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
   const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])
   const { register, watch } = useForm<{ search: string }>({
@@ -30,8 +31,8 @@ export const AssetSearch = ({ onClick }: AssetSearchProps) => {
   const fetchTokens = useCallback(async () => {
     try {
       let data:any = {}
-      //pioneer.refresh()
-      data.tokens = pioneer.App.balances
+      console.log("FINAL BALANCES: ",balances)
+      data.tokens = balances
       const sorted = sortBy(data?.tokens, ['name', 'symbol'])
       setSortedAssets(sorted)
     } catch (e) {
