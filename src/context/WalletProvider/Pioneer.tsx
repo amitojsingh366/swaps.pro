@@ -212,10 +212,10 @@ export class PioneerService {
       service: 'shapeshift',
       url: 'https://beta.shapeshift.com/',
       queryKey: this.queryKey,
-      // wss: 'wss://pioneers.dev',
-      wss: 'ws://127.0.0.1:9001',
-      // spec: 'https://pioneers.dev/spec/swagger.json'
-      spec: 'http://127.0.0.1:9001/spec/swagger.json'
+      wss: 'wss://pioneers.dev',
+      // wss: 'ws://127.0.0.1:9001',
+      spec: 'https://pioneers.dev/spec/swagger.json'
+      // spec: 'http://127.0.0.1:9001/spec/swagger.json'
     }
     if (this.username) {
       config.username = this.username

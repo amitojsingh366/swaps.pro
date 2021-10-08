@@ -193,33 +193,85 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       [state.keyring]
   )
 
-  const connect = useCallback(async () => {
-    try {
-      console.log("connect called")
+  // const connect = useCallback(async (type: string) => {
+  //   try {
+  //     console.log("connect called")
+  //
+  //
+  //
+  //     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+  //     const selected = await state.onboard?.walletSelect()
+  //     if (selected) {
+  //       console.log("selected: ",selected)
+  //       dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'MetaMask', icon:'Pioneer'} })
+  //       const ready = await state.onboard?.walletCheck()
+  //       if (ready) {
+  //         console.log("ready: ",ready)
+  //         dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+  //       } else {
+  //         console.log("not ready: ",ready)
+  //         //dont think I want to do this? keep memory of what used
+  //         // dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
+  //         // window.localStorage.removeItem('selectedWallet')
+  //       }
+  //     }
+  //
+  //     //pioneer
+  //
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }, [state?.onboard])
 
-      dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-      const selected = await state.onboard?.walletSelect()
-      if (selected) {
-        console.log("selected: ",selected)
-        dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'MetaMask', icon:'Pioneer'} })
-        const ready = await state.onboard?.walletCheck()
-        if (ready) {
-          console.log("ready: ",ready)
-          dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
-        } else {
-          console.log("not ready: ",ready)
-          //dont think I want to do this? keep memory of what used
-          // dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
-          // window.localStorage.removeItem('selectedWallet')
+  /**
+   * temp logging data here for dev use
+   */
+  const connect = useCallback(async (type: string) => {
+    setType(type)
+    console.log("type: ",type)
+    switch (type) {
+      case 'pioneer':
+        console.log('Pioneer connect selected!')
+        setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
+        //onStartPioneer()
+        break
+      case 'native':
+        console.log('ShapeShift connect selected!')
+        break
+      case 'kepler':
+        console.log('Kepler connect selected!')
+        break
+      case 'keepkey':
+        console.log('keepkey connect selected!')
+        break
+      case 'onboard':
+      case 'MetaMask':
+        console.log("connect onboard/metamask!")
+        dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+        const selected = await state.onboard?.walletSelect()
+        if (selected) {
+          console.log("selected: ",selected)
+          dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'MetaMask', icon:'Pioneer'} })
+          const ready = await state.onboard?.walletCheck()
+          if (ready) {
+            console.log("ready: ",ready)
+            dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+          } else {
+            console.log("not ready: ",ready)
+            //dont think I want to do this? keep memory of what used
+            // dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
+            // window.localStorage.removeItem('selectedWallet')
+          }
         }
-      }
-
-      //pioneer
-
-    } catch (error) {
-      console.log(error)
+        break
+      case 'xdefi':
+        console.log('xdefi connect selected!')
+        break
+      default:
+        throw Error('Wallet not supported: ' + type)
     }
   }, [state?.onboard])
+
 
   const disconnect = useCallback(() => {
     setType(null)
@@ -383,7 +435,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           //set code
           dispatch({ type: WalletActions.SET_PAIRING_CODE, code: initResult.code })
           //open modal
-          dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+
         } else if (initResult) {
           //get user info
           let userInfo = await pioneer.refresh()

@@ -35,6 +35,7 @@
     "bip39": "^3.0.4",
     "bnc-onboard": "^1.34.2",
     "crypto-js": "^4.1.1",
+    "cypress-dark": "^1.8.0",
     "dayjs": "^1.10.6",
     "ethers": "^5.4.7",
     "framer-motion": "^4",
