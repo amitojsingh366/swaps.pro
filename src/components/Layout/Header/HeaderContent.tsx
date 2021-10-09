@@ -9,7 +9,7 @@ import {
   useColorModeValue,
   useMediaQuery
 } from '@chakra-ui/react'
-import { ColorModeSwitcher } from 'components/ColorModeSwitcher/ColorModeSwitcher'
+// import { ColorModeSwitcher } from 'components/ColorModeSwitcher/ColorModeSwitcher'
 import { FoxIcon } from 'components/Icons/FoxIcon'
 import { Link as RouterLink } from 'react-router-dom'
 import { pathTo, Route } from 'Routes/helpers'
@@ -17,9 +17,6 @@ import { breakpoints } from 'theme/theme'
 
 import { NavBar } from './NavBar/NavBar'
 import { WalletButton } from './NavBar/WalletButton'
-import { OnboardButton } from './NavBar/OnboardButton'
-import { KeplrButton } from './NavBar/KeplrButton'
-import { AssetButton } from './NavBar/AssetContext'
 
 export const HeaderContent = ({ route }: { route: Route }) => {
   const [isLargerThanMd] = useMediaQuery(`(min-width: ${breakpoints['md']})`)

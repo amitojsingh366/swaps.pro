@@ -2,6 +2,14 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "show-linked-packages": "find node_modules node_modules/@* -depth 1 -type l -print",
+    "build": "react-scripts build",
+    "dev": "react-scripts start",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "yarn lint --fix",
+    "test": "yarn run cypress open"
+  },
   "dependencies": {
     "@chainapsis/cosmosjs": "^0.0.3-alpha.3",
     "@chakra-ui/icons": "^1.0.14",
@@ -61,14 +69,6 @@
     "redux-persist": "^6.0.0",
     "scrypt-js": "^3.0.1",
     "web-vitals": "^2.1.0"
-  },
-  "scripts": {
-    "show-linked-packages": "find node_modules node_modules/@* -depth 1 -type l -print",
-    "build": "react-scripts build",
-    "dev": "react-scripts start",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:fix": "yarn lint --fix",
-    "test": "yarn run cypress open"
   },
   "eslintConfig": {
     "extends": "react-app"

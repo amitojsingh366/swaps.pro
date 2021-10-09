@@ -1,5 +1,5 @@
 import { Modal, ModalContent, ModalOverlay } from '@chakra-ui/react'
-import {ModalProvider, useModal} from 'context/ModalProvider/ModalProvider'
+import {useModal} from 'context/ModalProvider/ModalProvider'
 import React, { useRef } from 'react'
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
 import { WalletProvider } from 'context/WalletProvider/WalletProvider'

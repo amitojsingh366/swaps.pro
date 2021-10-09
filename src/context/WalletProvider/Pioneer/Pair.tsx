@@ -1,25 +1,21 @@
 import {ModalBody, ModalHeader, Stack, Button, Image, useClipboard} from '@chakra-ui/react'
 import { RawText } from 'components/Text'
-import {useWallet, WalletActions} from 'context/WalletProvider/WalletProvider'
+import { useWallet } from 'context/WalletProvider/WalletProvider'
 import React, {useEffect, useState} from 'react'
 import PIONEER_ICON from 'assets/png/pioneer.png'
-
 import { NativeSetupProps } from './setup'
-import {NativeAdapter, NativeHDWallet} from "@shapeshiftoss/hdwallet-native";
-import {useLocalStorage} from "hooks/useLocalStorage/useLocalStorage";
-import { EncryptedWallet } from '@shapeshiftoss/hdwallet-native/dist/crypto'
 
 export const Pair = ({ history, location }: NativeSetupProps) => {
   const [isSuccessful, setIsSuccessful] = useState<boolean | null>(null)
-  const { state, dispatch, username, pioneer } = useWallet()
-  const { hasCopied, onCopy } = useClipboard(pioneer.pairingCode)
-  const { } = state
+  const { state } = useWallet()
+  const { code } = state
+  const { hasCopied, onCopy } = useClipboard(code)
 
   useEffect(() => {
     //console.log("Pair use Affect Called")
     //console.log("state: ",state)
-    //console.log("username: ",username)
-  }, [username])
+    console.log("code: ",code)
+  }, [code])
 
   return (
     <>
@@ -44,13 +40,12 @@ export const Pair = ({ history, location }: NativeSetupProps) => {
           </a>
         </RawText>
         <Stack my={6} spacing={4}>
-          {pioneer.username ? (
+          {!code ? (
               <div>
-                <h3>username: {username}</h3>
-                <small>Already logged in. continue</small>
+                <h3>Waiting on code...</h3>
               </div>
           ) : (
-              <h3>Pair: {pioneer.pairingCode}
+              <h3>Pair: {code}
               <Button onClick={onCopy} ml={2}>
                 {hasCopied ? "Copied" : "Copy"}
               </Button>

@@ -14,7 +14,7 @@ type AssetSearchProps = {
 }
 
 export const AssetSearch = ({ onClick }: AssetSearchProps) => {
-  const { state, pioneer } = useWallet()
+  const { state } = useWallet()
   const { balances } = state
   const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
   const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])

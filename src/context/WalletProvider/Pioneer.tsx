@@ -95,9 +95,13 @@ export class PioneerService {
   async registerWallet(wallet: any): Promise<any> {
     try{
       //
-      let resultRegister = this.App.registerWallet(wallet)
-      console.log("resultRegister: ",resultRegister)
-
+      if(this.App){
+        let resultRegister = await this.App.registerWallet(wallet)
+        console.log("resultRegister: ",resultRegister)
+        return resultRegister
+      } else {
+        throw Error("App not initialized!")
+      }
     }catch(e){
       console.error(e)
     }
@@ -261,7 +265,7 @@ export class PioneerService {
     })
 
     const info = await this.App.getUserInfo()
-    this.balances = this.App.balances
+    this.balances = info.balances
     //console.log('INFO: ', info)
     if (!info || info.error) {
       if (this.username) {
@@ -330,6 +334,7 @@ export class PioneerService {
         username: this.username,
         context: this.context,
         wallets: this.wallets,
+        balances: this.balances,
         walletsIds: this.walletsIds,
         valueUsdContext: this.valueUsdContext,
         totalValueUsd: this.totalValueUsd
