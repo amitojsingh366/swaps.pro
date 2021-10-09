@@ -33,12 +33,13 @@ const FiatInput = (props: InputProps) => (
 
 export const TradeInput = ({ history }: RouterProps) => {
   const { state } = useWallet()
-  const {  } = state
+  const { } = state
 
   const {
     control,
     handleSubmit,
     getValues,
+    setValue,
     formState: { errors, isDirty, isValid }
   } = useFormContext()
   const {
@@ -52,8 +53,14 @@ export const TradeInput = ({ history }: RouterProps) => {
   const onMax = () => {
     console.log("onMax called!")
     console.log("balance: ",getValues('sellAsset.currency.balance'))
-    let value = getValues('value')
-    console.log("value: ",value)
+    let balance = getValues('sellAsset.currency.balance')
+    let amount = getValues('sellAsset.balance')
+    setValue('sellAsset.amount',balance)
+    console.log("amount: ",amount)
+    let sellAsset = getValues('sellAsset.currency')
+    console.log("sellAsset: ",sellAsset)
+    //sellAsset.currency.balance
+
   }
 
   return (

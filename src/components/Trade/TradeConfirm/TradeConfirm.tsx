@@ -6,7 +6,6 @@ import { Row } from 'components/Row'
 import { SlideTransition } from 'components/SlideTransition'
 import { useFormContext } from 'react-hook-form'
 import { RouterProps } from 'react-router-dom'
-
 import { AssetToAsset } from './AssetToAsset'
 
 export const TradeConfirm = ({ history }: RouterProps) => {
