@@ -42,6 +42,7 @@ export class PioneerService {
   public valueUsdContext: string | undefined
   public wallets: any[] | undefined
   public balances: any[]
+  public pubkeys: any[]
   public invocations: any[]
   public events: any
   public userParams: any
@@ -59,6 +60,7 @@ export class PioneerService {
   constructor() {
     this.invocations = []
     this.balances = []
+    this.pubkeys = []
     let queryKey: string | null = localStorage.getItem('queryKey')
     const username: string | null = localStorage.getItem('username')
     if (!queryKey) {
@@ -98,6 +100,18 @@ export class PioneerService {
       if(this.App){
         let resultRegister = await this.App.registerWallet(wallet)
         console.log("resultRegister: ",resultRegister)
+        if(resultRegister.username){
+          this.username = resultRegister.username
+        }
+        if(resultRegister.balances){
+          this.balances = resultRegister.balances
+        }
+        if(resultRegister.pubkeys){
+          this.pubkeys = resultRegister.pubkeys
+        }
+        if(resultRegister.context){
+          this.context = resultRegister.context
+        }
         return resultRegister
       } else {
         throw Error("App not initialized!")
@@ -216,10 +230,10 @@ export class PioneerService {
       service: 'shapeshift',
       url: 'https://beta.shapeshift.com/',
       queryKey: this.queryKey,
-      wss: 'wss://pioneers.dev',
-      // wss: 'ws://127.0.0.1:9001',
-      spec: 'https://pioneers.dev/spec/swagger.json'
-      // spec: 'http://127.0.0.1:9001/spec/swagger.json'
+      // wss: 'wss://pioneers.dev',
+      wss: 'ws://127.0.0.1:9001',
+      // spec: 'https://pioneers.dev/spec/swagger.json'
+      spec: 'http://127.0.0.1:9001/spec/swagger.json'
     }
     if (this.username) {
       config.username = this.username
