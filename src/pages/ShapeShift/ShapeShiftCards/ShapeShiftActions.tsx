@@ -5,8 +5,8 @@ import { Trade } from 'components/Trade/Trade'
 import {useWallet} from "../../../context/WalletProvider/WalletProvider";
 
 export const ShapeShiftActions = () => {
-  const { state, username } = useWallet()
-  const { code, isConnected, pioneer } = state
+  const { state } = useWallet()
+  const {  } = state
 
   return (
     <Card maxW="460px" mx="auto" flex={1} justifyContent='center' alignItems='center'>

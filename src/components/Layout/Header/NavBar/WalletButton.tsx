@@ -52,7 +52,7 @@ const WalletImage: React.FC<WalletImageProps> = ({ isConnected, walletInfo }) =>
 
 export const WalletButton: FC<FlexProps> = () => {
   const { state, dispatch, disconnect, pioneer } = useWallet()
-  const { isConnected, walletInfo, username } = state
+  const { isConnected, walletInfo, username, context } = state
 
   return !username ? (
     <Button
@@ -75,7 +75,7 @@ export const WalletButton: FC<FlexProps> = () => {
       </MenuButton>
       <MenuList minW='300px'>
         <MenuGroup title='Wallet Overview'>
-          context: {pioneer.context}
+          context: {context?.substring(0, 28)}
           <Accordion>
             <AccordionItem>
               <h2>
@@ -87,7 +87,26 @@ export const WalletButton: FC<FlexProps> = () => {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
-                *metamask wallet info
+                <MenuItem
+                  icon={
+                    <Circle bg='whiteAlpha.200' size={8}>
+                      <RepeatIcon />
+                    </Circle>
+                  }
+                  onClick={() => dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })}
+                >
+                  Switch Wallet Provider
+                </MenuItem>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <CloseIcon />
+                      </Circle>
+                    }
+                    onClick={disconnect}
+                >
+                  Disconnect
+                </MenuItem>
               </AccordionPanel>
             </AccordionItem>
 

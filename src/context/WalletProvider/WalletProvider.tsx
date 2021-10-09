@@ -39,6 +39,9 @@ export enum WalletActions {
   SET_WALLET_MODAL = 'SET_WALLET_MODAL',
   SET_ASSET_CONTEXT = 'SET_ASSET_CONTEXT',
   SET_WALLET_CONTEXT = 'SET_WALLET_CONTEXT',
+  SET_CONTEXT = 'SET_CONTEXT',
+  SET_INVOCATION_CONTEXT = 'SET_INVOCATION_CONTEXT',
+  SET_TOTAL_VALUE_USD = 'SET_TOTAL_VALUE_USD',
   RESET_STATE = 'RESET_STATE'
 }
 
@@ -59,6 +62,10 @@ export interface InitialState {
   pioneer: any
   code: any
   username: any
+  assetContext: string | null
+  invocationContext: string | null
+  context: string | null
+  totalValueUsd: string | null
 }
 
 const initialState: InitialState = {
@@ -78,6 +85,10 @@ const initialState: InitialState = {
   pioneer: null,
   code: null,
   username: null,
+  assetContext: null,
+  invocationContext: null,
+  context: null,
+  totalValueUsd: null
 }
 
 export interface IWalletContext {
@@ -110,6 +121,9 @@ export type ActionTypes =
   | { type: WalletActions.SET_WALLET; payload: Wallet }
   | { type: WalletActions.SET_BALANCES; payload: any }
   | { type: WalletActions.SET_ACTIVE; payload: boolean }
+  | { type: WalletActions.SET_TOTAL_VALUE_USD; payload: string }
+  | { type: WalletActions.SET_INVOCATION_CONTEXT; payload: string }
+  | { type: WalletActions.SET_CONTEXT; payload: string }
 
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
@@ -139,6 +153,12 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, walletInfo: { name: action?.payload?.name, icon: action?.payload?.icon } }
     case WalletActions.SET_INITIALIZED:
       return { ...state, initialized: action.payload }
+    case WalletActions.SET_CONTEXT:
+      return { ...state, context: action.payload }
+    case WalletActions.SET_INVOCATION_CONTEXT:
+      return { ...state, invocationContext: action.payload }
+    case WalletActions.SET_TOTAL_VALUE_USD:
+      return { ...state, totalValueUsd: action.payload }
     case WalletActions.SET_IS_CONNECTED:
       return { ...state, isConnected: action.payload }
     case WalletActions.SET_WALLET_MODAL:
@@ -424,11 +444,14 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           }
         } else if (initResult) {
           //get user info
-          let userInfo = await pioneer.refresh()
-          console.log('userInfo: ', userInfo)
+          //let userInfo = await pioneer.refresh()
+          // console.log('userInfo: ', userInfo)
           username = initResult.username
+          let context:any = initResult.context
           assetContext = initResult.assetContext
           setUsername(initResult.username)
+
+          dispatch({ type: WalletActions.SET_CONTEXT, payload:context })
           dispatch({ type: WalletActions.SET_USERNAME, username })
           dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
           dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })

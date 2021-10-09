@@ -32,8 +32,8 @@ const FiatInput = (props: InputProps) => (
 )
 
 export const TradeInput = ({ history }: RouterProps) => {
-  const { state, username, pioneer } = useWallet()
-  const { code, isConnected } = state
+  const { state } = useWallet()
+  const {  } = state
 
   const {
     control,
@@ -92,7 +92,7 @@ export const TradeInput = ({ history }: RouterProps) => {
             inputLeftElement={
               <TokenButton
                 onClick={() => history.push('/trade/select/sell')}
-                logo={getValues('sellAsset.currency.logoURI')}
+                logo={getValues('sellAsset.currency.image')}
                 symbol={getValues('sellAsset.currency.symbol')}
               />
             }
@@ -133,7 +133,7 @@ export const TradeInput = ({ history }: RouterProps) => {
             inputLeftElement={
               <TokenButton
                 onClick={() => history.push('/trade/select/buy')}
-                logo={getValues('buyAsset.currency.logoURI')}
+                logo={getValues('buyAsset.currency.image')}
                 symbol={getValues('buyAsset.currency.symbol')}
               />
             }

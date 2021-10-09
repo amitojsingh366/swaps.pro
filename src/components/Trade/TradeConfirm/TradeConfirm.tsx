@@ -31,12 +31,12 @@ export const TradeConfirm = ({ history }: RouterProps) => {
             buyAsset={{
               symbol: buyAsset?.currency?.symbol,
               amount: buyAsset.amount,
-              icon: buyAsset?.currency?.logoURI
+              icon: buyAsset?.currency?.image
             }}
             sellAsset={{
               symbol: sellAsset?.currency?.symbol,
               amount: sellAsset.amount,
-              icon: sellAsset?.currency?.logoURI
+              icon: sellAsset?.currency?.image
             }}
             mt={6}
           />

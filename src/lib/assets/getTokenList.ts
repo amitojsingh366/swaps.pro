@@ -9,7 +9,7 @@ export interface SwapCurrency {
   address?: string | undefined
   chainId?: number | undefined
   decimals?: number
-  logoURI?: string | undefined
+  image?: string | undefined
   name?: string | undefined
   symbol?: string | undefined
 }
@@ -18,7 +18,7 @@ export type Currency = {
   address?: string | undefined
   chainId?: number | undefined
   decimals?: number
-  logoURI?: string | undefined
+  image?: string | undefined
   name?: string | undefined
   symbol?: string | undefined
 }
