@@ -10,28 +10,28 @@ export const ShapeShiftActions = () => {
 
   return (
     <Card maxW="460px" mx="auto" flex={1} justifyContent='center' alignItems='center'>
-      <Tabs isFitted variant='soft-rounded' defaultIndex={0}>
+      <Tabs isFitted variant='soft-rounded' defaultIndex={1}>
         <TabList>
           <Tab>
-            <Text translation='assets.assetCards.assetActions.trade' />
+            <Text translation='assets.exchanges.thorchain' />
           </Tab>
           <Tab>
-            <Text translation='assets.assetCards.assetActions.lp' />
+            <Text translation='assets.exchanges.osmosis' />
           </Tab>
           <Tab>
-            <Text translation='assets.assetCards.assetActions.ibc' />
+            <Text translation='assets.exchanges.0x' />
           </Tab>
         </TabList>
 
         <TabPanels>
           <TabPanel>
-            <Trade />
+            <Trade exchange='thorchain'/>
           </TabPanel>
           <TabPanel>
-            <p>Join Liquidity Pool</p>
+            <Trade exchange='osmosis'/>
           </TabPanel>
           <TabPanel>
-            <p>IBC channels</p>
+            <Trade exchange='0x'/>
           </TabPanel>
         </TabPanels>
       </Tabs>

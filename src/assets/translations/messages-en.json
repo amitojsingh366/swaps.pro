@@ -85,6 +85,11 @@
         "transactionHistory": "Transaction History"
       }
     },
+    "exchanges": {
+      "osmosis": "osmosis",
+      "thorchain": "thorchain",
+      "0x": "0x"
+    },
     "assetCards": {
       "assetActions": {
         "buy": "Buy",

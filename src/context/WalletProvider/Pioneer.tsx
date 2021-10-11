@@ -44,6 +44,7 @@ export class PioneerService {
   public balances: any[]
   public pubkeys: any[]
   public invocations: any[]
+  public status: any
   public events: any
   public userParams: any
   public user: any
@@ -73,6 +74,10 @@ export class PioneerService {
     if (username) {
       this.username = username
     }
+  }
+
+  getStatus(): string {
+    return this.status
   }
 
   getQueryKey(): string {
@@ -230,10 +235,10 @@ export class PioneerService {
       service: 'shapeshift',
       url: 'https://beta.shapeshift.com/',
       queryKey: this.queryKey,
-      wss: 'wss://pioneers.dev',
-      // wss: 'ws://127.0.0.1:9001',
-      spec: 'https://pioneers.dev/spec/swagger.json'
-      // spec: 'http://127.0.0.1:9001/spec/swagger.json'
+      // wss: 'wss://pioneers.dev',
+      wss: 'ws://127.0.0.1:9001',
+      // spec: 'https://pioneers.dev/spec/swagger.json'
+      spec: 'http://127.0.0.1:9001/spec/swagger.json'
     }
     if (this.username) {
       config.username = this.username
@@ -251,6 +256,13 @@ export class PioneerService {
       'osmosis'
     ]
     this.Api = await this.App.init(seedChains)
+
+    //get api health
+
+    //get api status
+    let statusResp = await this.Api.Status()
+    this.status = statusResp.data
+    console.log("status: ",this.status)
 
     // Sub to events
     try {

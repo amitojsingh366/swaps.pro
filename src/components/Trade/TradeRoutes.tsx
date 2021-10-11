@@ -14,10 +14,12 @@ export const TradeRoutes = () => {
   const history = useHistory()
   const { setValue } = useFormContext()
   const handleSellClick = (asset: SwapCurrency) => {
+    console.log("handleSellClick: ")
     setValue('sellAsset.currency', asset)
     history.push('/trade/input')
   }
   const handleBuyClick = (asset: SwapCurrency) => {
+    console.log("handleBuyClick: ")
     setValue('buyAsset.currency', asset)
     history.push('/trade/input')
   }

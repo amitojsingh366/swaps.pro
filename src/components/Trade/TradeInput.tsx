@@ -6,7 +6,7 @@ import {
   FormErrorMessage,
   IconButton,
   Input,
-  InputProps,
+  InputProps, MenuGroup, MenuItem,
   Text
 } from '@chakra-ui/react'
 import { HelperToolTip } from 'components/HelperTooltip'
@@ -33,7 +33,7 @@ const FiatInput = (props: InputProps) => (
 
 export const TradeInput = ({ history }: RouterProps) => {
   const { state } = useWallet()
-  const { } = state
+  const { status } = state
 
   const {
     control,
@@ -66,6 +66,14 @@ export const TradeInput = ({ history }: RouterProps) => {
   return (
     <SlideTransition>
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
+        <div>
+          <h5>Thorchain Status: </h5>
+          {status.thorchain.map((key:any)=>(
+              <div>
+                {key.blockchain} status: {key.online.toString()}
+              </div>
+          ))}
+        </div>
         <FormControl isInvalid={!!errors.fiatAmount}>
           <Controller
             render={({ field: { onChange, value } }) => (
@@ -115,7 +123,7 @@ export const TradeInput = ({ history }: RouterProps) => {
               </Button>
             }
           />
-          <small>max: {getValues('sellAsset.currency.symbol')}: {parseInt(getValues('sellAsset.currency.balance'))?.toLocaleString()} {getValues('sellAsset.currency.valueUsd')?.toLocaleString()}(USD)</small>
+          <small>balance: {getValues('sellAsset.currency.symbol')}: {Number(getValues('sellAsset.currency.balance'))?.toFixed(6)} {Number(getValues('sellAsset.currency.valueUsd'))?.toFixed(2)}(USD)</small>
         </FormControl>
         <FormControl
           rounded=''

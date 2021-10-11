@@ -1,5 +1,5 @@
 
-import { FormProvider, useForm } from 'react-hook-form'
+import {FormProvider, useForm, useFormContext} from 'react-hook-form'
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
 
 import { entries, TradeRoutes } from './TradeRoutes'
@@ -17,9 +17,10 @@ type TTradeInput = {
   }
 }
 
-export const Trade = () => {
+export const Trade = (exchange:any) => {
   const { state, username } = useWallet()
-  const { code, isConnected, pioneer } = state
+  const { status, code, isConnected, pioneer } = state
+  // const { setValue } = useFormContext()
 
   const methods = useForm<TTradeInput>({
     mode: 'onChange',
@@ -39,7 +40,7 @@ export const Trade = () => {
     <FormProvider {...methods}>
       <MemoryRouter initialEntries={entries}>
         <Switch>
-          <Route path='/' component={TradeRoutes} />
+          <Route path='/' component={TradeRoutes}/>
         </Switch>
       </MemoryRouter>
     </FormProvider>

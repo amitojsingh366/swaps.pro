@@ -22,6 +22,7 @@ import { WalletViewsRouter } from './WalletViewsRouter'
 const SUPPORTED_NETWORKS = [1]
 
 export enum WalletActions {
+  SET_STATUS = 'SET_STATUS',
   SET_ONBOARD = 'SET_ONBOARD',
   SET_BLOCK_NUMBER = 'SET_BLOCK_NUMBER',
   SET_ACCOUNT = 'SET_ACCOUNT',
@@ -46,6 +47,7 @@ export enum WalletActions {
 }
 
 export interface InitialState {
+  status: any
   onboard: OnboardAPI | null
   account: string | null
   provider: Web3Provider | null
@@ -69,6 +71,7 @@ export interface InitialState {
 }
 
 const initialState: InitialState = {
+  status: null,
   onboard: null,
   blockNumber: null,
   account: null,
@@ -103,6 +106,7 @@ export interface IWalletContext {
 }
 
 export type ActionTypes =
+  | { type: WalletActions.SET_STATUS; payload: any }
   | { type: WalletActions.SET_ADAPTERS; payload: Record<string, unknown> }
   | { type: WalletActions.SET_PIONEER; pioneer: any | null }
   | { type: WalletActions.SET_PAIRING_CODE; payload: String | null }
@@ -127,6 +131,8 @@ export type ActionTypes =
 
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
+    case WalletActions.SET_STATUS:
+      return { ...state, status: action.payload }
     case WalletActions.SET_ONBOARD:
       return { ...state, onboard: action.payload }
     case WalletActions.SET_BLOCK_NUMBER:
@@ -269,150 +275,9 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
     dispatch({ type: WalletActions.RESET_STATE })
   }, [])
 
-
-  // const connectPrevious = useCallback(
-  //     async (previous: string) => {
-  //       try {
-  //         console.log("CHECKPOINT *** connectPrevious")
-  //         const selected = await state.onboard?.walletSelect(previous)
-  //         if (!selected) {
-  //         }
-  //         dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-  //         dispatch({ type: WalletActions.SET_USERNAME, username: 'metamask' })
-  //         dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
-  //         dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-  //         dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
-  //         if (selected && state?.onboard?.walletCheck) {
-  //           const ready = await state.onboard.walletCheck()
-  //           if (ready) {
-  //             let stateOnboard = state?.onboard?.getState()
-  //             console.log("stateOnboard ",stateOnboard)
-  //
-  //             // let pairWalletOnboard:any = {
-  //             //   name:stateOnboard?.wallet?.name,
-  //             //   network:1,
-  //             //   initialized:true,
-  //             //   address:stateOnboard?.address
-  //             // }
-  //             // console.log("Onboard state: FINAL ",pairWalletOnboard)
-  //             // if(pairWalletOnboard.name && pairWalletOnboard.address && !state.username && state.initialized){
-  //             //   let resultRegister = await pioneer.registerWallet(pairWalletOnboard)
-  //             //   console.log("&&& resultRegister: ",resultRegister)
-  //             //   if(pioneer.balances){
-  //             //     //TODO dispatch balances
-  //             //     console.log("** pioneer.balances: ",pioneer.balances)
-  //             //     dispatch({ type: WalletActions.SET_BALANCES, payload: pioneer.balances })
-  //             //   }
-  //             //   if(pioneer.username){
-  //             //     dispatch({ type: WalletActions.SET_USERNAME, username: 'metamask' })
-  //             //   }
-  //             //
-  //             //   dispatch({ type: WalletActions.SET_PIONEER, pioneer: pioneer })
-  //             //   dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-  //             //
-  //             //   //console.log("Onboard state: ",state.onboard.getState())
-  //             //   //console.log("Onboard state: ",state)
-  //             //   dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
-  //             //   dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
-  //             // }
-  //           } else {
-  //             dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
-  //             window.localStorage.removeItem('selectedWallet')
-  //           }
-  //         }
-  //       } catch (error) {
-  //         console.warn(error)
-  //         dispatch({ type: WalletActions.SET_INITIALIZED, payload: false })
-  //         disconnect()
-  //         window.localStorage.removeItem('selectedWallet')
-  //       }
-  //     },
-  //     [disconnect, state.onboard]
-  // )
-
   useEffect(() => {
     onStart()
-
-    // onStartPioneer()
-    // console.log("start onboard!")
-    // onboard = initOnboard({
-    //   network: network => {
-    //     setNetwork(network)
-    //   },
-    //   address: address => {
-    //     if(address){
-    //       console.log("ADDRESS SET! ",address)
-    //       dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
-    //     }
-    //   },
-    //   wallet: (wallet: Wallet) => {
-    //     if (wallet.provider) {
-    //       dispatch({ type: WalletActions.SET_WALLET, payload: wallet })
-    //       dispatch({ type: WalletActions.SET_PROVIDER, payload: getLibrary(wallet.provider) })
-    //       window.localStorage.setItem('selectedWallet', wallet.name as string)
-    //     } else {
-    //       disconnect()
-    //     }
-    //   }
-    // })
-    // dispatch({ type: WalletActions.SET_ONBOARD, payload: onboard })
-    //
-    // const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
-    // console.log("previouslySelectedWallet: ",previouslySelectedWallet)
-
-    //start pioneer
-    // onStartPioneer(onboard)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // we explicitly only want this to happen once
-
-  // useEffect(() => {
-  //   const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
-  //   console.log("previouslySelectedWallet: ",previouslySelectedWallet)
-  //   if (previouslySelectedWallet && state.onboard && !state.active) {
-  //     console.log("CHECKOINT 2 NOT SELECTED and not active, previouslySelectedWallet")
-  //     void connectPrevious(previouslySelectedWallet)
-  //   } else if (!previouslySelectedWallet && state.onboard) {
-  //     console.log("CHECKOINT 2 NOT SELECTED")
-  //     dispatch({ type: WalletActions.SET_INITIALIZED, payload: false })
-  //   }
-  // }, [state.onboard, disconnect, state.active, connectPrevious])
-  //
-  // const setBlockNumber = useCallback(
-  //     (blockNumber: number) => {
-  //       if (state?.provider && blockNumber !== state.blockNumber) {
-  //         dispatch({ type: WalletActions.SET_BLOCK_NUMBER, payload: blockNumber })
-  //       }
-  //     },
-  //     [state.blockNumber, state?.provider]
-  // )
-  //
-  // useEffect(() => {
-  //   const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
-  //   if (previouslySelectedWallet && state.onboard && !state.active) {
-  //     void connectPrevious(previouslySelectedWallet)
-  //   } else if (!previouslySelectedWallet && state.onboard) {
-  //     //?
-  //   }
-  // }, [state.onboard, disconnect, state.active, connectPrevious])
-  //
-  // useEffect(() => {
-  //   if (state.wallet && state.active && state.account) {
-  //     console.log("Account set ready to login!")
-  //
-  //     dispatch({ type: WalletActions.SET_USERNAME, username: 'metamask' })
-  //     dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-  //     dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
-  //   } else {
-  //     console.log("Account NOT set")
-  //     dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: false })
-  //   }
-  // }, [state.account, state.active, state.wallet, state.wallet])
-
-  // useEffect(() => {
-  //   if (network && state.active && state.wallet && !SUPPORTED_NETWORKS.includes(network)) {
-  //     disconnect()
-  //   }
-  // }, [network, state.active, state.wallet, disconnect])
 
   const onStartPioneer = async function(){
     try{
@@ -424,6 +289,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         isPioneerStarted = true
         pioneer = new PioneerService()
         let initResult = await pioneer.init()
+
+        //pioneer status
+        let status = await pioneer.getStatus()
+        dispatch({ type: WalletActions.SET_STATUS, payload: status })
+        console.log('status: ', status)
 
         console.log('Pioneer initResult: ', initResult)
         dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
