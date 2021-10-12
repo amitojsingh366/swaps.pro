@@ -26,6 +26,7 @@ import sortBy from "lodash/sortBy";
 import {SwapCurrency} from "@shapeshiftoss/market-service";
 import {useForm} from "react-hook-form";
 import {filterAssetsBySearchTerm} from "../../AssetSearch/helpers/filterAssetsBySearchTerm/filterAssetsBySearchTerm";
+import {AssetIcon} from "../../AssetIcon";
 
 export const Select = () => {
     const { pioneer, state } = useWallet()
@@ -82,11 +83,12 @@ export const Select = () => {
                         <Input placeholder="Search name or paste contract" />
                     </Card>
                     <Box flex={1}>
-                        <AssetList
-                            mb='10'
-                            assets={searching ? filteredAssets : sortedAssets}
-                            handleClick={onSelectAsset}
-                        />
+                        {balances.map((key:any)=>(
+                            <div>
+                                <AssetIcon src={key?.image} boxSize='24px' mr={4} />
+                                {key.symbol} balance: {key.balance}
+                            </div>
+                        ))}
                     </Box>
                 </ModalBody>
                 <ModalFooter flexDir='column'>
