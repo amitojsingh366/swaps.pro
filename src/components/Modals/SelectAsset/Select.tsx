@@ -19,7 +19,7 @@ import { QRCode } from 'components/QRCode/QRCode'
 import { RawText, Text } from 'components/Text'
 import { useModal } from 'context/ModalProvider/ModalProvider'
 import { useTranslate } from 'react-polyglot'
-import {useWallet} from "../../../context/WalletProvider/WalletProvider";
+import {useWallet, WalletActions} from "../../../context/WalletProvider/WalletProvider";
 import { AssetList } from './AssetList'
 import {useCallback, useEffect, useMemo, useState} from "react";
 import sortBy from "lodash/sortBy";
@@ -29,7 +29,7 @@ import {filterAssetsBySearchTerm} from "../../AssetSearch/helpers/filterAssetsBy
 import {AssetIcon} from "../../AssetIcon";
 
 export const Select = () => {
-    const { pioneer, state } = useWallet()
+    const { pioneer, state, dispatch } = useWallet()
     const { balances } = state
     const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
     const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])
@@ -47,6 +47,9 @@ export const Select = () => {
 
     const onSelectAsset = function(asset:string){
         console.log("onSelectAsset: ",asset)
+        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, asset })
+        //close modal
+        modal.close('select')
     }
 
     const fetchTokens = useCallback(async () => {
