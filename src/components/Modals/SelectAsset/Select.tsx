@@ -45,7 +45,9 @@ export const Select = () => {
     const searchString = watch('search')
     const searching = useMemo(() => searchString.length > 0, [searchString])
 
-    const onSelectAsset = function(){}
+    const onSelectAsset = function(asset:string){
+        console.log("onSelectAsset: ",asset)
+    }
 
     const fetchTokens = useCallback(async () => {
         try {
@@ -85,8 +87,10 @@ export const Select = () => {
                     <Box flex={1}>
                         {balances.map((key:any)=>(
                             <div>
-                                <AssetIcon src={key?.image} boxSize='24px' mr={4} />
-                                {key.symbol} balance: {key.balance}
+                                <button onClick={() => onSelectAsset(key.symbol)}>
+                                    <AssetIcon src={key?.image} boxSize='24px' mr={4} />
+                                    {key.symbol} status: {key.balance}
+                                </button>
                             </div>
                         ))}
                     </Box>
