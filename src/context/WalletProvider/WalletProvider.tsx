@@ -38,9 +38,11 @@ export enum WalletActions {
   SET_INITIALIZED = 'SET_INITIALIZED',
   SET_IS_CONNECTED = 'SET_IS_CONNECTED',
   SET_WALLET_MODAL = 'SET_WALLET_MODAL',
+  SET_SELECT_MODAL = 'SET_SELECT_MODAL',
   SET_ASSET_CONTEXT = 'SET_ASSET_CONTEXT',
   SET_WALLET_CONTEXT = 'SET_WALLET_CONTEXT',
   SET_CONTEXT = 'SET_CONTEXT',
+  SET_EXCHANGE_CONTEXT = 'SET_EXCHANGE_CONTEXT',
   SET_INVOCATION_CONTEXT = 'SET_INVOCATION_CONTEXT',
   SET_TOTAL_VALUE_USD = 'SET_TOTAL_VALUE_USD',
   RESET_STATE = 'RESET_STATE'
@@ -61,12 +63,14 @@ export interface InitialState {
   isConnected: boolean
   initialized: boolean
   modal: boolean
+  modalSelect: boolean
   pioneer: any
   code: any
   username: any
   assetContext: string | null
   invocationContext: string | null
   context: string | null
+  exchangeContext: string | null
   totalValueUsd: string | null
 }
 
@@ -85,10 +89,12 @@ const initialState: InitialState = {
   isConnected: false,
   initialized: false,
   modal: false,
+  modalSelect: false,
   pioneer: null,
   code: null,
   username: null,
   assetContext: null,
+  exchangeContext: null,
   invocationContext: null,
   context: null,
   totalValueUsd: null
@@ -117,6 +123,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_INITIALIZED; payload: boolean }
   | { type: WalletActions.SET_IS_CONNECTED; payload: boolean }
   | { type: WalletActions.SET_WALLET_MODAL; payload: boolean }
+  | { type: WalletActions.SET_SELECT_MODAL; payload: boolean }
   | { type: WalletActions.RESET_STATE }
   | { type: WalletActions.SET_ONBOARD; payload: OnboardAPI }
   | { type: WalletActions.SET_BLOCK_NUMBER; payload: number | null }
@@ -128,6 +135,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_TOTAL_VALUE_USD; payload: string }
   | { type: WalletActions.SET_INVOCATION_CONTEXT; payload: string }
   | { type: WalletActions.SET_CONTEXT; payload: string }
+  | { type: WalletActions.SET_EXCHANGE_CONTEXT; payload: string }
 
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
@@ -159,6 +167,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, walletInfo: { name: action?.payload?.name, icon: action?.payload?.icon } }
     case WalletActions.SET_INITIALIZED:
       return { ...state, initialized: action.payload }
+    case WalletActions.SET_EXCHANGE_CONTEXT:
+      return { ...state, exchangeContext: action.payload }
     case WalletActions.SET_CONTEXT:
       return { ...state, context: action.payload }
     case WalletActions.SET_INVOCATION_CONTEXT:
@@ -168,8 +178,9 @@ const reducer = (state: InitialState, action: ActionTypes) => {
     case WalletActions.SET_IS_CONNECTED:
       return { ...state, isConnected: action.payload }
     case WalletActions.SET_WALLET_MODAL:
-      return { ...state,
-        modal: action.payload }
+      return { ...state, modal: action.payload }
+    case WalletActions.SET_SELECT_MODAL:
+      return { ...state, modalSelect: action.payload }
     case WalletActions.RESET_STATE:
       return {
         ...state,

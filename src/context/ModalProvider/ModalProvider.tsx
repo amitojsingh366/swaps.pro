@@ -1,5 +1,6 @@
 import { ReceiveModal } from 'components/Modals/Receive/Receive'
 import { SendModal } from 'components/Modals/Send/Send'
+import { SelectModal } from 'components/Modals/SelectAsset/SelectAsset'
 import noop from 'lodash/noop'
 import React, { useCallback, useContext, useReducer } from 'react'
 import { useMemo } from 'react'
@@ -7,7 +8,8 @@ import { useMemo } from 'react'
 // consts
 export const MODALS = {
   SEND: 'send',
-  RECEIVE: 'receive'
+  RECEIVE: 'receive',
+  SELECT: 'select'
 } as const
 
 export const OPEN_MODAL = 'OPEN_MODAL'
@@ -71,6 +73,7 @@ const reducer = (state: ModalState, action: ModalActions) => {
 const initialState = Object.freeze({
   [MODALS.SEND]: false,
   [MODALS.RECEIVE]: false,
+  [MODALS.SELECT]: false,
   props: {}
 })
 
@@ -110,6 +113,7 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
     <ModalContext.Provider value={value}>
       {children}
       <SendModal />
+      <SelectModal />
       <ReceiveModal />
     </ModalContext.Provider>
   )

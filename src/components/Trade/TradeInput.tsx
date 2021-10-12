@@ -17,7 +17,8 @@ import { useLocaleFormatter } from 'hooks/useLocaleFormatter/useLocaleFormatter'
 import { Controller, useFormContext } from 'react-hook-form'
 import NumberFormat from 'react-number-format'
 import { RouterProps } from 'react-router-dom'
-import { useWallet } from "../../context/WalletProvider/WalletProvider";
+import {useWallet, WalletActions} from "../../context/WalletProvider/WalletProvider";
+import { useModal } from 'context/ModalProvider/ModalProvider'
 
 const FiatInput = (props: InputProps) => (
   <Input
@@ -32,8 +33,9 @@ const FiatInput = (props: InputProps) => (
 )
 
 export const TradeInput = ({ history }: RouterProps) => {
-  const { state } = useWallet()
+  const { state, dispatch } = useWallet()
   const { status } = state
+  const { open } = useModal()
 
   const {
     control,
@@ -61,6 +63,19 @@ export const TradeInput = ({ history }: RouterProps) => {
     console.log("sellAsset: ",sellAsset)
     //sellAsset.currency.balance
 
+  }
+
+  const onSelectModalInput = () => {
+    //Open Select modal.
+    console.log("onSelectModal called!")
+    open('select')
+    //dispatch({ type: WalletActions.SET_SELECT_MODAL, payload: true })
+  }
+
+  const onSelectModalOutput = () => {
+    //Open Select modal.
+    console.log("onSelectModal called!")
+    dispatch({ type: WalletActions.SET_SELECT_MODAL, payload: true })
   }
 
   return (
@@ -106,7 +121,7 @@ export const TradeInput = ({ history }: RouterProps) => {
             rules={{ required: true }}
             inputLeftElement={
               <TokenButton
-                onClick={() => history.push('/trade/select/sell')}
+                onClick={onSelectModalInput}
                 logo={getValues('sellAsset.currency.image')}
                 symbol={getValues('sellAsset.currency.symbol')}
               />
