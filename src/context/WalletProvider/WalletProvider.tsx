@@ -240,7 +240,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       case 'pioneer':
         console.log('Pioneer connect selected!')
         setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
-        //onStartPioneer()
+
         break
       case 'native':
         console.log('ShapeShift connect selected!')
@@ -292,71 +292,72 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   const onStartPioneer = async function(){
     try{
-        console.log("CHECKPOINT PIONEER")
-        //onboard
-        let lastConnect = window.localStorage.getItem('selectedWallet')
-        console.log('lastConnect: ', lastConnect)
-        //only start once!
-        isPioneerStarted = true
-        pioneer = new PioneerService()
-        let initResult = await pioneer.init()
+      console.log("CHECKPOINT PIONEER")
+      //onboard
+      let lastConnect = window.localStorage.getItem('selectedWallet')
+      console.log('lastConnect: ', lastConnect)
+      //only start once!
+      isPioneerStarted = true
+      pioneer = new PioneerService()
+      let initResult = await pioneer.init()
 
-        //pioneer status
-        let status = await pioneer.getStatus()
-        dispatch({ type: WalletActions.SET_STATUS, payload: status })
-        console.log('status: ', status)
+      //pioneer status
+      let status = await pioneer.getStatus()
+      dispatch({ type: WalletActions.SET_STATUS, payload: status })
+      console.log('status: ', status)
 
-        console.log('Pioneer initResult: ', initResult)
-        dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-        //pairing code
-        if (initResult && initResult.code) {
-          console.log('wallet not paired! code: ', initResult.code)
-          //set code
-          dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
+      console.log('Pioneer initResult: ', initResult)
+      dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+      //pairing code
+      if (initResult && initResult.code) {
+        console.log('wallet not paired! code: ', initResult.code)
+        //set code
+        dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
 
-          //open modal
-          const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
-          console.log("previouslySelectedWallet: ",previouslySelectedWallet)
-          if (previouslySelectedWallet && onboard) {
-            console.log("previouslySelectedWallet: CHECKPOINT1")
-            //connectPrevious(previouslySelectedWallet)
-          } else {
-            console.log("previouslySelectedWallet: CHECKPOINT1 fail")
-          }
-        } else if (initResult) {
-          //get user info
-          //let userInfo = await pioneer.refresh()
-          // console.log('userInfo: ', userInfo)
-          username = initResult.username
-          let context:any = initResult.context
-          assetContext = initResult.assetContext
-          setUsername(initResult.username)
-
-          dispatch({ type: WalletActions.SET_CONTEXT, payload:context })
-          dispatch({ type: WalletActions.SET_USERNAME, username })
-          dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
-          dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+        //open modal
+        const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
+        console.log("previouslySelectedWallet: ",previouslySelectedWallet)
+        if (previouslySelectedWallet && onboard) {
+          console.log("previouslySelectedWallet: CHECKPOINT1")
+          //connectPrevious(previouslySelectedWallet)
+        } else {
+          console.log("previouslySelectedWallet: CHECKPOINT1 fail")
         }
-        /*
-          Pioneer events
-        * */
-        pioneer.events.on('message', async (event: any) => {
-          //console.log('pioneer event: ', event)
-          switch (event.type) {
-            case 'context':
-              // code block
-              break
-            case 'pairing':
-              //console.log('pairing event!: ', event.username)
-              dispatch({ type: WalletActions.SET_USERNAME, username: initResult.username })
-              dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
-              dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-              dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-              break
-            default:
-              console.error(' message unknown type:',event)
-          }
-        })
+      } else if (initResult) {
+        //get user info
+        //let userInfo = await pioneer.refresh()
+        // console.log('userInfo: ', userInfo)
+        username = initResult.username
+        let context:any = initResult.context
+        assetContext = initResult.assetContext
+        setUsername(initResult.username)
+
+        dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
+        dispatch({ type: WalletActions.SET_CONTEXT, payload:context })
+        dispatch({ type: WalletActions.SET_USERNAME, username })
+        dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
+        dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+      }
+      /*
+        Pioneer events
+      * */
+      pioneer.events.on('message', async (event: any) => {
+        //console.log('pioneer event: ', event)
+        switch (event.type) {
+          case 'context':
+            // code block
+            break
+          case 'pairing':
+            //console.log('pairing event!: ', event.username)
+            dispatch({ type: WalletActions.SET_USERNAME, username: initResult.username })
+            dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
+            dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+            dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+            break
+          default:
+            console.error(' message unknown type:',event)
+        }
+      })
     }catch(e){
       console.error(e)
     }

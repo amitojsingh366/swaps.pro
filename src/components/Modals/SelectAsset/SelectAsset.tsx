@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Switch } from 'react-router-dom'
 import { WalletProvider } from 'context/WalletProvider/WalletProvider'
 import { Select } from './Select'
 
-export const entries = ['/send/select']
+export const entries = ['/select/select']
 
 export const SelectModal = () => {
     const initialRef = useRef<HTMLInputElement>(null)
