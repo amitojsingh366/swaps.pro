@@ -275,6 +275,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           if (ready) {
             console.log("ready: ",ready)
             dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+            onStartOnboard()
           } else {
             console.log("not ready: ",ready)
             //dont think I want to do this? keep memory of what used
@@ -388,6 +389,9 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   const onStartOnboard = async function(){
     try{
+      if(!pioneer.isInitialized){
+        await onStartPioneer()
+      }
       console.log("start onboard!")
       onboard = initOnboard({
         network: network => {

@@ -33,6 +33,7 @@ export class PioneerService {
   private App: any
   private Api: any
   private queryKey: string
+  public isInitialized: boolean = false
   public username: string | undefined
   private pairingCode: string | undefined
   public context: string | undefined
@@ -257,12 +258,14 @@ export class PioneerService {
     ]
     this.Api = await this.App.init(seedChains)
 
-    //get api health
+    //TODO get api health
 
-    //get api status
-    let statusResp = await this.Api.Status()
-    this.status = statusResp.data
-    console.log("status: ",this.status)
+    //TODO get api status
+    // let statusResp = await this.Api.Status()
+    // this.status = statusResp.data
+    // console.log("status: ",this.status)
+
+    this.isInitialized = true
 
     // Sub to events
     try {

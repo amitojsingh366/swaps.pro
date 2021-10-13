@@ -74,7 +74,7 @@ export const TradeInput = ({ history }: RouterProps) => {
 
   const onSelectModalOutput = () => {
     //Open Select modal.
-    console.log("onSelectModal called!")
+    console.log("onSelectModalOutput called!")
     dispatch({ type: WalletActions.SET_SELECT_MODAL, payload: true })
   }
 
