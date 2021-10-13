@@ -88,7 +88,7 @@ export const Select = () => {
                         <Input placeholder="Search name or paste contract" />
                     </Card>
                     <Box flex={1}>
-                        {balances.map((key:any)=>(
+                        {balances?.map((key:any)=>(
                             <div>
                                 <button onClick={() => onSelectAsset(key.symbol)}>
                                     <AssetIcon src={key?.image} boxSize='24px' mr={4} />

@@ -44,6 +44,8 @@ export enum WalletActions {
   SET_CONTEXT = 'SET_CONTEXT',
   SET_EXCHANGE_CONTEXT = 'SET_EXCHANGE_CONTEXT',
   SET_INVOCATION_CONTEXT = 'SET_INVOCATION_CONTEXT',
+  SET_TRADE_INPUT = 'SET_TRADE_INPUT',
+  SET_TRADE_OUTPUT = 'SET_TRADE_OUTPUT',
   SET_TOTAL_VALUE_USD = 'SET_TOTAL_VALUE_USD',
   RESET_STATE = 'RESET_STATE'
 }
@@ -72,6 +74,8 @@ export interface InitialState {
   context: string | null
   exchangeContext: string | null
   totalValueUsd: string | null
+  tradeInputBalance: any
+  tradeOutputBalance: any
 }
 
 const initialState: InitialState = {
@@ -97,7 +101,9 @@ const initialState: InitialState = {
   exchangeContext: null,
   invocationContext: null,
   context: null,
-  totalValueUsd: null
+  totalValueUsd: null,
+  tradeInputBalance: null,
+  tradeOutputBalance: null
 }
 
 export interface IWalletContext {
@@ -117,6 +123,8 @@ export type ActionTypes =
   | { type: WalletActions.SET_PIONEER; pioneer: any | null }
   | { type: WalletActions.SET_PAIRING_CODE; payload: String | null }
   | { type: WalletActions.SET_USERNAME; username: String | null }
+  | { type: WalletActions.SET_TRADE_INPUT; payload: any }
+  | { type: WalletActions.SET_TRADE_OUTPUT; payload: any }
   | { type: WalletActions.SET_ASSET_CONTEXT; asset: String | null }
   | { type: WalletActions.SET_WALLET_CONTEXT; context: String | null }
   | { type: WalletActions.SET_WALLET_INFO; payload: { name: string; icon: string } }
@@ -179,6 +187,10 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, isConnected: action.payload }
     case WalletActions.SET_WALLET_MODAL:
       return { ...state, modal: action.payload }
+    case WalletActions.SET_TRADE_INPUT:
+      return { ...state, tradeInputBalance: action.payload }
+    case WalletActions.SET_TRADE_OUTPUT:
+      return { ...state, tradeOutputBalance: action.payload }
     case WalletActions.SET_SELECT_MODAL:
       return { ...state, modalSelect: action.payload }
     case WalletActions.RESET_STATE:
@@ -331,6 +343,17 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         let context:any = initResult.context
         assetContext = initResult.assetContext
         setUsername(initResult.username)
+
+        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, asset:'ETH' })
+
+        //TODO use remote context asset
+        //get first ETH symbol in balances
+        console.log("initResult.balances: ",initResult)
+        if(initResult.balances){
+          let ETHbalance = initResult.balances.filter((balance:any) => balance.symbol === 'ETH')[0]
+          console.log("ETHbalance: ",ETHbalance)
+        }
+
 
         dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
         dispatch({ type: WalletActions.SET_CONTEXT, payload:context })
