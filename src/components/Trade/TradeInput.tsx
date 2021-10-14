@@ -82,12 +82,12 @@ export const TradeInput = ({ history }: RouterProps) => {
     <SlideTransition>
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <h5>Thorchain Status: </h5>
-          {status?.thorchain.map((key:any)=>(
-              <div>
-                {key.blockchain} status: {key.online.toString()}
-              </div>
-          ))}
+          {/*<h5>Thorchain Status: </h5>*/}
+          {/*{status.map((key:any)=>(*/}
+          {/*    <div>*/}
+          {/*      {key.blockchain} status: {key.online.toString()}*/}
+          {/*    </div>*/}
+          {/*))}*/}
         </div>
         <FormControl isInvalid={!!errors.fiatAmount}>
           <Controller

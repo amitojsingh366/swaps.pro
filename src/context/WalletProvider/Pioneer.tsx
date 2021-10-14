@@ -77,7 +77,7 @@ export class PioneerService {
     }
   }
 
-  getStatus(): string {
+  getStatus(): any {
     return this.status
   }
 
@@ -104,6 +104,7 @@ export class PioneerService {
     try{
       //
       if(this.App){
+        console.log("pioneer: registerWallet: Checkpoint")
         let resultRegister = await this.App.registerWallet(wallet)
         console.log("resultRegister: ",resultRegister)
         if(resultRegister.username){
@@ -261,9 +262,9 @@ export class PioneerService {
     //TODO get api health
 
     //TODO get api status
-    // let statusResp = await this.Api.Status()
-    // this.status = statusResp.data
-    // console.log("status: ",this.status)
+    let statusResp = await this.Api.Status()
+    this.status = statusResp.data
+    console.log("status: ",this.status)
 
     this.isInitialized = true
 

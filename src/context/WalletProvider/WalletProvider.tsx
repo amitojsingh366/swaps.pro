@@ -47,6 +47,7 @@ export enum WalletActions {
   SET_TRADE_INPUT = 'SET_TRADE_INPUT',
   SET_TRADE_OUTPUT = 'SET_TRADE_OUTPUT',
   SET_TOTAL_VALUE_USD = 'SET_TOTAL_VALUE_USD',
+  SET_EXCHANGE_INFO = 'SET_EXCHANGE_INFO',
   RESET_STATE = 'RESET_STATE'
 }
 
@@ -76,6 +77,7 @@ export interface InitialState {
   totalValueUsd: string | null
   tradeInputBalance: any
   tradeOutputBalance: any
+  exchangeInfo: any
 }
 
 const initialState: InitialState = {
@@ -103,7 +105,8 @@ const initialState: InitialState = {
   context: null,
   totalValueUsd: null,
   tradeInputBalance: null,
-  tradeOutputBalance: null
+  tradeOutputBalance: null,
+  exchangeInfo:null
 }
 
 export interface IWalletContext {
@@ -128,6 +131,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_ASSET_CONTEXT; asset: String | null }
   | { type: WalletActions.SET_WALLET_CONTEXT; context: String | null }
   | { type: WalletActions.SET_WALLET_INFO; payload: { name: string; icon: string } }
+  | { type: WalletActions.SET_EXCHANGE_INFO; payload: any }
   | { type: WalletActions.SET_INITIALIZED; payload: boolean }
   | { type: WalletActions.SET_IS_CONNECTED; payload: boolean }
   | { type: WalletActions.SET_WALLET_MODAL; payload: boolean }
@@ -175,6 +179,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, walletInfo: { name: action?.payload?.name, icon: action?.payload?.icon } }
     case WalletActions.SET_INITIALIZED:
       return { ...state, initialized: action.payload }
+    case WalletActions.SET_EXCHANGE_INFO:
+      return { ...state, exchangeInfo: action.payload }
     case WalletActions.SET_EXCHANGE_CONTEXT:
       return { ...state, exchangeContext: action.payload }
     case WalletActions.SET_CONTEXT:
@@ -296,7 +302,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   const disconnect = useCallback(() => {
     setType(null)
     setRoutePath(undefined)
-    dispatch({ type: WalletActions.RESET_STATE })
+    //dispatch({ type: WalletActions.RESET_STATE })
   }, [])
 
   useEffect(() => {
@@ -316,7 +322,9 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
       //pioneer status
       let status = await pioneer.getStatus()
-      dispatch({ type: WalletActions.SET_STATUS, payload: status })
+      console.log("status: ",status)
+      // dispatch({ type: WalletActions.SET_STATUS, payload: status?.thorchain })
+      // dispatch({ type: WalletActions.SET_EXCHANGE_INFO, payload: status?.exchanges })
       console.log('status: ', status)
 
       console.log('Pioneer initResult: ', initResult)
@@ -434,6 +442,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           }
           console.log("Onboard state: FINAL ", pairWalletOnboard)
           if (pairWalletOnboard.name && pairWalletOnboard.address) {
+            console.log("&&& CHECKPOINT register wallet: ")
             let resultRegister = await pioneer.registerWallet(pairWalletOnboard)
             console.log("&&& resultRegister: ", resultRegister)
             if (pioneer.balances) {

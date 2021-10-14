@@ -25,12 +25,12 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import sortBy from "lodash/sortBy";
 import {SwapCurrency} from "@shapeshiftoss/market-service";
 import {useForm} from "react-hook-form";
-import {filterAssetsBySearchTerm} from "../../AssetSearch/helpers/filterAssetsBySearchTerm/filterAssetsBySearchTerm";
+import {filterAssetsBySearchTerm} from "./helpers/filterAssetsBySearchTerm/filterAssetsBySearchTerm";
 import {AssetIcon} from "../../AssetIcon";
 
 export const Select = () => {
     const { pioneer, state, dispatch } = useWallet()
-    const { balances } = state
+    const { balances, exchangeContext, exchangeInfo, status } = state
     const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
     const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])
     const { register, watch } = useForm<{ search: string }>({
@@ -66,21 +66,24 @@ export const Select = () => {
 
     useEffect(() => {
         fetchTokens()
-    }, [])
+    }, []) // run only once
 
     useEffect(() => {
         setFilteredAssets(
             searching ? filterAssetsBySearchTerm(searchString, sortedAssets) : sortedAssets
         )
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchString])
+    }, [searchString]) // run every time the search is updated
 
     return (
         <Modal isOpen={modal.select} onClose={() => modal.close('select')} isCentered>
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader textAlign='center'>
-                    <h2>Select an Asset </h2>
+                    <h2>Select an  </h2>
+                    <small>exchange: {exchangeContext}</small>
+                    <small>exchangeInfo: {exchangeInfo}</small>
+                    <small>status: {status}</small>
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody alignItems='center' justifyContent='center'>
