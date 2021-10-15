@@ -3,8 +3,6 @@ import { RouteComponentProps } from 'react-router-dom'
 
 import { ActionTypes } from '../WalletProvider'
 
-export const initalizePioneer = () => {}
-
 export interface NativeSetupProps
   extends RouteComponentProps<
     {},

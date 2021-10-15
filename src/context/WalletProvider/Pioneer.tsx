@@ -33,9 +33,9 @@ export class PioneerService {
   private App: any
   private Api: any
   private queryKey: string
+  private pairingCode: string | undefined
   public isInitialized: boolean = false
   public username: string | undefined
-  private pairingCode: string | undefined
   public context: string | undefined
   public assetContext: string | undefined
   public assetBalanceNativeContext: string | undefined
@@ -95,11 +95,6 @@ export class PioneerService {
     return true
   }
 
-  // async setSendToFiat(fiat: any): Promise<any> {
-  //   //console.log('fiat: ', fiat)
-  //
-  // }
-
   async registerWallet(wallet: any): Promise<any> {
     try{
       //
@@ -139,7 +134,6 @@ export class PioneerService {
     if (this.sendToFeeLevel && this.sendToFeeLevel !== level) {
       //console.log('Context valid sending request')
       this.sendToFeeLevel = level
-      //TODO esimate value of tx
       return true
     } else {
       //console.log('address already set!: ', level)
@@ -150,9 +144,7 @@ export class PioneerService {
   async setSendToAsset(asset: string): Promise<any> {
     //console.log('sendToAsset: ', asset)
     if (this.sendToAsset && this.sendToAsset !== asset) {
-      //console.log('Context valid sending request')
       this.sendToAsset = asset
-      //TODO esimate value of tx
       return true
     } else {
       //console.log('address already set!: ', asset)
@@ -163,9 +155,7 @@ export class PioneerService {
   async setSendToNetwork(network: string): Promise<any> {
     //console.log('sendToNetwork: ', network)
     if (this.sendToNetwork && this.sendToNetwork !== network) {
-      //console.log('Context valid sending request')
       this.sendToNetwork = network
-      //TODO esimate value of tx
       return true
     } else {
       //console.log('address already set!: ', network)
@@ -178,7 +168,6 @@ export class PioneerService {
     if (this.sendToAmountNative && this.sendToAmountNative !== amount) {
       //console.log('Context valid sending request')
       this.sendToAmountNative = amount
-      //TODO esimate value of tx
     } else {
       //console.log('address already set!: ', amount)
       return false
@@ -233,20 +222,18 @@ export class PioneerService {
     }
     const config: any = {
       network,
-      // TODO move SDK vars to env
-      service: 'shapeshift',
-      url: 'https://beta.shapeshift.com/',
+      service: process.env.PIONEER_SERVICE,
+      url: process.env.APP_URL,
       queryKey: this.queryKey,
-      // wss: 'wss://pioneers.dev',
-      wss: 'ws://127.0.0.1:9001',
-      // spec: 'https://pioneers.dev/spec/swagger.json'
-      spec: 'http://127.0.0.1:9001/spec/swagger.json'
+      wss: process.env.URL_PIONEER_SOCKET,
+      spec: process.env.URL_PIONEER_SPEC
     }
     if (this.username) {
       config.username = this.username
     }
     console.log("config: ",config)
     this.App = new SDK(config.spec, config)
+    //TODO get chains from api endpoint (auto enable new assets)
     const seedChains = [
       'bitcoin',
       'ethereum',

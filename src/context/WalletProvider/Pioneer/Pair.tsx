@@ -1,19 +1,16 @@
 import {ModalBody, ModalHeader, Stack, Button, Image, useClipboard} from '@chakra-ui/react'
 import { RawText } from 'components/Text'
 import { useWallet } from 'context/WalletProvider/WalletProvider'
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
 import PIONEER_ICON from 'assets/png/pioneer.png'
 import { NativeSetupProps } from './setup'
 
-export const Pair = ({ history, location }: NativeSetupProps) => {
-  const [isSuccessful, setIsSuccessful] = useState<boolean | null>(null)
+export const Pair = ({ }: NativeSetupProps) => {
   const { state } = useWallet()
   const { code } = state
   const { hasCopied, onCopy } = useClipboard(code)
 
   useEffect(() => {
-    //console.log("Pair use Affect Called")
-    //console.log("state: ",state)
     console.log("code: ",code)
   }, [code])
 
