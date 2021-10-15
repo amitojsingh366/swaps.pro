@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { SwapActions } from './Swap/SwapActions'
 import { useWallet } from "context/WalletProvider/WalletProvider";
-import { useBalances } from 'hooks/usePioneerSdk/usePioneerSdk'
+import { pioneer } from 'hooks/usePioneerSdk/usePioneerSdk'
 // import { AssetBalance } from './AssetCards/AssetBalance'
 // import { Rewards } from './AssetCards/Rewards'
 // import { AssetDetails } from './AssetDetails/AssetDetails'
@@ -18,7 +18,7 @@ export interface MatchParams {
 export const Swap = () => {
   const { state } = useWallet()
   const { username } = state
-  const { balances, loading } = useBalances()
+  const { balances, loading } = pioneer()
 
 
   useEffect(() => {

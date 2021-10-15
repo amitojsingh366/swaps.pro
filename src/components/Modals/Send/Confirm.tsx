@@ -18,7 +18,6 @@ import {useWallet} from "context/WalletProvider/WalletProvider";
 import {useEffect} from "react";
 
 export const Confirm = () => {
-  const { pioneer } = useWallet()
   const history = useHistory()
   const { getValues } = useFormContext()
 
@@ -33,7 +32,7 @@ export const Confirm = () => {
   return (
     <SlideTransition>
       <ModalHeader textAlign='center'>
-        <Text translation={'modals.send.confirm.send'} /><h3>{pioneer?.assetContext}</h3>
+        <Text translation={'modals.send.confirm.send'} /><h3>{}</h3>
       </ModalHeader>
       <ModalBody>
         <Flex flexDir='column' alignItems='center' mb={8}>
@@ -47,7 +46,7 @@ export const Confirm = () => {
         <Stack spacing={4} mb={4}>
           <Row>
             <Row.Label>
-              <Text translation={['modals.send.confirm.sendAssetTo', { asset: pioneer?.assetContext }]} />
+              <Text translation={['modals.send.confirm.sendAssetTo', { asset: "foo" }]} />
             </Row.Label>
             <Row.Value>
               <RawText>{values?.address}</RawText>
@@ -87,7 +86,7 @@ export const Confirm = () => {
           </Box>
           <Box textAlign='right'>
             <Row.Value>
-              <RawText>{pioneer?.sendToAmountNative}</RawText>
+              <RawText>{}</RawText>
             </Row.Value>
             {/*<Row.Label>*/}
             {/*  <RawText>$110.00</RawText>*/}

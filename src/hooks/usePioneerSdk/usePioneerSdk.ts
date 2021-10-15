@@ -1,35 +1,40 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useWallet } from 'context/WalletProvider/WalletProvider'
-
-type UseBalancesReturnType = {
+import { PioneerService } from './Pioneer'
+type PioneerReturnType = {
     balances: any
     error?: Error | unknown
     loading: boolean
+    onStartSdk: any
 }
 
-export const useBalances = (): UseBalancesReturnType => {
+export const pioneer = (): PioneerReturnType => {
     const [error, setError] = useState<Error | unknown>()
     const [loading, setLoading] = useState<boolean>(false)
-    const {
-        state: { wallet, walletInfo }
-    } = useWallet()
+    // const {
+    //     state: { wallet, walletInfo }
+    // } = useWallet()
     let balances = [
         {
             foo:"bar"
         }
     ]
     const getBalances = useCallback(async () => {
-        if (wallet) {
+        if (true) {
             //register?
             console.log("getBalances: ")
         } else {
             console.log("Missing Wallet ")
         }
-    }, [walletInfo])
+    }, [])
+
+    const onStartSdk = useCallback(async () => {
+        console.log("SDK onStart")
+    }, [])
 
     useEffect(() => {
-        if (wallet) {
+        if (true) {
             ;(async () => {
                 try {
                     setLoading(true)
@@ -44,9 +49,10 @@ export const useBalances = (): UseBalancesReturnType => {
         }
         // Here we rely on the deviceId vs the wallet class
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [walletInfo, getBalances])
+    }, [getBalances])
 
     return {
+        onStartSdk,
         balances,
         error,
         loading

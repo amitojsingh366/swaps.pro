@@ -17,6 +17,8 @@ import { useState } from 'react'
 import { SUPPORTED_WALLETS } from './config'
 import { WalletViewsRouter } from './WalletViewsRouter'
 
+import { pioneer } from 'hooks/usePioneerSdk/usePioneerSdk'
+
 //TODO expand networks
 const SUPPORTED_NETWORKS = [1]
 
@@ -116,7 +118,6 @@ const initialState: InitialState = {
 
 export interface IWalletContext {
   state: InitialState
-  pioneer: any | null
   username: string | null
   assetContext: string | null
   dispatch: React.Dispatch<ActionTypes>
@@ -160,8 +161,6 @@ const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
     case WalletActions.SET_STATUS:
       return { ...state, status: action.payload }
-    case WalletActions.INIT_PIONEER:
-      return { ...state, isInitPioneer: action.payload }
     case WalletActions.INIT_ONBOARD:
       return { ...state, isInitOnboard: action.payload }
     case WalletActions.SET_ONBOARD:
@@ -230,6 +229,7 @@ const WalletContext = createContext<IWalletContext | null>(null)
 let isPioneerStarted: boolean = false
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
+  const { onStartSdk, balances, loading } = pioneer()
   const [state, dispatch] = useReducer(reducer, initialState)
   const [type, setType] = useState<string | null>(null)
   let [username, setUsername] = useState<string | null>(null)
@@ -237,7 +237,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   const [routePath, setRoutePath] = useState<string | readonly string[] | undefined>()
   let assetContext: string = "ETH"
   let onboard: OnboardAPI
-  let pioneer = {}
   useEffect(() => {
     //console.log("Use Effect Called! state: ",state)
     dispatch({ type: WalletActions.SET_USERNAME, username })
@@ -505,6 +504,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   const onStart = async function(){
     try{
+      onStartSdk()
       // await onStartPioneer()
       // await onStartOnboard()
     }catch(e){
@@ -514,8 +514,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   //end
   const value: IWalletContext = useMemo(
-    () => ({ state, pioneer, username, assetContext, dispatch, connect, disconnect, setAssetContext }),
-    [state, pioneer, username, assetContext, connect, disconnect, setAssetContext]
+    () => ({ state, username, assetContext, dispatch, connect, disconnect, setAssetContext }),
+    [state, username, assetContext, connect, disconnect, setAssetContext]
   )
 
   return (

@@ -5,7 +5,7 @@ import { shortenAddress } from 'utils/helpers'
 import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 
 export const OnboardButton: FC<FlexProps> = props => {
-    const { state, connect, pioneer } = useWallet()
+    const { state, connect } = useWallet()
     const { isConnected, wallet, account } = state
 
 

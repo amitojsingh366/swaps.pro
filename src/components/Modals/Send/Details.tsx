@@ -28,7 +28,7 @@ import { TxFeeRadioGroup } from './TxFeeRadioGroup'
 import {useWallet} from "context/WalletProvider/WalletProvider";
 
 export const Details = () => {
-  const { state, dispatch, disconnect, setAssetContext, pioneer } = useWallet()
+  const { state, dispatch, disconnect, setAssetContext } = useWallet()
   const [fiatInput, setFiatInput] = useState<boolean>(true)
   const translate = useTranslate()
   const history = useHistory()
@@ -46,9 +46,9 @@ export const Details = () => {
   const onNext = () => {
     let values = getValues()
     //console.log("values: ",values)
-    pioneer.setSendToAddress(values.address)
+    //pioneer.setSendToAddress(values.address)
     if(values.fait){
-      pioneer.setSendToFiat(values.fait)
+      //pioneer.setSendToFiat(values.fait)
     }
     history.push('/send/confirm')
   }
@@ -68,7 +68,7 @@ export const Details = () => {
         onClick={() => history.push('/send/select')}
       />
       <ModalHeader textAlign='center'>
-        {translate('modals.send.sendForm.sendAsset', { asset: pioneer?.assetContext })}
+        {translate('modals.send.sendForm.sendAsset', { asset: "foo" })}
       </ModalHeader>
       <ModalCloseButton borderRadius='full' />
       <ModalBody>

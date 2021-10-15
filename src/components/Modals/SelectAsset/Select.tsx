@@ -29,7 +29,7 @@ import {filterAssetsBySearchTerm} from "./helpers/filterAssetsBySearchTerm/filte
 import {AssetIcon} from "../../AssetIcon";
 
 export const Select = () => {
-    const { pioneer, state, dispatch } = useWallet()
+    const { state, dispatch } = useWallet()
     const { balances, exchangeContext, exchangeInfo, status } = state
     const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
     const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])

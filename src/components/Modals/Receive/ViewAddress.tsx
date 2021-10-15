@@ -21,7 +21,6 @@ import { useTranslate } from 'react-polyglot'
 import {useWallet} from "../../../context/WalletProvider/WalletProvider";
 
 export const ViewAddress = () => {
-    const { pioneer } = useWallet()
     const translate = useTranslate()
     const modal = useModal()
     return (
@@ -29,16 +28,16 @@ export const ViewAddress = () => {
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader textAlign='center'>
-                    {translate('modals.receive.receiveAsset', { asset: pioneer.assetContext })}
+                    {translate('modals.receive.receiveAsset', { asset: "foobar" })}
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody alignItems='center' justifyContent='center'>
                     <Card variant='inverted' width='auto' borderRadius='xl'>
                         <Card.Body>
-                            <QRCode text={pioneer?.wallets.filter((e:any) => e.context === pioneer.context).masters[pioneer.assetContext]} />
+                            <QRCode text="Hi there" />
                         </Card.Body>
                         <Card.Footer textAlign='center' pt={0}>
-                            <RawText>{JSON.stringify(pioneer?.wallets)} </RawText>
+                            <RawText></RawText>
                         </Card.Footer>
                     </Card>
                 </ModalBody>

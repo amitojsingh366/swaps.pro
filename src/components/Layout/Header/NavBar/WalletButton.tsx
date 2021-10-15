@@ -51,13 +51,12 @@ const WalletImage: React.FC<WalletImageProps> = ({ isConnected, walletInfo }) =>
   ) : null
 
 export const WalletButton: FC<FlexProps> = () => {
-  const { state, dispatch, disconnect, pioneer } = useWallet()
+  const { state, dispatch, disconnect } = useWallet()
   const { isConnected, walletInfo, username, context } = state
 
   return !username ? (
     <Button
       onClick={() => dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })}
-      leftIcon={<WalletImage isConnected={isConnected} walletInfo={pioneer.walletInfo} />}
       rightIcon={<ChevronRightIcon h={6} w={6} />}
       mr={6}
     >

@@ -31,7 +31,6 @@ type SendInput = {
 }
 
 export const Form = () => {
-  const { pioneer } = useWallet()
   const location = useLocation()
   const history = useHistory()
   // const toast = useToast()
@@ -60,9 +59,6 @@ export const Form = () => {
 
   const handleSubmit = async (data: any) => {
     console.info("submited data: ",data)
-
-    let invocationId = await pioneer.buildTx(pioneer.assetContext,'send',{})
-    console.info("invocationId: ",invocationId)
 
     //wait for signed on pioneer
 

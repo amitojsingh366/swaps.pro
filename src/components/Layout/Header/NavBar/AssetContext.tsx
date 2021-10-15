@@ -30,7 +30,7 @@ const WalletImage: React.FC<WalletImageProps> = ({ isConnected, walletInfo }) =>
     ) : null
 
 export const AssetButton: FC<FlexProps> = props => {
-    const { state, dispatch, disconnect, setAssetContext, pioneer } = useWallet()
+    const { state, dispatch, disconnect, setAssetContext } = useWallet()
     const { isConnected, walletInfo } = state
     const modal = useModal()
 
@@ -55,17 +55,17 @@ export const AssetButton: FC<FlexProps> = props => {
             <MenuButton
                 as={Button}
             >
-                {pioneer?.assetContext} {pioneer?.assetBalanceNativeContext} ({parseInt(pioneer?.assetBalanceUsdValueContext)}$)
+                {/*{pioneer?.assetContext} {pioneer?.assetBalanceNativeContext} ({parseInt(pioneer?.assetBalanceUsdValueContext)}$)*/}
             </MenuButton>
             <MenuList>
                 <MenuGroup title='asset selection'>
-                    {Object.keys(pioneer?.balances).map((key)=>(
-                        <MenuItem
-                            onClick={() => onSelect('ASSET_CONTEXT', {ASSET:key})}
-                        >
-                            {key} balance: {pioneer?.balances[key]} {pioneer?.balances[key]?.valueUsd[key]}
-                        </MenuItem>
-                    ))}
+                    {/*{Object.keys(pioneer?.balances).map((key)=>(*/}
+                    {/*    <MenuItem*/}
+                    {/*        onClick={() => onSelect('ASSET_CONTEXT', {ASSET:key})}*/}
+                    {/*    >*/}
+                    {/*        {key} balance: {pioneer?.balances[key]} {pioneer?.balances[key]?.valueUsd[key]}*/}
+                    {/*    </MenuItem>*/}
+                    {/*))}*/}
                 </MenuGroup>
             </MenuList>
         </Menu>
