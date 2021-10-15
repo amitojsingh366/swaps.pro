@@ -57,7 +57,10 @@ export const Select = () => {
             let data:any = {}
             console.log("FINAL BALANCES: ",balances)
             data.tokens = balances
-            const sorted = sortBy(data?.tokens, ['name', 'symbol'])
+            // const sorted = sortBy(data?.tokens, ['name', 'symbol'])
+            console.log("exchangeInfo.assets: ",exchangeInfo.assets)
+            const sorted = balances.filter((entry: { symbol: any }) => exchangeInfo.assets.indexOf(entry.symbol) > -1);
+            console.log("sorted: ",exchangeInfo.assets)
             setSortedAssets(sorted)
         } catch (e) {
             console.warn(e)
@@ -82,8 +85,8 @@ export const Select = () => {
                 <ModalHeader textAlign='center'>
                     <h2>Select an  </h2>
                     <small>exchange: {exchangeContext}</small>
-                    <small>exchangeInfo: {exchangeInfo}</small>
-                    <small>status: {status}</small>
+                    <small>exchangeInfo: {JSON.stringify(exchangeInfo)}</small>
+                    <small>status: {JSON.stringify(status)}</small>
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody alignItems='center' justifyContent='center'>

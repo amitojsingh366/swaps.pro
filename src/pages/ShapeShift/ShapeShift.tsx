@@ -1,6 +1,5 @@
 import {Box, Divider, Flex, Spinner, Stack} from '@chakra-ui/react'
 import { Page } from 'components/Layout/Page'
-import { AssetData, getAssetData } from 'lib/assets/getAssetData'
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ShapeShiftActions } from './ShapeShiftCards/ShapeShiftActions'
@@ -18,7 +17,6 @@ export interface MatchParams {
 export const ShapeShift = () => {
   const { state, pioneer } = useWallet()
   const { code, isConnected, username } = state
-  const [asset, setAsset] = useState<AssetData>()
   // const [loading, setLoading] = useState<boolean>(false)
   let { network, address } = useParams<MatchParams>()
   let loading = true

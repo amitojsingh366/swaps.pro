@@ -10,7 +10,7 @@ export const ShapeShiftActions = () => {
 
   return (
     <Card maxW="460px" mx="auto" flex={1} justifyContent='center' alignItems='center'>
-      <Tabs isFitted variant='soft-rounded' defaultIndex={1}>
+      <Tabs isFitted variant='soft-rounded' defaultIndex={0}>
         <TabList>
           <Tab>
             <Text translation='assets.exchanges.thorchain' />
