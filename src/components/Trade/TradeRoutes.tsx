@@ -3,9 +3,9 @@ import { AnimatePresence } from 'framer-motion'
 import { useFormContext } from 'react-hook-form'
 import { Redirect, Route, RouteProps, Switch, useHistory, useLocation } from 'react-router-dom'
 
-import { SelectAsset } from './SelectAsset'
 import { TradeConfirm } from './TradeConfirm/TradeConfirm'
 import { TradeInput } from './TradeInput'
+import { SelectAsset } from './SelectAsset'
 
 export const entries = ['/send/details', '/send/confirm']
 

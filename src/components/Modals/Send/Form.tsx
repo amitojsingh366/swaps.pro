@@ -11,7 +11,6 @@ import {
   useLocation
 } from 'react-router-dom'
 
-import { SelectAssets } from '../../SelectAssets/SelectAssets'
 import { Confirm } from './Confirm'
 import { Details } from './Details'
 import {useWallet} from "../../../context/WalletProvider/WalletProvider";
@@ -88,7 +87,7 @@ export const Form = () => {
             <Route
               path='/send/select'
               component={(props: RouteComponentProps) => (
-                <SelectAssets onClick={handleClick} {...props} />
+                  <div>selected asset: assetContext*</div>
               )}
             />
             <Route path='/send/details' component={Details} />

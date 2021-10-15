@@ -1,5 +1,4 @@
 import { Box } from '@chakra-ui/react'
-import { AssetSearch } from 'components/AssetSearch/AssetSearch'
 import { SlideTransition } from 'components/SlideTransition'
 import { RouteProps } from 'react-router-dom'
 
@@ -9,7 +8,7 @@ export const SelectAsset = ({ onClick }: SelectAssetProps) => {
   return (
     <SlideTransition>
       <Box height='400px' p={0} display='flex' flexDir='column'>
-        <AssetSearch onClick={onClick} />
+          TODO button to open assetSelect
       </Box>
     </SlideTransition>
   )
