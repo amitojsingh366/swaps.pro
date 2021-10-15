@@ -60,7 +60,7 @@ export const TradeConfirm = ({ history }: RouterProps) => {
             </Row>
             <Row>
               <HelperToolTip label='This is the Miner Fee'>
-                <Row.Label>ShapeShift Fee</Row.Label>
+                <Row.Label>Swap Fee</Row.Label>
               </HelperToolTip>
               <Row.Value>$0.00</Row.Value>
             </Row>

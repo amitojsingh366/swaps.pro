@@ -272,7 +272,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
         break
       case 'native':
-        console.log('ShapeShift connect selected!')
+        console.log('Swap connect selected!')
         break
       case 'kepler':
         console.log('Kepler connect selected!')

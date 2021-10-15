@@ -2,8 +2,8 @@ import {Box, Divider, Flex, Spinner, Stack} from '@chakra-ui/react'
 import { Page } from 'components/Layout/Page'
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ShapeShiftActions } from './ShapeShiftCards/ShapeShiftActions'
-import { useWallet } from "../../context/WalletProvider/WalletProvider";
+import { SwapActions } from './Swap/SwapActions'
+import { useWallet } from "context/WalletProvider/WalletProvider";
 import { useBalances } from 'hooks/usePioneerSdk/usePioneerSdk'
 // import { AssetBalance } from './AssetCards/AssetBalance'
 // import { Rewards } from './AssetCards/Rewards'
@@ -15,7 +15,7 @@ export interface MatchParams {
   address: string
 }
 
-export const ShapeShift = () => {
+export const Swap = () => {
   const { state } = useWallet()
   const { username } = state
   const { balances, loading } = useBalances()
@@ -44,7 +44,7 @@ export const ShapeShift = () => {
     <Page>
       <Flex maxWidth={{ base: 'auto', '2xl': '1464px' }} mx='auto' px={4}>
         <Stack flex={1} spacing={4} justifyContent='center' alignItems='center'>
-          <ShapeShiftActions />
+          <SwapActions />
         </Stack>
       </Flex>
     </Page>

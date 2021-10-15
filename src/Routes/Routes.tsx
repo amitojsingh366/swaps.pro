@@ -1,22 +1,22 @@
 import { AssetsIcon } from 'components/Icons/Assets'
 import { Layout } from 'components/Layout/Layout'
 import { NotFound } from 'pages/NotFound/NotFound'
-import { ShapeShift } from 'pages/ShapeShift/ShapeShift'
+import { Swap } from 'pages/Swap/Swap'
 import { Redirect, Route, Switch } from 'react-router-dom'
 
 import { generateAppRoutes, Route as NestedRoute } from './helpers'
 
 export const routes: Array<NestedRoute> = [
   {
-    path: '/shapeshift',
+    path: '/swap',
     label: 'navBar.assets',
-    main: <ShapeShift />,
+    main: <Swap />,
     icon: <AssetsIcon color='inherit' />,
     routes: [
       {
         path: '/:network/:address?',
         label: 'Asset Details',
-        main: <ShapeShift />
+        main: <Swap />
       }
     ]
   }
@@ -34,7 +34,7 @@ export const Routes = () => {
           </Route>
         )
       })}
-      <Redirect from='/' to='/shapeshift' />
+      <Redirect from='/' to='/swap' />
       <Route component={NotFound} />
     </Switch>
   )

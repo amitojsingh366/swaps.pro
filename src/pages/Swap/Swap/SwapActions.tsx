@@ -4,7 +4,7 @@ import { Text } from 'components/Text'
 import { Trade } from 'components/Trade/Trade'
 import {useWallet} from "../../../context/WalletProvider/WalletProvider";
 
-export const ShapeShiftActions = () => {
+export const SwapActions = () => {
   const { state } = useWallet()
   const {  } = state
 
