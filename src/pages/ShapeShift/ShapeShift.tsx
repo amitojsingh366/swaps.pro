@@ -3,7 +3,8 @@ import { Page } from 'components/Layout/Page'
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ShapeShiftActions } from './ShapeShiftCards/ShapeShiftActions'
-import {useWallet} from "../../context/WalletProvider/WalletProvider";
+import { useWallet } from "../../context/WalletProvider/WalletProvider";
+import { useBalances } from 'hooks/usePioneerSdk/usePioneerSdk'
 // import { AssetBalance } from './AssetCards/AssetBalance'
 // import { Rewards } from './AssetCards/Rewards'
 // import { AssetDetails } from './AssetDetails/AssetDetails'
@@ -15,22 +16,27 @@ export interface MatchParams {
 }
 
 export const ShapeShift = () => {
-  const { state, pioneer } = useWallet()
-  const { code, isConnected, username } = state
-  // const [loading, setLoading] = useState<boolean>(false)
-  let { network, address } = useParams<MatchParams>()
-  let loading = true
+  const { state } = useWallet()
+  const { username } = state
+  const { balances, loading } = useBalances()
 
 
   useEffect(() => {
-      //console.log("render: ",state)
+      console.log("balances: ",balances)
+      console.log("loading: ",loading)
       //console.log("username: ",username)
-  }, [network, address])
+  }, [balances, loading])
 
   if (!username)
     return (
         <Box d='flex' width='full' justifyContent='center' alignItems='center'>
-          <h2>Connect A wallet!</h2>
+          <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+          />
         </Box>
     )
 
