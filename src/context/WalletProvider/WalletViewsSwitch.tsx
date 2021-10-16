@@ -14,7 +14,7 @@ import React, { useEffect } from 'react'
 import { Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-router-dom'
 
 import { SUPPORTED_WALLETS } from './config'
-import { SelectModal } from './SelectModal'
+import { WalletSelectModal } from './WalletSelectModal'
 import { useWallet, WalletActions } from './WalletProvider'
 import { WalletViewProps } from './WalletViewsRouter'
 
@@ -75,7 +75,7 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
                     )
                   })}
 
-                <Route {...props} children={() => <SelectModal connect={props?.connect} />} />
+                <Route {...props} children={() => <WalletSelectModal connect={props?.connect} />} />
               </Switch>
             </SlideTransition>
           </AnimatePresence>

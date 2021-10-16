@@ -3,7 +3,7 @@ import { RawText } from 'components/Text'
 
 import { SUPPORTED_WALLETS } from './config'
 
-export const SelectModal = ({ connect }: { connect: (adapter: string) => Promise<void> }) => {
+export const WalletSelectModal = ({ connect }: { connect: (adapter: string) => Promise<void> }) => {
   return (
     <>
       <ModalHeader>Connect a wallet</ModalHeader>
