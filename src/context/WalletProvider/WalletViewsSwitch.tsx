@@ -61,7 +61,7 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
           <AnimatePresence exitBeforeEnter initial={false}>
             <SlideTransition key={location.key}>
               <Switch key={location.pathname} location={location}>
-                {props.type &&
+                {props?.type &&
                   SUPPORTED_WALLETS[props.type].routes.map((route, index) => {
                     const Component = route.component
                     return !Component ? null : (
@@ -75,7 +75,7 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
                     )
                   })}
 
-                <Route {...props} children={() => <SelectModal connect={props.connect} />} />
+                <Route {...props} children={() => <SelectModal connect={props?.connect} />} />
               </Switch>
             </SlideTransition>
           </AnimatePresence>

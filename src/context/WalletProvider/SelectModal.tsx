@@ -11,11 +11,14 @@ export const SelectModal = ({ connect }: { connect: (adapter: string) => Promise
         <RawText mb={6} color='gray.500'>
         </RawText>
         <Stack mb={6}>
-          {Object.keys(SUPPORTED_WALLETS).map(key => {
+          {Object.keys(SUPPORTED_WALLETS).map((key, i) => {
+            console.log("key:",key)
+            console.log("i:",i)
             const option = SUPPORTED_WALLETS[key]
+            // console.log("option:",option)
             return (
-              <>
-                  <small>type: {option.type}</small>
+              <div key={option.name}>
+                  <small>type: {option?.type}</small>
                   <Button
                   variant='ghost-filled'
                   colorScheme='blue'
@@ -28,22 +31,22 @@ export const SelectModal = ({ connect }: { connect: (adapter: string) => Promise
                   onClick={() => connect(key)}
                 >
                   <div>
-                      <Text fontWeight='semibold'>{option.name}</Text>
+                      <Text fontWeight='semibold'>{option?.name}</Text>
                   </div>
                   <div>
-                  {option.support ? (
-                      <small>{option.support.map((entry:any, i:any) => {
-                          return (<small>Supports: <br/><Image maxH={7} maxW={10} src={entry.icon} />{entry.name}</small>)
+                  {option?.support ? (
+                      <small>{option?.support.map((entry:any, i:any) => {
+                          return (<small key={i}>Supports: <br/><Image maxH={7} maxW={10} src={entry?.icon} />{entry?.name}</small>)
                       })}</small>
                   ) : (
                       <small></small>
                   )}
                   </div>
                       <div>
-                          <Image maxH={10} maxW={20} src={option.icon} />
+                          <Image maxH={10} maxW={20} src={option?.icon} />
                       </div>
                 </Button>
-              </>
+              </div>
             )
           })}
         </Stack>
