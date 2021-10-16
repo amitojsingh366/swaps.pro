@@ -220,128 +220,145 @@ export class PioneerService {
     if (!this.queryKey) {
       throw Error('Failed to init! missing queryKey')
     }
-    const config: any = {
-      network,
-      service: process.env.REACT_APP_PIONEER_SERVICE,
-      url: process.env.REACT_APP_APP_URL,
-      queryKey: this.queryKey,
-      wss: process.env.REACT_APP_URL_PIONEER_SOCKET,
-      spec: process.env.REACT_APP_URL_PIONEER_SPEC
-    }
-    if (this.username) {
-      config.username = this.username
-    }
-    console.log("config: ",config)
-    this.App = new SDK(config.spec, config)
-    //TODO get chains from api endpoint (auto enable new assets)
-    const seedChains = [
-      'bitcoin',
-      'ethereum',
-      'thorchain',
-      'bitcoincash',
-      'binance',
-      'litecoin',
-      'cosmos',
-      'osmosis'
-    ]
-    this.Api = await this.App.init(seedChains)
-
-    //TODO get api health
-
-    //TODO get api status
-    let statusResp = await this.Api.Status()
-    this.status = statusResp.data
-    console.log("status: ",this.status)
-
-    this.isInitialized = true
-
-    // Sub to events
-    try {
-      this.events = await this.App.startSocket()
-    } catch (e) {
-      // delete keypair (force repair)
-      localStorage.removeItem('username')
-      localStorage.removeItem('queryKey')
-    }
-
-    // handle events
-    this.events.on('message', async (event: any) => {
-      //console.log('message:', event)
-      if (event.paired && event.username) {
-        this.username = event.username
-        if (this.username != null) {
-          localStorage.setItem('username', this.username)
-        }
+    if(!this.isInitialized) {
+      this.isInitialized = true
+      const config: any = {
+        network,
+        service: process.env.REACT_APP_PIONEER_SERVICE,
+        url: process.env.REACT_APP_APP_URL,
+        queryKey: this.queryKey,
+        wss: process.env.REACT_APP_URL_PIONEER_SOCKET,
+        spec: process.env.REACT_APP_URL_PIONEER_SPEC
       }
-      if (event.type === 'context') {
-        //console.log('Switching context!:', event)
-        this.context = event.context
-        await this.App.setContext(event.context)
-        await this.onPair()
-      }
-    })
-
-    const info = await this.App.getUserInfo()
-    this.balances = info.balances
-    //console.log('INFO: ', info)
-    if (!info || info.error) {
       if (this.username) {
+        config.username = this.username
+      }
+      console.log("config: ",config)
+      this.App = new SDK(config.spec, config)
+      //TODO get chains from api endpoint (auto enable new assets)
+      const seedChains = [
+        'bitcoin',
+        'ethereum',
+        'thorchain',
+        'bitcoincash',
+        'binance',
+        'litecoin',
+        'cosmos',
+        'osmosis'
+      ]
+      this.Api = await this.App.init(seedChains)
+
+      //TODO get api health
+
+      //TODO get api status
+      let statusResp = await this.Api.Status()
+      this.status = statusResp.data
+      console.log("status: ",this.status)
+
+      // Sub to events
+      try {
+        this.events = await this.App.startSocket()
+      } catch (e) {
         // delete keypair (force repair)
         localStorage.removeItem('username')
         localStorage.removeItem('queryKey')
       }
-      // not paired
-      const response = await this.App.createPairingCode()
-      if (!response.code) {
-        throw Error('102: invalid response! createPairingCode')
-      }
-      this.pairingCode = response.code
 
-      //console.log('pairingCode: ', this.pairingCode)
-      return {
-        status: 'App Not Paired!',
-        paired: false,
-        code: this.pairingCode
-      }
-    } else {
-      this.context = info.context
-      this.valueUsdContext = info.valueUsdContext
-      this.walletsIds = info.wallets
-      this.wallets = info.walletDescriptions
-      this.walletDescriptions = info.walletDescriptions
-      this.totalValueUsd = info.totalValueUsd
-      this.username = info.username
-
-      // set context info
-      let contextInfo = info.walletDescriptions.filter(
-        (e: { context: string | undefined }) => e.context === this.context
-      )
-      contextInfo = contextInfo[0]
-      this.valueUsdContext = contextInfo.valueUsdContext
-
-      if (this.username != null) {
-        localStorage.setItem('username', this.username)
-      }
-      this.user = await this.App.getUserParams()
-      //console.log('userParams: ', this.user)
-      /*
-       */
-      //set context
-      if (contextInfo) {
-        // this.assetContext = 'ATOM'
-        // this.assetBalanceNativeContext = contextInfo.balances[this.assetContext]
-        // this.assetBalanceUsdValueContext = contextInfo.values[this.assetContext]
-      }
-
-      this.events.emit('context', {
-        context: this.context,
-        //valueUsdContext: this.user.valueUsdContext,
-        assetContext: this.assetContext,
-        assetBalanceNativeContext: this.assetBalanceNativeContext,
-        assetBalanceUsdValueContext: this.assetBalanceUsdValueContext
+      // handle events
+      this.events.on('message', async (event: any) => {
+        //console.log('message:', event)
+        if (event.paired && event.username) {
+          this.username = event.username
+          if (this.username != null) {
+            localStorage.setItem('username', this.username)
+          }
+        }
+        if (event.type === 'context') {
+          //console.log('Switching context!:', event)
+          this.context = event.context
+          await this.App.setContext(event.context)
+          await this.onPair()
+        }
       })
 
-      //TODO use x-chain User() class (x-chain compatiblity)?
+      const info = await this.App.getUserInfo()
+      this.balances = info.balances
+      //console.log('INFO: ', info)
+      if (!info || info.error) {
+        if (this.username) {
+          // delete keypair (force repair)
+          localStorage.removeItem('username')
+          localStorage.removeItem('queryKey')
+        }
+        // not paired
+        const response = await this.App.createPairingCode()
+        if (!response.code) {
+          throw Error('102: invalid response! createPairingCode')
+        }
+        this.pairingCode = response.code
+
+        //console.log('pairingCode: ', this.pairingCode)
+        return {
+          status: 'App Not Paired!',
+          paired: false,
+          code: this.pairingCode
+        }
+      } else {
+        this.context = info.context
+        this.valueUsdContext = info.valueUsdContext
+        this.walletsIds = info.wallets
+        this.wallets = info.walletDescriptions
+        this.walletDescriptions = info.walletDescriptions
+        this.totalValueUsd = info.totalValueUsd
+        this.username = info.username
+
+        // set context info
+        let contextInfo = info.walletDescriptions.filter(
+            (e: { context: string | undefined }) => e.context === this.context
+        )
+        contextInfo = contextInfo[0]
+        this.valueUsdContext = contextInfo.valueUsdContext
+
+        if (this.username != null) {
+          localStorage.setItem('username', this.username)
+        }
+        this.user = await this.App.getUserParams()
+        //console.log('userParams: ', this.user)
+        /*
+         */
+        //set context
+        if (contextInfo) {
+          // this.assetContext = 'ATOM'
+          // this.assetBalanceNativeContext = contextInfo.balances[this.assetContext]
+          // this.assetBalanceUsdValueContext = contextInfo.values[this.assetContext]
+        }
+
+        this.events.emit('context', {
+          context: this.context,
+          //valueUsdContext: this.user.valueUsdContext,
+          assetContext: this.assetContext,
+          assetBalanceNativeContext: this.assetBalanceNativeContext,
+          assetBalanceUsdValueContext: this.assetBalanceUsdValueContext
+        })
+
+        //TODO use x-chain User() class (x-chain compatiblity)?
+        return {
+          status: 'Online',
+          paired: true,
+          assetContext: this.assetContext,
+          assetBalanceNativeContext: this.assetBalanceNativeContext,
+          assetBalanceUsdValueContext: this.assetBalanceUsdValueContext,
+          username: this.username,
+          context: this.context,
+          wallets: this.wallets,
+          balances: this.balances,
+          walletsIds: this.walletsIds,
+          valueUsdContext: this.valueUsdContext,
+          totalValueUsd: this.totalValueUsd
+        }
+      }
+    }else{
+      console.log("Already initialized!")
       return {
         status: 'Online',
         paired: true,

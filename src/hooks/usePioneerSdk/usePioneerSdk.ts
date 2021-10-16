@@ -33,13 +33,13 @@ export const pioneer = (): PioneerReturnType => {
 
     const onStartSdk = useCallback(async () => {
         console.log("SDK onStart")
-        //
-        // let initResult = await pioneer.init()
-        // setLoading(false)
-        // console.log("initResult: ",initResult)
-        // if (initResult && initResult.code) {
-        //     //set code to state
-        // }
+
+        let initResult = await pioneer.init()
+        setLoading(false)
+        console.log("initResult: ",initResult)
+        if (initResult && initResult.code) {
+            //set code to state
+        }
 
 
     }, []) //this should only run once on startup
@@ -49,8 +49,8 @@ export const pioneer = (): PioneerReturnType => {
             ;(async () => {
                 try {
                     setLoading(true)
-                    const initResult = await pioneer.init()
-                    console.log("initResult: ",initResult)
+                    // const initResult = await pioneer.init()
+                    // console.log("initResult: ",initResult)
                 } catch (error) {
                     setError(error)
                 } finally {
@@ -60,7 +60,7 @@ export const pioneer = (): PioneerReturnType => {
         }
         // Here we rely on the deviceId vs the wallet class
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [getBalances])
+    }, [onStartSdk])
 
     return {
         onStartSdk,
