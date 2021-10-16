@@ -7,7 +7,6 @@ import {
   ModalContent,
   ModalOverlay
 } from '@chakra-ui/react'
-import { NativeHDWallet } from '@shapeshiftoss/hdwallet-native'
 import { SlideTransition } from 'components/SlideTransition'
 import { AnimatePresence } from 'framer-motion'
 import React, { useEffect } from 'react'
@@ -17,6 +16,9 @@ import { SUPPORTED_WALLETS } from './config'
 import { WalletSelectModal } from './WalletSelectModal'
 import { useWallet, WalletActions } from './WalletProvider'
 import { WalletViewProps } from './WalletViewsRouter'
+
+//Select
+import { Select } from './AssetSelect/Select'
 
 export const WalletViewsSwitch = (props: WalletViewProps) => {
   const history = useHistory()
@@ -74,7 +76,13 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
                       />
                     )
                   })}
-
+                  <Route
+                      exact
+                      key='selectAsset'
+                      path='/AssetSelect/Select'
+                      render={routeProps => <Select {...props} {...routeProps} />}
+                      {...props}
+                  />
                 <Route {...props} children={() => <WalletSelectModal connect={props?.connect} />} />
               </Switch>
             </SlideTransition>
