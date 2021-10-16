@@ -12,10 +12,7 @@ export const SelectModal = ({ connect }: { connect: (adapter: string) => Promise
         </RawText>
         <Stack mb={6}>
           {Object.keys(SUPPORTED_WALLETS).map((key, i) => {
-            console.log("key:",key)
-            console.log("i:",i)
             const option = SUPPORTED_WALLETS[key]
-            // console.log("option:",option)
             return (
               <div key={option.name}>
                   <small>type: {option?.type}</small>

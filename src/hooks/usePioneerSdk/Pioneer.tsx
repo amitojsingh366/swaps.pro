@@ -222,11 +222,11 @@ export class PioneerService {
     }
     const config: any = {
       network,
-      service: process.env.PIONEER_SERVICE,
-      url: process.env.APP_URL,
+      service: process.env.REACT_APP_PIONEER_SERVICE,
+      url: process.env.REACT_APP_APP_URL,
       queryKey: this.queryKey,
-      wss: process.env.URL_PIONEER_SOCKET,
-      spec: process.env.URL_PIONEER_SPEC
+      wss: process.env.REACT_APP_URL_PIONEER_SOCKET,
+      spec: process.env.REACT_APP_URL_PIONEER_SPEC
     }
     if (this.username) {
       config.username = this.username

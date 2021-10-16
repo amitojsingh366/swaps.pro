@@ -27,7 +27,7 @@ export const Swap = () => {
       //console.log("username: ",username)
   }, [balances, loading])
 
-  if (!username)
+  if (loading)
     return (
         <Box d='flex' width='full' justifyContent='center' alignItems='center'>
           <Spinner
