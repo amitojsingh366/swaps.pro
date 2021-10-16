@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { SwapActions } from './Swap/SwapActions'
 import { useWallet } from "context/WalletProvider/WalletProvider";
-import { pioneer } from 'hooks/usePioneerSdk/usePioneerSdk'
 // import { AssetBalance } from './AssetCards/AssetBalance'
 // import { Rewards } from './AssetCards/Rewards'
 // import { AssetDetails } from './AssetDetails/AssetDetails'
@@ -18,16 +17,15 @@ export interface MatchParams {
 export const Swap = () => {
   const { state } = useWallet()
   const { username } = state
-  const { balances, loading } = pioneer()
 
 
-  useEffect(() => {
-      console.log("balances: ",balances)
-      console.log("loading: ",loading)
-      //console.log("username: ",username)
-  }, [balances, loading])
+  // useEffect(() => {
+  //     console.log("balances: ",balances)
+  //     console.log("loading: ",loading)
+  //     //console.log("username: ",username)
+  // }, [balances, loading])
 
-  if (loading)
+  if (!username)
     return (
         <Box d='flex' width='full' justifyContent='center' alignItems='center'>
           <Spinner
