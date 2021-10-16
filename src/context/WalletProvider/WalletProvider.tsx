@@ -119,7 +119,7 @@ const initialState: InitialState = {
 }
 
 export interface IWalletContext {
-  setRoutePath: string
+  setRoutePath: any
   state: InitialState
   username: string | null
   assetContext: string | null

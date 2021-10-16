@@ -51,8 +51,13 @@ const WalletImage: React.FC<WalletImageProps> = ({ isConnected, walletInfo }) =>
   ) : null
 
 export const WalletButton: FC<FlexProps> = () => {
-  const { state, dispatch, disconnect } = useWallet()
+  const { state, dispatch, disconnect, setRoutePath } = useWallet()
   const { isConnected, walletInfo, username, context } = state
+
+  const openWalletConnect = function(){
+    setRoutePath('/')
+    dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+  }
 
   return !username ? (
     <Button
@@ -92,7 +97,7 @@ export const WalletButton: FC<FlexProps> = () => {
                       <RepeatIcon />
                     </Circle>
                   }
-                  onClick={() => dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })}
+                  onClick={openWalletConnect}
                 >
                   Switch Wallet Provider
                 </MenuItem>

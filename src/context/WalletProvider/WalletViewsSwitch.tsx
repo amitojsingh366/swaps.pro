@@ -24,10 +24,11 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
   const history = useHistory()
   const location = useLocation()
   const match = useRouteMatch('/')
-  const { dispatch } = useWallet()
+  const { dispatch, setRoutePath } = useWallet()
 
   const onClose = () => {
-    history.replace('/')
+    //history.replace('/')
+    setRoutePath('/')
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
   }
 
@@ -39,7 +40,7 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
     if (props.routePath) {
       history.push(props.routePath as string)
     }
-  }, [history, props.routePath])
+  }, [history, props.routePath, dispatch])
 
   return (
     <>

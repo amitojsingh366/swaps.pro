@@ -51,7 +51,7 @@ export const TradeInput = ({ history }: RouterProps) => {
   } = useLocaleFormatter({ fiatType: 'USD' })
 
   const onSubmit = () => {
-    history.push('/trade/confirm')
+    history.push('/AssetSelect/Select')
   }
 
   const onMax = () => {
