@@ -25,6 +25,8 @@ export const routes: Array<NestedRoute> = [
 const appRoutes = generateAppRoutes(routes)
 
 export const Routes = () => {
+
+  //TODO loading?
   return (
     <Switch>
       {appRoutes.map((route, index) => {
