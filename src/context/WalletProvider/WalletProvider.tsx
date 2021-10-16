@@ -3,7 +3,7 @@ import { Keyring } from '@shapeshiftoss/hdwallet-core'
 import { Web3Provider } from '@ethersproject/providers'
 import { API as OnboardAPI, Wallet } from 'bnc-onboard/dist/src/interfaces'
 import { getLibrary, initOnboard } from 'lib/onboard'
-const Datastore = require('nedb-promises')
+import { PioneerService } from './Pioneer'
 
 import React, {
   createContext,
@@ -17,6 +17,7 @@ import { useState } from 'react'
 
 import { SUPPORTED_WALLETS } from './config'
 import { WalletViewsRouter } from './WalletViewsRouter'
+const Datastore = require('nedb-promises')
 
 //TODO expand networks
 const SUPPORTED_NETWORKS = [1]
@@ -236,6 +237,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   const [routePath, setRoutePath] = useState<string | readonly string[] | undefined>()
   let assetContext: string = "ETH"
   let onboard: OnboardAPI
+  let pioneer: any
   // const pioneer = new PioneerService()
   let db = Datastore.create('/path/to/db.db')
   db.ensureIndex({fieldName:"test"})
@@ -250,7 +252,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         //dispatch({ type: WalletActions.SELECT_MODAL, payload: false })
         try {
           //set asset context
-
           // pioneer.setAssetContext(ASSET)
           //dispatch?
           return true
@@ -311,98 +312,99 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
     }
   }, [state?.onboard])
 
-  // const onStartPioneer = async function(){
-  //   try{
-  //
-  //     console.log("state init: ",state.isInitPioneer)
-  //     if(!state.isInitPioneer){
-  //       console.log("CHECKPOINT PIONEER")
-  //       dispatch({ type: WalletActions.INIT_PIONEER, payload: true })
-  //       console.log("state init2: ",state.isInitPioneer)
-  //       //onboard
-  //       let lastConnect = window.localStorage.getItem('selectedWallet')
-  //       console.log('lastConnect: ', lastConnect)
-  //       //only start once!
-  //       isPioneerStarted = true
-  //       let initResult = await pioneer.init()
-  //
-  //       //pioneer status
-  //       let status = await pioneer.getStatus()
-  //       console.log("status: ",status)
-  //       dispatch({ type: WalletActions.SET_STATUS, payload: status?.thorchain })
-  //       dispatch({ type: WalletActions.SET_EXCHANGE_INFO, payload: status?.exchanges })
-  //       console.log('status: ', status)
-  //
-  //       console.log('Pioneer initResult: ', initResult)
-  //       dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-  //       //pairing code
-  //       if (initResult && initResult.code) {
-  //         console.log('wallet not paired! code: ', initResult.code)
-  //         //set code
-  //         dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
-  //
-  //         //open modal
-  //         const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
-  //         console.log("previouslySelectedWallet: ",previouslySelectedWallet)
-  //         if (previouslySelectedWallet && onboard) {
-  //           console.log("previouslySelectedWallet: CHECKPOINT1")
-  //           //connectPrevious(previouslySelectedWallet)
-  //         } else {
-  //           console.log("previouslySelectedWallet: CHECKPOINT1 fail")
-  //         }
-  //       } else if (initResult) {
-  //         //get user info
-  //         //let userInfo = await pioneer.refresh()
-  //         // console.log('userInfo: ', userInfo)
-  //         username = initResult.username
-  //         let context:any = initResult.context
-  //         assetContext = initResult.assetContext
-  //         setUsername(initResult.username)
-  //
-  //         dispatch({ type: WalletActions.SET_ASSET_CONTEXT, asset:'ETH' })
-  //
-  //         //TODO use remote context asset
-  //         //get first ETH symbol in balances
-  //         console.log("initResult.balances: ",initResult)
-  //         if(initResult.balances){
-  //           let ETHbalance = initResult.balances.filter((balance:any) => balance.symbol === 'ETH')[0]
-  //           console.log("ETHbalance: ",ETHbalance)
-  //         }
-  //
-  //
-  //         dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
-  //         dispatch({ type: WalletActions.SET_CONTEXT, payload:context })
-  //         dispatch({ type: WalletActions.SET_USERNAME, username })
-  //         dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
-  //         dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-  //       }
-  //       /*
-  //         Pioneer events
-  //       * */
-  //       pioneer.events.on('message', async (event: any) => {
-  //         //console.log('pioneer event: ', event)
-  //         switch (event.type) {
-  //           case 'context':
-  //             // code block
-  //             break
-  //           case 'pairing':
-  //             //console.log('pairing event!: ', event.username)
-  //             dispatch({ type: WalletActions.SET_USERNAME, username: initResult.username })
-  //             dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
-  //             dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-  //             dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-  //             break
-  //           default:
-  //             console.error(' message unknown type:',event)
-  //         }
-  //       })
-  //     } else {
-  //       console.log("ALREADY INIT PIONEER!")
-  //     }
-  //   }catch(e){
-  //     console.error(e)
-  //   }
-  // }
+  const onStartPioneer = async function(){
+    try{
+
+      console.log("state init: ",state.isInitPioneer)
+      if(!state.isInitPioneer){
+        console.log("CHECKPOINT PIONEER")
+        dispatch({ type: WalletActions.INIT_PIONEER, payload: true })
+        console.log("state init2: ",state.isInitPioneer)
+        //onboard
+        let lastConnect = window.localStorage.getItem('selectedWallet')
+        console.log('lastConnect: ', lastConnect)
+        //only start once!
+        isPioneerStarted = true
+        pioneer = new PioneerService()
+        let initResult = await pioneer.init()
+
+        //pioneer status
+        let status = await pioneer.getStatus()
+        console.log("status: ",status)
+        dispatch({ type: WalletActions.SET_STATUS, payload: status?.thorchain })
+        dispatch({ type: WalletActions.SET_EXCHANGE_INFO, payload: status?.exchanges })
+        console.log('status: ', status)
+
+        console.log('Pioneer initResult: ', initResult)
+        dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+        //pairing code
+        if (initResult && initResult.code) {
+          console.log('wallet not paired! code: ', initResult.code)
+          //set code
+          dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
+
+          //open modal
+          const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
+          console.log("previouslySelectedWallet: ",previouslySelectedWallet)
+          if (previouslySelectedWallet && onboard) {
+            console.log("previouslySelectedWallet: CHECKPOINT1")
+            //connectPrevious(previouslySelectedWallet)
+          } else {
+            console.log("previouslySelectedWallet: CHECKPOINT1 fail")
+          }
+        } else if (initResult) {
+          //get user info
+          //let userInfo = await pioneer.refresh()
+          // console.log('userInfo: ', userInfo)
+          username = initResult.username
+          let context:any = initResult.context
+          assetContext = initResult.assetContext
+          setUsername(initResult.username)
+
+          dispatch({ type: WalletActions.SET_ASSET_CONTEXT, asset:'ETH' })
+
+          //TODO use remote context asset
+          //get first ETH symbol in balances
+          console.log("initResult.balances: ",initResult)
+          if(initResult.balances){
+            let ETHbalance = initResult.balances.filter((balance:any) => balance.symbol === 'ETH')[0]
+            console.log("ETHbalance: ",ETHbalance)
+          }
+
+
+          dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
+          dispatch({ type: WalletActions.SET_CONTEXT, payload:context })
+          dispatch({ type: WalletActions.SET_USERNAME, username })
+          dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
+          dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+        }
+        /*
+          Pioneer events
+        * */
+        pioneer.events.on('message', async (event: any) => {
+          //console.log('pioneer event: ', event)
+          switch (event.type) {
+            case 'context':
+              // code block
+              break
+            case 'pairing':
+              //console.log('pairing event!: ', event.username)
+              dispatch({ type: WalletActions.SET_USERNAME, username: initResult.username })
+              dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
+              dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+              dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+              break
+            default:
+              console.error(' message unknown type:',event)
+          }
+        })
+      } else {
+        console.log("ALREADY INIT PIONEER!")
+      }
+    }catch(e){
+      console.error(e)
+    }
+  }
 
   // const onStartOnboard = async function(){
   //   try{
@@ -507,8 +509,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       // console.log("currentDb: ",currentDb)
 
       //isStarted = true
-      // await onStartPioneer()
-      // await onStartOnboard()
+      await onStartPioneer()
+      //await onStartOnboard()
     }catch(e){
       console.error(e)
     }
