@@ -19,6 +19,8 @@ import NumberFormat from 'react-number-format'
 import { RouterProps } from 'react-router-dom'
 import {useWallet, WalletActions} from "../../context/WalletProvider/WalletProvider";
 import { useModal } from 'context/ModalProvider/ModalProvider'
+import {SUPPORTED_WALLETS} from "../../context/WalletProvider/config";
+import {useState} from "react";
 
 const FiatInput = (props: InputProps) => (
   <Input
@@ -33,7 +35,7 @@ const FiatInput = (props: InputProps) => (
 )
 
 export const TradeInput = ({ history }: RouterProps) => {
-  const { state, dispatch } = useWallet()
+  const { state, dispatch, setRoutePath } = useWallet()
   const { status } = state
   const { open } = useModal()
 
@@ -69,6 +71,7 @@ export const TradeInput = ({ history }: RouterProps) => {
     //Open Select modal.
     console.log("onSelectModal called!")
     //open('select')
+    setRoutePath('/AssetSelect/Select')
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     //dispatch({ type: WalletActions.SET_SELECT_MODAL, payload: true })
   }

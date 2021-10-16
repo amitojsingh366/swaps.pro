@@ -119,6 +119,7 @@ const initialState: InitialState = {
 }
 
 export interface IWalletContext {
+  setRoutePath: string
   state: InitialState
   username: string | null
   assetContext: string | null
@@ -522,8 +523,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   //end
   const value: IWalletContext = useMemo(
-    () => ({ state, username, assetContext, dispatch, connect, disconnect, setAssetContext }),
-    [state, username, assetContext, connect, disconnect, setAssetContext]
+    () => ({ state, setRoutePath, username, assetContext, dispatch, connect, disconnect, setAssetContext }),
+    [state, setRoutePath, username, assetContext, connect, disconnect, setAssetContext]
   )
 
   return (
@@ -532,6 +533,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       <WalletViewsRouter
         connect={connect}
         modalOpen={state.modal}
+        modalSelectOpen={state.modalSelect}
         type={type}
         routePath={routePath}
       />

@@ -6,6 +6,7 @@ import { WalletViewsSwitch } from './WalletViewsSwitch'
 export type WalletViewProps = {
   type: string | null
   modalOpen: boolean
+  modalSelectOpen: boolean
   connect: (adapter: string) => Promise<void>
   routePath?: string | readonly string[] | undefined
 }
