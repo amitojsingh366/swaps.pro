@@ -1,35 +1,26 @@
 
-import { useCallback, useEffect, useState } from 'react'
-import { useWallet } from 'context/WalletProvider/WalletProvider'
-import { PioneerService } from './Pioneer'
-const Pioneer = new PioneerService()
+import {useCallback, useEffect, useReducer, useState} from 'react'
 
 type PioneerReturnType = {
     balances: any
     error?: Error | unknown
     loading: boolean
     onStartSdk: any
+    onRegister: any
 }
 
 export const pioneer = (): PioneerReturnType => {
     const [error, setError] = useState<Error | unknown>()
     const [loading, setLoading] = useState<boolean>(true)
 
-    // const {
-    //     state: { wallet, walletInfo }
-    // } = useWallet()
     let balances = [
         {
             foo:"bar"
         }
     ]
-    const getBalances = useCallback(async () => {
-        if (true) {
-            //register?
-            console.log("getBalances: ")
-        } else {
-            console.log("Missing Wallet ")
-        }
+    const onRegister = useCallback(async () => {
+        console.log("onRegister: ")
+
     }, [])
 
     const onStartSdk = useCallback(async () => {
@@ -52,15 +43,16 @@ export const pioneer = (): PioneerReturnType => {
                     setLoading(true)
                     console.log("SDK onStart")
 
-                    let initResult = await Pioneer.init()
-                    setLoading(false)
-                    console.log("initResult: ",initResult)
-                    if (initResult && initResult.code) {
-                        //set code to state
-                        console.log("SDK need to pair")
-                    } else {
-                        console.log("SDK already paired")
-                    }
+                    // let initResult = await Pioneer.init()
+                    // console.log("initResult: ",initResult)
+                    // if (initResult && initResult.code) {
+                    //     //set code to state
+                    //     console.log("SDK need to pair")
+                    //     // dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
+                    // } else {
+                    //     console.log("SDK already paired")
+                    //     setLoading(false)
+                    // }
 
                 } catch (error) {
                     setError(error)
@@ -69,12 +61,11 @@ export const pioneer = (): PioneerReturnType => {
                 }
             })()
         }
-        // Here we rely on the deviceId vs the wallet class
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, []) // only run once
 
     return {
         onStartSdk,
+        onRegister,
         balances,
         error,
         loading
