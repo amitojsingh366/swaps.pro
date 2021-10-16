@@ -23,11 +23,11 @@ export function AppProviders({ children }: ProvidersProps) {
         <ColorModeScript />
         <BrowserRouter>
           <I18n locale={locale} messages={messages}>
-            <ModalProvider>
-              <WalletProvider>
-                {children}
-              </WalletProvider>
-            </ModalProvider>
+            <WalletProvider>
+              <ModalProvider>
+                  {children}
+              </ModalProvider>
+            </WalletProvider>
           </I18n>
         </BrowserRouter>
       </ChakraProvider>

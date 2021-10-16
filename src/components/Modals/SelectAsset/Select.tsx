@@ -58,9 +58,9 @@ export const Select = () => {
             console.log("FINAL BALANCES: ",balances)
             data.tokens = balances
             // const sorted = sortBy(data?.tokens, ['name', 'symbol'])
-            console.log("exchangeInfo.assets: ",exchangeInfo.assets)
-            const sorted = balances.filter((entry: { symbol: any }) => exchangeInfo.assets.indexOf(entry.symbol) > -1);
-            console.log("sorted: ",exchangeInfo.assets)
+            console.log("exchangeInfo.assets: ",exchangeInfo?.assets)
+            const sorted = balances?.filter((entry: { symbol: any }) => exchangeInfo?.assets.indexOf(entry?.symbol) > -1);
+            console.log("sorted: ",exchangeInfo?.assets)
             setSortedAssets(sorted)
         } catch (e) {
             console.warn(e)

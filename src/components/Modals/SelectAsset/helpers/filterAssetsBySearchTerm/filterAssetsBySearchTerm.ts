@@ -11,7 +11,7 @@ export const filterAssetsBySearchTerm = (search: string, assets: SwapCurrency[])
   const searchLower = search.toLowerCase()
 
   if (isAddress(search)) {
-    return assets.filter(asset => asset?.address?.toLowerCase() === searchLower)
+    return assets?.filter(asset => asset?.address?.toLowerCase() === searchLower)
   }
 
   return matchSorter(assets, search, { keys: ['name', 'symbol'] })
