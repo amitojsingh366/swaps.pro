@@ -23,10 +23,10 @@ import {useWallet, WalletActions} from "../../../context/WalletProvider/WalletPr
 import { AssetList } from './AssetList'
 import {useCallback, useEffect, useMemo, useState} from "react";
 import sortBy from "lodash/sortBy";
-import {SwapCurrency} from "@shapeshiftoss/market-service";
-import {useForm} from "react-hook-form";
-import {filterAssetsBySearchTerm} from "./helpers/filterAssetsBySearchTerm/filterAssetsBySearchTerm";
-import {AssetIcon} from "../../AssetIcon";
+import { SwapCurrency } from "@shapeshiftoss/market-service";
+import { useForm } from "react-hook-form";
+import { filterAssetsBySearchTerm } from "./helpers/filterAssetsBySearchTerm/filterAssetsBySearchTerm";
+import { AssetIcon } from "../../AssetIcon";
 
 export const Select = () => {
     const { state, dispatch } = useWallet()

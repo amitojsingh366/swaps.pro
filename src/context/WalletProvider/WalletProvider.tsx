@@ -460,25 +460,25 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             console.log("Onboard state: FINAL ", pairWalletOnboard)
             if (pairWalletOnboard.name && pairWalletOnboard.address) {
               console.log("&&& CHECKPOINT register wallet: ")
-              // let resultRegister = await pioneer.registerWallet(pairWalletOnboard)
-              // console.log("&&& resultRegister: ", resultRegister)
-              // if (pioneer.balances) {
-              //   //TODO dispatch balances
-              //   console.log("** pioneer.balances: ", pioneer.balances)
-              //   dispatch({type: WalletActions.SET_BALANCES, payload: pioneer.balances})
-              // }
-              // if (pioneer.username) {
-              //   dispatch({type: WalletActions.SET_USERNAME, username: 'metamask'})
-              // }
-              //
-              // dispatch({type: WalletActions.SET_PIONEER, pioneer: pioneer})
-              // dispatch({type: WalletActions.SET_WALLET_INFO, payload: {name: 'pioneer', icon: 'Pioneer'}})
-              //
-              // //console.log("Onboard state: ",state.onboard.getState())
-              // //console.log("Onboard state: ",state)
-              // dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-              // dispatch({type: WalletActions.SET_ACTIVE, payload: true})
-              // dispatch({type: WalletActions.SET_IS_CONNECTED, payload: true})
+              let resultRegister = await pioneer.registerWallet(pairWalletOnboard)
+              console.log("&&& resultRegister: ", resultRegister)
+              if (pioneer.balances) {
+                //TODO dispatch balances
+                console.log("** pioneer.balances: ", pioneer.balances)
+                dispatch({type: WalletActions.SET_BALANCES, payload: pioneer.balances})
+              }
+              if (pioneer.username) {
+                dispatch({type: WalletActions.SET_USERNAME, username: 'metamask'})
+              }
+
+              dispatch({type: WalletActions.SET_PIONEER, pioneer: pioneer})
+              dispatch({type: WalletActions.SET_WALLET_INFO, payload: {name: 'pioneer', icon: 'Pioneer'}})
+
+              //console.log("Onboard state: ",state.onboard.getState())
+              //console.log("Onboard state: ",state)
+              dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+              dispatch({type: WalletActions.SET_ACTIVE, payload: true})
+              dispatch({type: WalletActions.SET_IS_CONNECTED, payload: true})
             } else {
               console.error("Failed to start onboard! bad wallet info! info: ",pairWalletOnboard)
             }
@@ -510,8 +510,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       console.log("currentDb: ",currentDb)
 
       //isStarted = true
-      // await onStartPioneer()
-      // await onStartOnboard()
+      await onStartPioneer()
+      await onStartOnboard()
     }catch(e){
       console.error(e)
     }
