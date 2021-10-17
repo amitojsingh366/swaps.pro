@@ -97,12 +97,12 @@ export const TradeInput = ({ history }: RouterProps) => {
       console.log("balances: ",balances)
       console.log("assetContext: ",assetContext)
       if(balances){
-        let ETHbalance = balances.filter((balance:any) => balance.symbol === 'ETH')[0]
-        console.log("ETHbalance: ",ETHbalance)
-        setValue('sellAsset.currency',ETHbalance)
-        setValue('sellAsset.amount',ETHbalance.balance)
-        setValue('fiatAmount',ETHbalance.valueUsd)
-        console.log("amountUsd: ",ETHbalance.valueUsd)
+        let balance = balances.filter((balance:any) => balance.symbol === assetContext)[0]
+        console.log("balance: ",balance)
+        setValue('sellAsset.currency',balance)
+        setValue('sellAsset.amount',balance.balance)
+        setValue('fiatAmount',balance.valueUsd)
+        console.log("amountUsd: ",balance.valueUsd)
       }
     }catch(e){
       console.error(e)
@@ -111,7 +111,7 @@ export const TradeInput = ({ history }: RouterProps) => {
 
   useEffect(() => {
     onStart()
-  }, [balances]) // we explicitly only want this to happen once
+  }, [balances, assetContext]) // we explicitly only want this to happen once
 
   return (
     <SlideTransition>

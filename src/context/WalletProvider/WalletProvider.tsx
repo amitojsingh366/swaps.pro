@@ -75,7 +75,7 @@ export interface InitialState {
   pioneer: any
   code: any
   username: any
-  assetContext: string | null
+  assetContext: any
   invocationContext: string | null
   context: string | null
   exchangeContext: string | null
@@ -106,7 +106,7 @@ const initialState: InitialState = {
   pioneer: null,
   code: null,
   username: null,
-  assetContext: "ETH",
+  assetContext: null,
   exchangeContext: null,
   invocationContext: null,
   context: null,
@@ -135,7 +135,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_USERNAME; username: String | null }
   | { type: WalletActions.SET_TRADE_INPUT; payload: any }
   | { type: WalletActions.SET_TRADE_OUTPUT; payload: any }
-  | { type: WalletActions.SET_ASSET_CONTEXT; asset: String | null }
+  | { type: WalletActions.SET_ASSET_CONTEXT; payload: String | null }
   | { type: WalletActions.SET_WALLET_CONTEXT; context: String | null }
   | { type: WalletActions.SET_WALLET_INFO; payload: { name: string; icon: string } }
   | { type: WalletActions.SET_EXCHANGE_INFO; payload: any }
@@ -200,6 +200,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, totalValueUsd: action.payload }
     case WalletActions.SET_IS_CONNECTED:
       return { ...state, isConnected: action.payload }
+    case WalletActions.SET_ASSET_CONTEXT:
+      return { ...state, assetContext: action.payload }
     case WalletActions.SET_WALLET_MODAL:
       return { ...state, modal: action.payload }
     case WalletActions.SET_TRADE_INPUT:
@@ -357,7 +359,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           let context:any = initResult.context
           setUsername(initResult.username)
 
-          dispatch({ type: WalletActions.SET_ASSET_CONTEXT, asset:'ETH' })
+          dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
 
           //TODO use remote context asset
           //get first ETH symbol in balances
@@ -470,7 +472,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
               if (pioneer.username) {
                 dispatch({type: WalletActions.SET_USERNAME, username: 'metamask'})
               }
-              dispatch({ type: WalletActions.SET_ASSET_CONTEXT, asset:'ETH' })
+              dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
               dispatch({type: WalletActions.SET_PIONEER, pioneer: pioneer})
               dispatch({type: WalletActions.SET_WALLET_INFO, payload: {name: 'pioneer', icon: 'Pioneer'}})
 

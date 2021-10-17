@@ -35,7 +35,8 @@ export const Select = ({ }: any) => {
 
     const onSelectAsset = function(asset:string){
         console.log("onSelectAsset: ",asset)
-        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, asset })
+        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:asset })
+        dispatch({ type: WalletActions.SET_WALLET_MODAL, payload:false })
         // //close modal
         // modal.close('select')
     }
