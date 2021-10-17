@@ -1,7 +1,11 @@
-import {ModalBody, ModalHeader, Stack, Button, Image, useClipboard} from '@chakra-ui/react'
+import {ModalBody, ModalHeader, Stack, Button, Image, useClipboard, ModalContent} from '@chakra-ui/react'
 import { RawText } from 'components/Text'
-import { useWallet } from 'context/WalletProvider/WalletProvider'
+import {useWallet, WalletProvider} from 'context/WalletProvider/WalletProvider'
 import React, {useEffect} from 'react'
+import {MemoryRouter, Route, Switch} from "react-router-dom";
+import {Form} from "./Form";
+
+export const entries = ['/send/details', '/send/confirm']
 
 export const Send = ({ }: any) => {
     const { state } = useWallet()
@@ -15,7 +19,13 @@ export const Send = ({ }: any) => {
         <>
             <ModalHeader>Send Monies</ModalHeader>
             <ModalBody>
-                hi
+                <MemoryRouter initialEntries={entries}>
+                    <Switch>
+                        <WalletProvider>
+                            <Route path='/' component={Form} />
+                        </WalletProvider>
+                    </Switch>
+                </MemoryRouter>
             </ModalBody>
         </>
     )

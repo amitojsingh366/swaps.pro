@@ -36,7 +36,7 @@ const FiatInput = (props: InputProps) => (
 
 export const TradeInput = ({ history }: RouterProps) => {
   const { state, dispatch, setRoutePath } = useWallet()
-  const { status } = state
+  const { status, assetContext } = state
   const { open } = useModal()
 
   const {
@@ -86,6 +86,7 @@ export const TradeInput = ({ history }: RouterProps) => {
     <SlideTransition>
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
         <div>
+          input: {assetContext}
           {/*<h5>Thorchain Status: </h5>*/}
           {/*{status.map((key:any)=>(*/}
           {/*    <div>*/}

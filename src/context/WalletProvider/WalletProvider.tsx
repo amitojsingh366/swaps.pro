@@ -106,7 +106,7 @@ const initialState: InitialState = {
   pioneer: null,
   code: null,
   username: null,
-  assetContext: null,
+  assetContext: "ETH",
   exchangeContext: null,
   invocationContext: null,
   context: null,
@@ -120,11 +120,9 @@ export interface IWalletContext {
   setRoutePath: any
   state: InitialState
   username: string | null
-  assetContext: string | null
   dispatch: React.Dispatch<ActionTypes>
   connect: (adapter: any, icon: string, name: string) => Promise<void>
   disconnect: () => void
-  setAssetContext: any
 }
 
 export type ActionTypes =
@@ -235,7 +233,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   let [username, setUsername] = useState<string | null>(null)
   const [network, setNetwork] = useState<number | null>(null)
   const [routePath, setRoutePath] = useState<string | readonly string[] | undefined>()
-  let assetContext: string = "ETH"
   let onboard: OnboardAPI
   let pioneer: any
   // const pioneer = new PioneerService()
@@ -358,7 +355,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           // console.log('userInfo: ', userInfo)
           username = initResult.username
           let context:any = initResult.context
-          assetContext = initResult.assetContext
           setUsername(initResult.username)
 
           dispatch({ type: WalletActions.SET_ASSET_CONTEXT, asset:'ETH' })
@@ -469,7 +465,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
               if (pioneer.username) {
                 dispatch({type: WalletActions.SET_USERNAME, username: 'metamask'})
               }
-
+              dispatch({ type: WalletActions.SET_ASSET_CONTEXT, asset:'ETH' })
               dispatch({type: WalletActions.SET_PIONEER, pioneer: pioneer})
               dispatch({type: WalletActions.SET_WALLET_INFO, payload: {name: 'pioneer', icon: 'Pioneer'}})
 
@@ -505,6 +501,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
     try{
       console.log("ON START!!!! isStarted: ")
 
+      //TODO persistance
       // let currentDb = await db.find()
       // console.log("currentDb: ",currentDb)
 
@@ -522,8 +519,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   //end
   const value: IWalletContext = useMemo(
-    () => ({ state, setRoutePath, username, assetContext, dispatch, connect, disconnect, setAssetContext }),
-    [state, setRoutePath, username, assetContext, connect, disconnect, setAssetContext]
+    () => ({ state, setRoutePath, username, dispatch, connect, disconnect }),
+    [state, setRoutePath, username, connect, disconnect]
   )
 
   return (

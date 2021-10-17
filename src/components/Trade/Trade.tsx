@@ -19,7 +19,7 @@ type TTradeInput = {
 
 export const Trade = (exchange:any) => {
   const { state, username } = useWallet()
-  const { status, code, isConnected, pioneer } = state
+  const { status, code, isConnected, pioneer, assetContext } = state
   // const { setValue } = useFormContext()
 
   const methods = useForm<TTradeInput>({
