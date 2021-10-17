@@ -42,6 +42,12 @@ export const TokenRow = ({
     number: { localeParts }
   } = useLocaleFormatter({ fiatType: 'USD' })
 
+  const onTextChangeNative = () => {
+    //Open Select modal.
+    console.log("onTextChangeNative called! (asset input)")
+  }
+
+
   return (
     <InputGroup size='lg' {...rest}>
       {inputLeftElement && (
@@ -57,7 +63,7 @@ export const TokenRow = ({
             decimalSeparator={localeParts.decimal}
             value={value}
             customInput={CryptoInput}
-            onValueChange={e => onChange(e.value)}
+            onValueChange={onTextChangeNative}
           />
         )}
         name={fieldName}

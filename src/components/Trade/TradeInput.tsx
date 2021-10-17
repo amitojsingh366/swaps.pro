@@ -84,6 +84,11 @@ export const TradeInput = ({ history }: RouterProps) => {
 
   }
 
+  const onTextChangeFiat = () => {
+    //Open Select modal.
+    console.log("onTextChangeFiat called! (Fiat input)")
+  }
+
   const onSelectModalOutput = () => {
     //Open Select modal.
     console.log("onSelectModalOutput called!")
@@ -128,7 +133,7 @@ export const TradeInput = ({ history }: RouterProps) => {
                 suffix={localeParts.postfix}
                 value={value}
                 customInput={FiatInput}
-                onValueChange={e => onChange(e.value)}
+                onValueChange={onTextChangeFiat}
               />
             )}
             name='fiatAmount'
