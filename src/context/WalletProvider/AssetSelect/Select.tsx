@@ -16,8 +16,6 @@ import {AssetIcon} from "../../../components/AssetIcon";
 import {SwapCurrency} from "@shapeshiftoss/market-service";
 import {useForm} from "react-hook-form";
 import {useTranslate} from "react-polyglot";
-import {useModal} from "../../ModalProvider/ModalProvider";
-import {filterAssetsBySearchTerm} from "../../../components/Modals/SelectAsset/helpers/filterAssetsBySearchTerm/filterAssetsBySearchTerm";
 
 export const Select = ({ }: any) => {
     const { state, dispatch } = useWallet()
@@ -31,7 +29,6 @@ export const Select = ({ }: any) => {
         }
     })
     const translate = useTranslate()
-    const modal = useModal()
 
     const searchString = watch('search')
     const searching = useMemo(() => searchString.length > 0, [searchString])
@@ -39,8 +36,8 @@ export const Select = ({ }: any) => {
     const onSelectAsset = function(asset:string){
         console.log("onSelectAsset: ",asset)
         dispatch({ type: WalletActions.SET_ASSET_CONTEXT, asset })
-        //close modal
-        modal.close('select')
+        // //close modal
+        // modal.close('select')
     }
 
     const fetchTokens = useCallback(async () => {
@@ -62,12 +59,12 @@ export const Select = ({ }: any) => {
         fetchTokens()
     }, []) // run only once
 
-    useEffect(() => {
-        setFilteredAssets(
-            searching ? filterAssetsBySearchTerm(searchString, sortedAssets) : sortedAssets
-        )
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchString]) // run every time the search is updated
+    // useEffect(() => {
+    //     setFilteredAssets(
+    //         searching ? filterAssetsBySearchTerm(searchString, sortedAssets) : sortedAssets
+    //     )
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [searchString]) // run every time the search is updated
 
   return (
     <>

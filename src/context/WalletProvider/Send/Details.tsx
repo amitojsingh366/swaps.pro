@@ -18,7 +18,6 @@ import { QRCode } from 'components/Icons/QRCode'
 import { SlideTransition } from 'components/SlideTransition'
 import { Text } from 'components/Text'
 import { TokenRow } from 'components/TokenRow/TokenRow'
-import { useModal } from 'context/ModalProvider/ModalProvider'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useTranslate } from 'react-polyglot'
@@ -28,7 +27,7 @@ import { TxFeeRadioGroup } from './TxFeeRadioGroup'
 import {useWallet} from "context/WalletProvider/WalletProvider";
 
 export const Details = () => {
-  const { state, dispatch, disconnect, setAssetContext } = useWallet()
+  const { state } = useWallet()
   const [fiatInput, setFiatInput] = useState<boolean>(true)
   const translate = useTranslate()
   const history = useHistory()
@@ -37,7 +36,6 @@ export const Details = () => {
     getValues,
     formState: { isValid }
   } = useFormContext()
-  const modal = useModal()
 
   const toggleCurrency = () => {
     setFiatInput(input => !input)
@@ -139,9 +137,9 @@ export const Details = () => {
         </FormControl>
       </ModalBody>
       <ModalFooter>
-        <Button variant='ghost' size='lg' mr={3} onClick={() => modal.close('send')}>
-          <Text translation='common.cancel' />
-        </Button>
+        {/*<Button variant='ghost' size='lg' mr={3} onClick={() => modal.close('send')}>*/}
+        {/*  <Text translation='common.cancel' />*/}
+        {/*</Button>*/}
         <Button isDisabled={!isValid} colorScheme='blue' size='lg' onClick={onNext}>
           <Text translation='common.next' />
         </Button>
