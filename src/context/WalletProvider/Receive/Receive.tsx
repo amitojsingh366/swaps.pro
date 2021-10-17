@@ -1,11 +1,7 @@
 import {
     ModalBody,
     ModalHeader,
-    Stack,
     Button,
-    Image,
-    useClipboard,
-    ModalContent,
     ModalCloseButton, ModalFooter, Box, HStack, useColorModeValue, Circle
 } from '@chakra-ui/react'
 import {RawText, Text} from 'components/Text'
@@ -14,8 +10,6 @@ import {Card} from "../../../components/Card";
 import {QRCode} from "../../../components/QRCode/QRCode";
 import {CopyIcon, ViewIcon} from "@chakra-ui/icons";
 import {useTranslate} from "react-polyglot";
-
-export const entries = ['/send/details', '/send/confirm']
 
 export const Receive = ({ }: any) => {
     const translate = useTranslate()

@@ -9,10 +9,8 @@ import {
     MenuItem,
     MenuList,
 } from '@chakra-ui/react'
-import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
+import { InitialState, useWallet } from 'context/WalletProvider/WalletProvider'
 import {FC, useEffect} from 'react'
-
-import { useModal } from 'context/ModalProvider/ModalProvider'
 
 type WalletImageProps = {
     isConnected: Boolean
@@ -30,16 +28,15 @@ const WalletImage: React.FC<WalletImageProps> = ({ isConnected, walletInfo }) =>
     ) : null
 
 export const AssetButton: FC<FlexProps> = props => {
-    const { state, dispatch, disconnect, setAssetContext } = useWallet()
+    const { state, dispatch, disconnect } = useWallet()
     const { isConnected, walletInfo } = state
-    const modal = useModal()
 
     let assetContext
 
     const onSelect = (type: any, payload:any) => {
         //console.log('onSelect! type: ',type)
         //console.log('onSelect! payload: ',payload)
-        setAssetContext(payload.ASSET)
+        // setAssetContext(payload.ASSET)
         assetContext = payload.ASSET
     }
 

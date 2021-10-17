@@ -18,6 +18,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import NumberFormat from 'react-number-format'
 import { RouterProps } from 'react-router-dom'
 import {useWallet, WalletActions} from "../../context/WalletProvider/WalletProvider";
+import {useEffect} from "react";
 
 const FiatInput = (props: InputProps) => (
   <Input
@@ -33,7 +34,7 @@ const FiatInput = (props: InputProps) => (
 
 export const TradeInput = ({ history }: RouterProps) => {
   const { state, dispatch, setRoutePath } = useWallet()
-  const { assetContext } = state
+  const { assetContext, balances } = state
 
   const {
     control,
@@ -59,6 +60,7 @@ export const TradeInput = ({ history }: RouterProps) => {
     console.log("amount: ",amount)
     let sellAsset = getValues('sellAsset.currency')
     console.log("sellAsset: ",sellAsset)
+    console.log("formState: ",{ errors, isDirty, isValid })
     //sellAsset.currency.balance
 
   }
@@ -69,7 +71,9 @@ export const TradeInput = ({ history }: RouterProps) => {
     //open('select')
     setRoutePath('/AssetSelect/Select')
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
-    //dispatch({ type: WalletActions.SET_SELECT_MODAL, payload: true })
+
+    //set balance input
+
   }
 
   const onSelectModalOutput = () => {
@@ -78,17 +82,31 @@ export const TradeInput = ({ history }: RouterProps) => {
     dispatch({ type: WalletActions.SET_SELECT_MODAL, payload: true })
   }
 
+  const onStart = async function (){
+    try{
+      console.log("ON START!!!! TradeInput: ")
+      console.log("balances: ",balances)
+      console.log("assetContext: ",assetContext)
+      if(balances){
+        let ETHbalance = balances.filter((balance:any) => balance.symbol === 'ETH')[0]
+        console.log("ETHbalance: ",ETHbalance)
+        setValue('sellAsset.currency',ETHbalance)
+      }
+    }catch(e){
+      console.error(e)
+    }
+  }
+
+  useEffect(() => {
+    onStart()
+  }, []) // we explicitly only want this to happen once
+
   return (
     <SlideTransition>
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
         <div>
           input: {assetContext}
-          {/*<h5>Thorchain Status: </h5>*/}
-          {/*{status.map((key:any)=>(*/}
-          {/*    <div>*/}
-          {/*      {key.blockchain} status: {key.online.toString()}*/}
-          {/*    </div>*/}
-          {/*))}*/}
+          {/*{JSON.stringify(balances)}*/}
         </div>
         <FormControl isInvalid={!!errors.fiatAmount}>
           <Controller

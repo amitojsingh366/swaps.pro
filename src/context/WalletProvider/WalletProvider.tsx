@@ -461,6 +461,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
                 //TODO dispatch balances
                 console.log("** pioneer.balances: ", pioneer.balances)
                 dispatch({type: WalletActions.SET_BALANCES, payload: pioneer.balances})
+
+                //set context balance
+                let ETHbalance = pioneer.balances.filter((balance:any) => balance.symbol === 'ETH')[0]
+                console.log("ETHbalance: ",ETHbalance)
               }
               if (pioneer.username) {
                 dispatch({type: WalletActions.SET_USERNAME, username: 'metamask'})

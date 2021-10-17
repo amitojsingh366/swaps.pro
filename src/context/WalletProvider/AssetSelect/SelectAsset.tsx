@@ -1,5 +1,4 @@
 import { Modal, ModalContent, ModalOverlay } from '@chakra-ui/react'
-import {useModal} from 'context/ModalProvider/ModalProvider'
 import React, { useRef } from 'react'
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
 import { WalletProvider } from 'context/WalletProvider/WalletProvider'
@@ -9,11 +8,10 @@ export const entries = ['/select/select']
 
 export const SelectModal = () => {
     const initialRef = useRef<HTMLInputElement>(null)
-    const modal = useModal()
     return (
         <Modal
-            isOpen={modal.select}
-            onClose={() => modal.close('select')}
+            isOpen={true}
+            onClose={() => {}}
             isCentered
             initialFocusRef={initialRef}
         >
