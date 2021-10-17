@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useFormContext } from 'react-hook-form'
 import { Redirect, Route, RouteProps, Switch, useHistory, useLocation } from 'react-router-dom'
 
+import { TradeStatus } from './TradeStatus/TradeStatus'
 import { TradeConfirm } from './TradeConfirm/TradeConfirm'
 import { TradeInput } from './TradeInput'
 import { SelectAsset } from './SelectAsset'
@@ -36,6 +37,7 @@ export const TradeRoutes = () => {
         />
         <Route path='/trade/input' component={TradeInput} />
         <Route path='/trade/confirm' component={TradeConfirm} />
+        <Route path='/trade/status' component={TradeStatus} />
         <Redirect from='/' to='/trade/input' />
       </Switch>
     </AnimatePresence>

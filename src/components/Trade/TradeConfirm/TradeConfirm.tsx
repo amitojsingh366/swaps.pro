@@ -72,7 +72,7 @@ export const TradeConfirm = ({ history }: RouterProps) => {
             size='lg'
             width='full'
             mt={6}
-            onClick={() => history.push('/trade/input')}
+            onClick={() => history.push('/trade/status')}
           >
             Confirm and Trade
           </Button>
