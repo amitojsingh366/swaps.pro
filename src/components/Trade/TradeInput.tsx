@@ -36,7 +36,7 @@ export const TradeInput = ({ history }: RouterProps) => {
   const { state, dispatch, setRoutePath } = useWallet()
   const { assetContext, balances, tradeOutput } = state
 
-  const {
+  let {
     control,
     handleSubmit,
     getValues,
@@ -115,6 +115,9 @@ export const TradeInput = ({ history }: RouterProps) => {
         //setValue('fiatAmount',balanceOutput.valueUsd)
         console.log("amountUsd: output (buy) ",balanceOutput.valueUsd)
 
+        if(balance && balanceOutput){
+          isValid = true
+        }
       }
     }catch(e){
       console.error(e)
@@ -217,7 +220,7 @@ export const TradeInput = ({ history }: RouterProps) => {
           size='lg'
           width='full'
           colorScheme='green'
-          isDisabled={!isDirty || !isValid}
+          // isDisabled={!isDirty || !isValid}
         >
           Preview Trade
         </Button>
