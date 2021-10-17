@@ -100,6 +100,9 @@ export const TradeInput = ({ history }: RouterProps) => {
         let ETHbalance = balances.filter((balance:any) => balance.symbol === 'ETH')[0]
         console.log("ETHbalance: ",ETHbalance)
         setValue('sellAsset.currency',ETHbalance)
+        setValue('sellAsset.amount',ETHbalance.balance)
+        setValue('fiatAmount',ETHbalance.valueUsd)
+        console.log("amountUsd: ",ETHbalance.valueUsd)
       }
     }catch(e){
       console.error(e)
