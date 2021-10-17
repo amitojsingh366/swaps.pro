@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Switch } from 'react-router-dom'
 import { entries, TradeRoutes } from './TradeRoutes'
 import {useWallet} from "../../context/WalletProvider/WalletProvider";
 
-type TTradeInput = {
+type TradeInput = {
   fiatAmount?: string
   sellAsset: {
     currency: any
@@ -20,7 +20,7 @@ type TTradeInput = {
 export const Trade = (exchange:any) => {
   const { } = useWallet()
 
-  const methods = useForm<TTradeInput>({
+  const methods = useForm<TradeInput>({
     mode: 'onChange',
     defaultValues: {
       fiatAmount: undefined,

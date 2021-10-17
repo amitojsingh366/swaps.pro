@@ -15,9 +15,10 @@ import { TokenButton } from 'components/TokenRow/TokenButton'
 import { TokenRow } from 'components/TokenRow/TokenRow'
 import { useLocaleFormatter } from 'hooks/useLocaleFormatter/useLocaleFormatter'
 import { Controller, useFormContext } from 'react-hook-form'
+import { Pioneer } from 'hooks/usePioneerSdk/usePioneerSdk'
 import NumberFormat from 'react-number-format'
 import { RouterProps } from 'react-router-dom'
-import {useWallet, WalletActions} from "../../context/WalletProvider/WalletProvider";
+import {useWallet, WalletActions} from "context/WalletProvider/WalletProvider";
 import {useEffect} from "react";
 
 const FiatInput = (props: InputProps) => (
@@ -35,7 +36,7 @@ const FiatInput = (props: InputProps) => (
 export const TradeInput = ({ history }: RouterProps) => {
   const { state, dispatch, setRoutePath } = useWallet()
   const { assetContext, balances, tradeOutput } = state
-
+  const { getCryptoQuote, getFiatQuote, reset, switchAssets, update, setMaxInput } = Pioneer()
   let {
     control,
     handleSubmit,
@@ -49,23 +50,6 @@ export const TradeInput = ({ history }: RouterProps) => {
 
   const onSubmit = () => {
     history.push('/AssetSelect/Select')
-  }
-
-  const onMax = () => {
-    console.log("onMax called!")
-    console.log("balance: ",getValues('sellAsset.currency.balance'))
-    let balance = getValues('sellAsset.currency.balance')
-    let amount = getValues('sellAsset.balance')
-    setValue('sellAsset.amount',balance)
-    console.log("amount: ",amount)
-    let sellAsset = getValues('sellAsset.currency')
-    console.log("sellAsset: ",sellAsset)
-    console.log("formState: ",{ errors, isDirty, isValid })
-
-    //valueUsd
-    let amountUsd = getValues('sellAsset.currency.valueUsd')
-    setValue('fiatAmount',amountUsd)
-    console.log("amountUsd: ",amountUsd)
   }
 
   const onSelectModalInput = () => {
@@ -92,40 +76,8 @@ export const TradeInput = ({ history }: RouterProps) => {
     dispatch({ type: WalletActions.SET_SELECT_MODAL_TYPE, payload: 'output' })
   }
 
-  const onStart = async function (){
-    try{
-      console.log("ON START!!!! TradeInput: ")
-      console.log("balances: ",balances)
-      console.log("assetContext: ",assetContext)
-      if(balances){
-        let balance = balances.filter((balance:any) => balance.symbol === assetContext)[0]
-        console.log("balance: ",balance)
-        setValue('sellAsset.currency',balance)
-        setValue('sellAsset.amount',balance.balance)
-        setValue('fiatAmount',balance.valueUsd)
-        console.log("amountUsd: ",balance.valueUsd)
-
-        //output
-        let balanceOutput = balances.filter((balance:any) => balance.symbol === tradeOutput)[0]
-        console.log("balanceOutput: ",balanceOutput)
-        setValue('buyAsset.currency',balanceOutput)
-        setValue('buyAsset.currency.image',balanceOutput.image)
-        setValue('buyAsset.currency.symbol',balanceOutput.symbol)
-        setValue('buyAsset.amount',balanceOutput.balance)
-        //setValue('fiatAmount',balanceOutput.valueUsd)
-        console.log("amountUsd: output (buy) ",balanceOutput.valueUsd)
-
-        if(balance && balanceOutput){
-          isValid = true
-        }
-      }
-    }catch(e){
-      console.error(e)
-    }
-  }
-
   useEffect(() => {
-    onStart()
+    update()
   }, [balances, assetContext, tradeOutput]) // we explicitly only want this to happen once
 
   return (
@@ -178,7 +130,7 @@ export const TradeInput = ({ history }: RouterProps) => {
                 size='sm'
                 variant='ghost'
                 colorScheme='blue'
-                onClick={onMax}
+                onClick={setMaxInput}
               >
                 Max
               </Button>
@@ -195,7 +147,7 @@ export const TradeInput = ({ history }: RouterProps) => {
           alignItems='center'
           justifyContent='space-between'
         >
-          <IconButton aria-label='Switch' isRound icon={<ArrowDownIcon />} />
+          <IconButton onClick={switchAssets} aria-label='Switch' isRound icon={<ArrowDownIcon />} />
           <Box display='flex' alignItems='center' color='gray.500'>
             <Text fontSize='sm'>{getValues('sellAsset.currency.priceUsd')}</Text>
             <HelperToolTip label='The price is ' />
