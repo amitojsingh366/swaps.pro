@@ -52,12 +52,6 @@ export const TradeInput = ({ history }: RouterProps) => {
   }
 
   const onMax = () => {
-    if(balances){
-      let ETHbalance = balances.filter((balance:any) => balance.symbol === 'ETH')[0]
-      console.log("ETHbalance: ",ETHbalance)
-      setValue('sellAsset.currency',ETHbalance)
-    }
-
     console.log("onMax called!")
     console.log("balance: ",getValues('sellAsset.currency.balance'))
     let balance = getValues('sellAsset.currency.balance')
@@ -67,10 +61,11 @@ export const TradeInput = ({ history }: RouterProps) => {
     let sellAsset = getValues('sellAsset.currency')
     console.log("sellAsset: ",sellAsset)
     console.log("formState: ",{ errors, isDirty, isValid })
-    //sellAsset.currency.balance
 
-
-
+    //valueUsd
+    let amountUsd = getValues('sellAsset.currency.valueUsd')
+    setValue('fiatAmount',amountUsd)
+    console.log("amountUsd: ",amountUsd)
   }
 
   const onSelectModalInput = () => {
@@ -124,7 +119,7 @@ export const TradeInput = ({ history }: RouterProps) => {
         </div>
         <FormControl isInvalid={!!errors.fiatAmount}>
           <Controller
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { value } }) => (
               <NumberFormat
                 inputMode='decimal'
                 thousandSeparator={localeParts.group}
