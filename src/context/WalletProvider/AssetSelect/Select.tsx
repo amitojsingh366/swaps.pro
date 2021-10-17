@@ -70,8 +70,7 @@ export const Select = ({ }: any) => {
         <ModalHeader textAlign='center'>
             <h2>Select an  {selectType} currency</h2>
             <small>exchange: {exchangeContext}</small>
-            <small>exchangeInfo: {JSON.stringify(exchangeInfo)}</small>
-            <small>status: {JSON.stringify(status)}</small>
+            {/*<small>status: {JSON.stringify(status)}</small>*/}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody alignItems='center' justifyContent='center'>

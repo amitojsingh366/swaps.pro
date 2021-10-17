@@ -78,7 +78,7 @@ export interface InitialState {
   username: any
   assetContext: any
   invocationContext: string | null
-  context: string | null
+  context: any
   exchangeContext: string | null
   totalValueUsd: string | null
   tradeOutput: any
@@ -119,6 +119,7 @@ const initialState: InitialState = {
 
 export interface IWalletContext {
   setRoutePath: any
+  buildTransaction: () => any
   state: InitialState
   username: string | null
   dispatch: React.Dispatch<ActionTypes>
@@ -248,6 +249,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
     dispatch({ type: WalletActions.SET_USERNAME, username })
   }, [])
 
+  //TODO catch context events and propagate
   const setAssetContext = useCallback(
       async (ASSET:string) => {
         //dispatch({ type: WalletActions.SELECT_MODAL, payload: false })
@@ -262,6 +264,45 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       },
       []
   )
+
+  /*
+      Pioneer SDK transaction protocal
+
+   */
+  const buildTransaction = async function(){
+    try{
+      console.log("Build TX~!")
+      //TODO switch on tx type?
+      // let transfer:Transfer = {
+      //   context:state.context,
+      //   recipient: vaultAddress,
+      //   fee:{
+      //     // gasLimit: 20000,
+      //     priority:3, //1-5 5 = highest
+      //   },
+      //   asset: ASSET,
+      //   network: ASSET,
+      //   memo: '=:THOR.RUNE:'+FAUCET_RUNE_ADDRESS,
+      //   "amount":{
+      //     // "type":"BASE",
+      //     // "decimal":18,
+      //     amount: function(){
+      //       return BigNumber.BigNumber.from(amountTestNative)
+      //     }
+      //   },
+      //   noBroadcast:true //TODO configurable
+      // }
+      // log.info(tag,"transfer: ",transfer)
+      // //if monitor
+      // //let invocationId = "pioneer:invocation:v0.01:ETH:sKxuLRKdaCKHHKAJ1t4iYm"
+      //
+      // let responseTransfer = await user.clients[BLOCKCHAIN].transfer(transfer,options)
+      // log.debug(tag,"responseTransfer: ",responseTransfer)
+
+    }catch(e){
+      console.error(e)
+    }
+  }
 
   /**
    * temp logging data here for dev use
@@ -332,8 +373,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         //pioneer status
         let status = await pioneer.getStatus()
         console.log("status: ",status)
-        dispatch({ type: WalletActions.SET_STATUS, payload: status?.thorchain })
-        dispatch({ type: WalletActions.SET_EXCHANGE_INFO, payload: status?.exchanges })
+        dispatch({ type: WalletActions.SET_STATUS, payload: status })
         console.log('status: ', status)
 
         console.log('Pioneer initResult: ', initResult)
@@ -528,8 +568,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   //end
   const value: IWalletContext = useMemo(
-    () => ({ state, setRoutePath, username, dispatch, connect, disconnect }),
-    [state, setRoutePath, username, connect, disconnect]
+    () => ({ state, buildTransaction, setRoutePath, username, dispatch, connect, disconnect }),
+    [state, buildTransaction, setRoutePath, username, connect, disconnect]
   )
 
   return (

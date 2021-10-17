@@ -15,7 +15,7 @@ export enum TradeActions {
 
 export const Pioneer = () => {
     const { state, dispatch, setRoutePath } = useWallet()
-    const { assetContext, balances, tradeOutput } = state
+    const { assetContext, balances, tradeOutput, status } = state
     const {
         setValue,
         getValues,
@@ -89,13 +89,24 @@ export const Pioneer = () => {
         //debug
         console.log("formState: ",{ errors, isDirty, isValid })
         setValue('formState', {isValid:true})
-        //TODO get new quote
-        // getCryptoQuote(
-        //     { sellAmount: currentBuyAsset.amount },
-        //     currentBuyAsset,
-        //     currentSellAsset,
-        //     TradeActions.SELL
-        // )
+
+        //status
+        console.log("** STATUS: ",status)
+
+        let symbolIn = currentBuyAsset.currency.symbol
+        let symbolOut = currentSellAsset.currency.symbol
+
+        let pair = symbolIn+"_"+symbolOut
+        console.log("HOOK: pair",pair)
+        //market Info
+        let marketInfo = status.exchanges.markets.filter((e:any) => e.pair == pair)
+        marketInfo = marketInfo[0]
+        console.log("marketInfo: ",marketInfo)
+
+        //amountOut = amountIn * rate
+        let amountOut = parseFloat(currentBuyAsset.amount) * marketInfo.rate
+        console.log("amountOut:",amountOut)
+        setValue('buyAsset.amount', amountOut)
     }
 
 
