@@ -49,7 +49,7 @@ export const TradeInput = ({ history }: RouterProps) => {
   } = useLocaleFormatter({ fiatType: 'USD' })
 
   const onSubmit = () => {
-    history.push('/AssetSelect/Select')
+    history.push('/trade/confirm')
   }
 
   const onSelectModalInput = () => {

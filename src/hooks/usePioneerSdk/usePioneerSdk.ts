@@ -86,6 +86,9 @@ export const Pioneer = () => {
         setValue('buyAsset', currentSellAsset)
         setValue('sellAsset', currentBuyAsset)
 
+        //debug
+        console.log("formState: ",{ errors, isDirty, isValid })
+        setValue('formState', {isValid:true})
         //TODO get new quote
         // getCryptoQuote(
         //     { sellAmount: currentBuyAsset.amount },
