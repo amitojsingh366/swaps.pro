@@ -41,6 +41,7 @@ export enum WalletActions {
   SET_INITIALIZED = 'SET_INITIALIZED',
   SET_IS_CONNECTED = 'SET_IS_CONNECTED',
   SET_WALLET_MODAL = 'SET_WALLET_MODAL',
+  SET_SELECT_MODAL_TYPE = 'SET_SELECT_MODAL_TYPE',
   SET_SELECT_MODAL = 'SET_SELECT_MODAL',
   SET_ASSET_CONTEXT = 'SET_ASSET_CONTEXT',
   SET_WALLET_CONTEXT = 'SET_WALLET_CONTEXT',
@@ -80,9 +81,9 @@ export interface InitialState {
   context: string | null
   exchangeContext: string | null
   totalValueUsd: string | null
-  tradeInputBalance: any
-  tradeOutputBalance: any
+  tradeOutput: any
   exchangeInfo: any
+  selectType: any
 }
 
 const initialState: InitialState = {
@@ -103,6 +104,7 @@ const initialState: InitialState = {
   initialized: false,
   modal: false,
   modalSelect: false,
+  selectType: null,
   pioneer: null,
   code: null,
   username: null,
@@ -111,8 +113,7 @@ const initialState: InitialState = {
   invocationContext: null,
   context: null,
   totalValueUsd: null,
-  tradeInputBalance: null,
-  tradeOutputBalance: null,
+  tradeOutput: null,
   exchangeInfo:null
 }
 
@@ -142,6 +143,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_INITIALIZED; payload: boolean }
   | { type: WalletActions.SET_IS_CONNECTED; payload: boolean }
   | { type: WalletActions.SET_WALLET_MODAL; payload: boolean }
+  | { type: WalletActions.SET_SELECT_MODAL_TYPE; payload: string }
   | { type: WalletActions.SET_SELECT_MODAL; payload: boolean }
   | { type: WalletActions.RESET_STATE }
   | { type: WalletActions.SET_ONBOARD; payload: OnboardAPI }
@@ -204,10 +206,10 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, assetContext: action.payload }
     case WalletActions.SET_WALLET_MODAL:
       return { ...state, modal: action.payload }
-    case WalletActions.SET_TRADE_INPUT:
-      return { ...state, tradeInputBalance: action.payload }
+    case WalletActions.SET_SELECT_MODAL_TYPE:
+      return { ...state, selectType: action.payload }
     case WalletActions.SET_TRADE_OUTPUT:
-      return { ...state, tradeOutputBalance: action.payload }
+      return { ...state, tradeOutput: action.payload }
     case WalletActions.SET_SELECT_MODAL:
       return { ...state, modalSelect: action.payload }
     case WalletActions.RESET_STATE:

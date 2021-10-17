@@ -34,7 +34,7 @@ const FiatInput = (props: InputProps) => (
 
 export const TradeInput = ({ history }: RouterProps) => {
   const { state, dispatch, setRoutePath } = useWallet()
-  const { assetContext, balances } = state
+  const { assetContext, balances, tradeOutput } = state
 
   const {
     control,
@@ -74,7 +74,7 @@ export const TradeInput = ({ history }: RouterProps) => {
     //open('select')
     setRoutePath('/AssetSelect/Select')
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
-
+    dispatch({ type: WalletActions.SET_SELECT_MODAL_TYPE, payload: 'input' })
     //set balance input
 
   }
@@ -89,6 +89,7 @@ export const TradeInput = ({ history }: RouterProps) => {
     console.log("onSelectModalOutput called!")
     setRoutePath('/AssetSelect/Select')
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+    dispatch({ type: WalletActions.SET_SELECT_MODAL_TYPE, payload: 'output' })
   }
 
   const onStart = async function (){
@@ -103,6 +104,17 @@ export const TradeInput = ({ history }: RouterProps) => {
         setValue('sellAsset.amount',balance.balance)
         setValue('fiatAmount',balance.valueUsd)
         console.log("amountUsd: ",balance.valueUsd)
+
+        //output
+        let balanceOutput = balances.filter((balance:any) => balance.symbol === tradeOutput)[0]
+        console.log("balanceOutput: ",balanceOutput)
+        setValue('buyAsset.currency',balanceOutput)
+        setValue('buyAsset.currency.image',balanceOutput.image)
+        setValue('buyAsset.currency.symbol',balanceOutput.symbol)
+        setValue('buyAsset.amount',balanceOutput.balance)
+        //setValue('fiatAmount',balanceOutput.valueUsd)
+        console.log("amountUsd: output (buy) ",balanceOutput.valueUsd)
+
       }
     }catch(e){
       console.error(e)
@@ -111,7 +123,7 @@ export const TradeInput = ({ history }: RouterProps) => {
 
   useEffect(() => {
     onStart()
-  }, [balances, assetContext]) // we explicitly only want this to happen once
+  }, [balances, assetContext, tradeOutput]) // we explicitly only want this to happen once
 
   return (
     <SlideTransition>

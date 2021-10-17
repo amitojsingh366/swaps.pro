@@ -19,7 +19,7 @@ import {useTranslate} from "react-polyglot";
 
 export const Select = ({ }: any) => {
     const { state, dispatch } = useWallet()
-    const { balances, exchangeContext, exchangeInfo, status } = state
+    const { balances, exchangeContext, exchangeInfo, status, selectType } = state
     const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
     const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])
     const { register, watch } = useForm<{ search: string }>({
@@ -35,10 +35,8 @@ export const Select = ({ }: any) => {
 
     const onSelectAsset = function(asset:string){
         console.log("onSelectAsset: ",asset)
-        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:asset })
+        dispatch({ type: WalletActions.SET_TRADE_OUTPUT, payload:asset })
         dispatch({ type: WalletActions.SET_WALLET_MODAL, payload:false })
-        // //close modal
-        // modal.close('select')
     }
 
     const fetchTokens = useCallback(async () => {
@@ -70,7 +68,7 @@ export const Select = ({ }: any) => {
   return (
     <>
         <ModalHeader textAlign='center'>
-            <h2>Select an  </h2>
+            <h2>Select an  {selectType} currency</h2>
             <small>exchange: {exchangeContext}</small>
             <small>exchangeInfo: {JSON.stringify(exchangeInfo)}</small>
             <small>status: {JSON.stringify(status)}</small>
