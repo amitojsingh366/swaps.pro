@@ -365,6 +365,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           if(initResult.balances){
             let ETHbalance = initResult.balances.filter((balance:any) => balance.symbol === 'ETH')[0]
             console.log("ETHbalance: ",ETHbalance)
+            dispatch({ type: WalletActions.SET_BALANCES, payload:initResult.balances })
           }
 
 

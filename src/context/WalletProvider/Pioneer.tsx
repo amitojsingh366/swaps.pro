@@ -303,7 +303,9 @@ export class PioneerService {
           code: this.pairingCode
         }
       } else {
-        this.balances = info.balances
+        //get context
+        //balances = context balances
+
         this.context = info.context
         this.valueUsdContext = info.valueUsdContext
         this.walletsIds = info.wallets
@@ -315,14 +317,18 @@ export class PioneerService {
         // set context info
         let contextInfo = info.walletDescriptions.filter(
             (e: { context: string | undefined }) => e.context === this.context
-        )
-        contextInfo = contextInfo[0]
+        )[0]
+        console.log("contextInfo: ",contextInfo)
+
         this.valueUsdContext = contextInfo.valueUsdContext
+
+        this.balances = contextInfo.balances
+        console.log("*** pioneer: this.balances: ",this.balances)
 
         if (this.username != null) {
           localStorage.setItem('username', this.username)
         }
-        this.user = await this.App.getUserParams()
+        // this.user = await this.App.getUserParams()
         //console.log('userParams: ', this.user)
         /*
          */
