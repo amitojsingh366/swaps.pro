@@ -59,6 +59,16 @@ export const WalletButton: FC<FlexProps> = () => {
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
   }
 
+  const openSend = function(){
+    setRoutePath('/Send/Send')
+    dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+  }
+
+  const openReceive = function(){
+    setRoutePath('/Receive/Receive')
+    dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+  }
+
   return !username ? (
     <Button
       onClick={() => dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })}
@@ -92,12 +102,32 @@ export const WalletButton: FC<FlexProps> = () => {
               </h2>
               <AccordionPanel pb={4}>
                 <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <ArrowUpIcon />
+                      </Circle>
+                    }
+                    onClick={openSend}
+                >
+                  Send
+                </MenuItem>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <ArrowDownIcon />
+                      </Circle>
+                    }
+                    onClick={openReceive}
+                >
+                  Receive
+                </MenuItem>
+                <MenuItem
                   icon={
                     <Circle bg='whiteAlpha.200' size={8}>
                       <RepeatIcon />
                     </Circle>
                   }
-                  onClick={openWalletConnect}
+                  onClick={openReceive}
                 >
                   Switch Wallet Provider
                 </MenuItem>

@@ -19,6 +19,8 @@ import { WalletViewProps } from './WalletViewsRouter'
 
 //Select
 import { Select } from './AssetSelect/Select'
+import { Send } from './Send/Send'
+import { Receive } from './Receive/Receive'
 
 export const WalletViewsSwitch = (props: WalletViewProps) => {
   const history = useHistory()
@@ -82,6 +84,20 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
                       key='selectAsset'
                       path='/AssetSelect/Select'
                       render={routeProps => <Select {...props} {...routeProps} />}
+                      {...props}
+                  />
+                  <Route
+                      exact
+                      key='send'
+                      path='/Send/Send'
+                      render={routeProps => <Send {...props} {...routeProps} />}
+                      {...props}
+                  />
+                  <Route
+                      exact
+                      key='receive'
+                      path='/Receive/Receive'
+                      render={routeProps => <Receive {...props} {...routeProps} />}
                       {...props}
                   />
                 <Route {...props} children={() => <WalletSelectModal connect={props?.connect} />} />
