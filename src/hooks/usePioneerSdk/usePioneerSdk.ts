@@ -86,27 +86,7 @@ export const Pioneer = () => {
         setValue('buyAsset', currentSellAsset)
         setValue('sellAsset', currentBuyAsset)
 
-        //debug
-        console.log("formState: ",{ errors, isDirty, isValid })
-        setValue('formState', {isValid:true})
-
-        //status
-        console.log("** STATUS: ",status)
-
-        let symbolIn = currentBuyAsset.currency.symbol
-        let symbolOut = currentSellAsset.currency.symbol
-
-        let pair = symbolIn+"_"+symbolOut
-        console.log("HOOK: pair",pair)
-        //market Info
-        let marketInfo = status.exchanges.markets.filter((e:any) => e.pair == pair)
-        marketInfo = marketInfo[0]
-        console.log("marketInfo: ",marketInfo)
-
-        //amountOut = amountIn * rate
-        let amountOut = parseFloat(currentBuyAsset.amount) * marketInfo.rate
-        console.log("amountOut:",amountOut)
-        setValue('buyAsset.amount', amountOut)
+        update()
     }
 
 
@@ -132,11 +112,33 @@ export const Pioneer = () => {
           setValue('buyAsset.amount',balanceOutput?.balance)
           //setValue('fiatAmount',balanceOutput.valueUsd)
           console.log("amountUsd: output (buy) ",balanceOutput?.valueUsd)
-
-
         } else {
           console.log(' cant update, no balances ')
         }
+
+        if(status){
+            //status
+            console.log("** STATUS: ",status)
+            const currentSellAsset = getValues('sellAsset')
+            const currentBuyAsset = getValues('buyAsset')
+            let symbolIn = currentSellAsset.currency.symbol
+            let symbolOut = currentBuyAsset.currency.symbol
+
+            let pair = symbolIn+"_"+symbolOut
+            console.log("HOOK: pair",pair)
+            //market Info
+            let marketInfo = status.exchanges.markets.filter((e:any) => e.pair == pair)
+            marketInfo = marketInfo[0]
+            console.log("marketInfo: ",marketInfo)
+
+            //amountOut = amountIn * rate
+            let amountOut = parseFloat(currentBuyAsset.amount) * marketInfo.rate
+            console.log("amountOut:",amountOut)
+            setValue('buyAsset.amount', amountOut)
+        } else {
+            console.log(' cant update, no market status ')
+        }
+
     }
 
     const reset = () => {
