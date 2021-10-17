@@ -52,6 +52,12 @@ export const TradeInput = ({ history }: RouterProps) => {
   }
 
   const onMax = () => {
+    if(balances){
+      let ETHbalance = balances.filter((balance:any) => balance.symbol === 'ETH')[0]
+      console.log("ETHbalance: ",ETHbalance)
+      setValue('sellAsset.currency',ETHbalance)
+    }
+
     console.log("onMax called!")
     console.log("balance: ",getValues('sellAsset.currency.balance'))
     let balance = getValues('sellAsset.currency.balance')
@@ -62,6 +68,8 @@ export const TradeInput = ({ history }: RouterProps) => {
     console.log("sellAsset: ",sellAsset)
     console.log("formState: ",{ errors, isDirty, isValid })
     //sellAsset.currency.balance
+
+
 
   }
 
@@ -79,7 +87,8 @@ export const TradeInput = ({ history }: RouterProps) => {
   const onSelectModalOutput = () => {
     //Open Select modal.
     console.log("onSelectModalOutput called!")
-    dispatch({ type: WalletActions.SET_SELECT_MODAL, payload: true })
+    setRoutePath('/AssetSelect/Select')
+    dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
   }
 
   const onStart = async function (){
@@ -99,7 +108,7 @@ export const TradeInput = ({ history }: RouterProps) => {
 
   useEffect(() => {
     onStart()
-  }, []) // we explicitly only want this to happen once
+  }, [balances]) // we explicitly only want this to happen once
 
   return (
     <SlideTransition>
@@ -181,7 +190,7 @@ export const TradeInput = ({ history }: RouterProps) => {
             rules={{ required: true }}
             inputLeftElement={
               <TokenButton
-                onClick={() => history.push('/trade/select/buy')}
+                onClick={onSelectModalOutput}
                 logo={getValues('buyAsset.currency.image')}
                 symbol={getValues('buyAsset.currency.symbol')}
               />
