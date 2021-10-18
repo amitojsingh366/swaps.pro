@@ -7,10 +7,14 @@ import { SlideTransition } from 'components/SlideTransition'
 import { useFormContext } from 'react-hook-form'
 import { RouterProps } from 'react-router-dom'
 import { AssetToAsset } from './AssetToAsset'
+import {useWallet} from "../../../context/WalletProvider/WalletProvider";
 
 export const TradeStatus = ({ history }: RouterProps) => {
     const { getValues } = useFormContext()
     const { sellAsset, buyAsset } = getValues()
+    const { state } = useWallet()
+    const { invocationContext } = state
+
     return (
         <SlideTransition>
             <Card variant='unstyled'>
@@ -24,7 +28,8 @@ export const TradeStatus = ({ history }: RouterProps) => {
                             isRound
                             onClick={() => history.push('/trade/input')}
                         />
-                        <Card.Heading textAlign='center'>Trade Status</Card.Heading>
+                        <Card.Heading textAlign='center'>Trade Status <small>{invocationContext}</small></Card.Heading>
+
                     </SimpleGrid>
                     <AssetToAsset
                         buyAsset={{

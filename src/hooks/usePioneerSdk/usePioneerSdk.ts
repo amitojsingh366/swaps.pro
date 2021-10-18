@@ -135,9 +135,9 @@ export const Pioneer = () => {
             console.log("marketInfo: ",marketInfo)
 
             //amountOut = amountIn * rate
-            // let amountOut = parseFloat(currentBuyAsset.amount) * marketInfo.rate
-            // console.log("amountOut:",amountOut)
-            // setValue('buyAsset.amount', amountOut)
+            let amountOut = parseFloat(currentSellAsset.amount) * marketInfo.rate
+            console.log("amountOut:",amountOut)
+            setValue('buyAsset.amount', amountOut)
         } else {
             console.log(' cant update, no market status ')
         }

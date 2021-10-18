@@ -407,6 +407,7 @@ export class PioneerService {
 
     //toLongName
     let blockchain = COIN_MAP_LONG[transfer.network]
+    if(blockchain === 'bitcoincash') blockchain = 'bitcoinCash'
     console.log("blockchain: ",blockchain)
 
     //if not init, init again
@@ -419,6 +420,10 @@ export class PioneerService {
     console.log("clients: ",this.user.clients)
     let responseTransfer = await this.user.clients[blockchain].transfer(transfer,options)
     console.log('responseTransfer: ',responseTransfer)
+
+    //if got invocation back
+    //clear all state
+
     if(responseTransfer) this.invocations.push(responseTransfer)
     return responseTransfer
   }

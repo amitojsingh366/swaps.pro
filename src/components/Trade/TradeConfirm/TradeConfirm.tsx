@@ -23,7 +23,7 @@ export const TradeConfirm = ({ history }: RouterProps) => {
       //submit transaction
       let result = await buildTransaction(currentSellAsset,currentBuyAsset)
       console.log("result:  ",result)
-      //history.push('/trade/status')
+      history.push('/trade/status')
     }catch(e){
       console.error(e)
     }

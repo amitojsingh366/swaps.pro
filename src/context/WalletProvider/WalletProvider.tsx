@@ -337,9 +337,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       console.log("transfer: ",transfer)
 
       let result = await pioneer.buildTx(transfer)
+      dispatch({ type: WalletActions.SET_INVOCATION_CONTEXT, payload: result })
 
-      //todo push to invocations
 
+      return result
     }catch(e){
       console.error(e)
     }
@@ -441,13 +442,13 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           let context:any = initResult.context
           setUsername(initResult.username)
 
-          dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+          dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'BCH' })
 
           //TODO use remote context asset
           //get first ETH symbol in balances
           console.log("initResult.balances: ",initResult)
           if(initResult.balances){
-            let ETHbalance = initResult.balances.filter((balance:any) => balance.symbol === 'ETH')[0]
+            let ETHbalance = initResult.balances.filter((balance:any) => balance.symbol === 'BCH')[0]
             console.log("ETHbalance: ",ETHbalance)
             dispatch({ type: WalletActions.SET_BALANCES, payload:initResult.balances })
           }
@@ -548,13 +549,13 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
                 dispatch({type: WalletActions.SET_BALANCES, payload: pioneer.balances})
 
                 //set context balance
-                let ETHbalance = pioneer.balances.filter((balance:any) => balance.symbol === 'ETH')[0]
+                let ETHbalance = pioneer.balances.filter((balance:any) => balance.symbol === 'BCH')[0]
                 console.log("ETHbalance: ",ETHbalance)
               }
               if (pioneer.username) {
                 dispatch({type: WalletActions.SET_USERNAME, username: 'metamask'})
               }
-              dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+              dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'BCH' })
               dispatch({type: WalletActions.SET_PIONEER, pioneer: pioneer})
               dispatch({type: WalletActions.SET_WALLET_INFO, payload: {name: 'pioneer', icon: 'Pioneer'}})
 
