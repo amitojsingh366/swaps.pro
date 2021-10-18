@@ -25,7 +25,10 @@ import { SDK } from '@pioneer-platform/pioneer-sdk'
 import { v4 as uuidv4 } from 'uuid'
 import {Transfer} from "@pioneer-platform/pioneer-types";
 let {
+  supportedBlockchains,
   baseAmountToNative,
+  nativeToBaseAmount,
+  COIN_MAP_LONG,
 } = require("@pioneer-platform/pioneer-coins")
 let BigNumber = require('@ethersproject/bignumber')
 
@@ -328,8 +331,8 @@ export class PioneerService {
         if (this.username != null) {
           localStorage.setItem('username', this.username)
         }
-        // this.user = await this.App.getUserParams()
-        //console.log('userParams: ', this.user)
+        this.user = await this.App.getUserParams()
+        console.log('userParams: ', this.user)
         /*
          */
         //set context
@@ -395,43 +398,28 @@ export class PioneerService {
       transfer object example:https://github.com/BitHighlander/pioneer/blob/master/e2e/sdk-transfers/osmosis-e2e-transfer/src/index.ts#L245
   * */
   //build transfer
-  async buildTx(network:string,asset:string,address:string,amount:string): Promise<any> {
-
-    //console.log("Building a tx!",{network,asset,address,amount})
-
-    //Hard coded osmo for testing
-    //if transfer
-    //test amount in native
-    let TEST_AMOUNT = "0.04"
-    let amountTestNative = baseAmountToNative("OSMO",TEST_AMOUNT)
+  async buildTx(transfer:any): Promise<any> {
 
     let options:any = {
       verbose: true,
       txidOnResp: false, // txidOnResp is the output format
     }
 
-    let transfer:Transfer = {
-      context:this.context,
-      recipient: "osmo1a7xqkxa4wyjfllme9u3yztgsz363dalz3lxtj6",
-      asset: "OSMO",
-      network: "OSMO",
-      memo: '',
-      "amount":{
-        amount: function(){
-          return BigNumber.BigNumber.from(amountTestNative)
-        }
-      },
-      fee:{
-        priority:5, //1-5 5 = highest
-      }
+    //toLongName
+    let blockchain = COIN_MAP_LONG[transfer.network]
+    console.log("blockchain: ",blockchain)
+
+    //if not init, init again
+    //TODO WHY THE FUCK THIS HAPPENING!!
+    if(!this.isInitialized){
+      await this.init()
     }
-    //console.log("transfer: ",transfer)
 
-    let responseTransfer = await this.user.clients['osmosis'].transfer(transfer,options)
-    //console.log("responseTransfer: ",responseTransfer)
-
+    console.log("App: ",this.user)
+    console.log("clients: ",this.user.clients)
+    let responseTransfer = await this.user.clients[blockchain].transfer(transfer,options)
+    console.log('responseTransfer: ',responseTransfer)
     if(responseTransfer) this.invocations.push(responseTransfer)
-
     return responseTransfer
   }
 

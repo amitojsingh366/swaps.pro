@@ -279,6 +279,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   const buildTransaction = async function(currentSellAsset:any,currentBuyAsset:any){
     try{
       console.log("Build TX~!")
+
       //TODO switch on context/wallet?
         //if onboard
         //if keplr
@@ -334,19 +335,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         noBroadcast:true //TODO configurable
       }
       console.log("transfer: ",transfer)
-      let options:any = {
-        verbose: true,
-        txidOnResp: false, // txidOnResp is the output format
-      }
 
-      //toLongName
-      let blockchain = COIN_MAP_LONG[state.assetContext]
-      console.log("blockchain: ",blockchain)
-      console.log("pioneer: ",pioneer)
-      console.log("blockchain: ",pioneer.user)
-      console.log("blockchain: ",pioneer.user.clients)
-      // let responseTransfer = await pioneer.user.clients[blockchain].transfer(transfer,options)
-      // console.log('responseTransfer: ',responseTransfer)
+      let result = await pioneer.buildTx(transfer)
 
       //todo push to invocations
 
