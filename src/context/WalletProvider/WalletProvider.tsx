@@ -1,4 +1,11 @@
 import { Transfer } from '@pioneer-platform/pioneer-types'
+let {
+  supportedBlockchains,
+  baseAmountToNative,
+  nativeToBaseAmount,
+  COIN_MAP_LONG,
+} = require("@pioneer-platform/pioneer-coins")
+let BigNumber = require('@ethersproject/bignumber')
 import { Keyring } from '@shapeshiftoss/hdwallet-core'
 import { Web3Provider } from '@ethersproject/providers'
 import { API as OnboardAPI, Wallet } from 'bnc-onboard/dist/src/interfaces'
@@ -119,7 +126,7 @@ const initialState: InitialState = {
 
 export interface IWalletContext {
   setRoutePath: any
-  buildTransaction: () => any
+  buildTransaction: any
   state: InitialState
   username: string | null
   dispatch: React.Dispatch<ActionTypes>
@@ -239,8 +246,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   const [network, setNetwork] = useState<number | null>(null)
   const [routePath, setRoutePath] = useState<string | readonly string[] | undefined>()
   let onboard: OnboardAPI
-  let pioneer: any
-  // const pioneer = new PioneerService()
+  // let pioneer: any
+  const pioneer = new PioneerService()
   let db = Datastore.create('/path/to/db.db')
   db.ensureIndex({fieldName:"test"})
 
@@ -269,35 +276,79 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       Pioneer SDK transaction protocal
 
    */
-  const buildTransaction = async function(){
+  const buildTransaction = async function(currentSellAsset:any,currentBuyAsset:any){
     try{
       console.log("Build TX~!")
-      //TODO switch on tx type?
-      // let transfer:Transfer = {
-      //   context:state.context,
-      //   recipient: vaultAddress,
-      //   fee:{
-      //     // gasLimit: 20000,
-      //     priority:3, //1-5 5 = highest
-      //   },
-      //   asset: ASSET,
-      //   network: ASSET,
-      //   memo: '=:THOR.RUNE:'+FAUCET_RUNE_ADDRESS,
-      //   "amount":{
-      //     // "type":"BASE",
-      //     // "decimal":18,
-      //     amount: function(){
-      //       return BigNumber.BigNumber.from(amountTestNative)
-      //     }
-      //   },
-      //   noBroadcast:true //TODO configurable
-      // }
-      // log.info(tag,"transfer: ",transfer)
-      // //if monitor
-      // //let invocationId = "pioneer:invocation:v0.01:ETH:sKxuLRKdaCKHHKAJ1t4iYm"
-      //
-      // let responseTransfer = await user.clients[BLOCKCHAIN].transfer(transfer,options)
-      // log.debug(tag,"responseTransfer: ",responseTransfer)
+      //TODO switch on context/wallet?
+        //if onboard
+        //if keplr
+      console.log("currentSellAsset: ",currentSellAsset)
+      console.log("currentBuyAsset: ",currentBuyAsset)
+
+      console.log("context: ",state.context)
+      console.log("assetContext: ",state.assetContext)
+      //tradeOutput
+      console.log("tradeOutput: ",state.tradeOutput)
+      let tradePair = state.assetContext+"_"+state.tradeOutput
+      console.log("tradePair: ",tradePair)
+      console.log("status: ",state.status)
+      console.log("status.pools: ",state.status.exchanges.pools)
+
+      //get pool address
+      let thorVault = state.status.exchanges.pools.filter((e:any) => e.chain === state.assetContext)
+      thorVault = thorVault[0]
+      console.log("thorVault: ",thorVault)
+      let vaultAddress = thorVault.address
+      console.log("vaultAddress: ",vaultAddress)
+
+      //from pubkeys gets output address
+      let pubkeyOutput = state.balances.filter((balance:any) => balance.symbol === state.tradeOutput)[0]
+      console.log("pubkeyOutput: ",pubkeyOutput)
+
+      //TODO buildThorChain memo function coolness
+      let memo = '=:'+state.tradeOutput+'.'+state.tradeOutput+":"+pubkeyOutput.master
+      console.log("memo: ",memo)
+
+      let amountBase = currentSellAsset.amount
+      let amountTestNative = baseAmountToNative(state.assetContext,amountBase)
+      console.log("amountTestNative: ",amountTestNative)
+
+
+      let transfer:Transfer = {
+        context:state.context,
+        recipient: vaultAddress,
+        fee:{
+          // gasLimit: 20000,
+          priority:3, //1-5 5 = highest
+        },
+        asset: state.assetContext,
+        network: state.assetContext,
+        memo,
+        "amount":{
+          // "type":"BASE",
+          // "decimal":18,
+          amount: function(){
+            return BigNumber.BigNumber.from(amountTestNative)
+          }
+        },
+        noBroadcast:true //TODO configurable
+      }
+      console.log("transfer: ",transfer)
+      let options:any = {
+        verbose: true,
+        txidOnResp: false, // txidOnResp is the output format
+      }
+
+      //toLongName
+      let blockchain = COIN_MAP_LONG[state.assetContext]
+      console.log("blockchain: ",blockchain)
+      console.log("pioneer: ",pioneer)
+      console.log("blockchain: ",pioneer.user)
+      console.log("blockchain: ",pioneer.user.clients)
+      // let responseTransfer = await pioneer.user.clients[blockchain].transfer(transfer,options)
+      // console.log('responseTransfer: ',responseTransfer)
+
+      //todo push to invocations
 
     }catch(e){
       console.error(e)
@@ -367,7 +418,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         console.log('lastConnect: ', lastConnect)
         //only start once!
         isPioneerStarted = true
-        pioneer = new PioneerService()
         let initResult = await pioneer.init()
 
         //pioneer status

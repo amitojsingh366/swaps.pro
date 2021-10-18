@@ -121,6 +121,9 @@ export const Pioneer = () => {
             console.log("** STATUS: ",status)
             const currentSellAsset = getValues('sellAsset')
             const currentBuyAsset = getValues('buyAsset')
+            console.log("HOOK: currentSellAsset",currentSellAsset)
+            console.log("HOOK: currentBuyAsset",currentBuyAsset)
+
             let symbolIn = currentSellAsset.currency.symbol
             let symbolOut = currentBuyAsset.currency.symbol
 
@@ -132,9 +135,9 @@ export const Pioneer = () => {
             console.log("marketInfo: ",marketInfo)
 
             //amountOut = amountIn * rate
-            let amountOut = parseFloat(currentBuyAsset.amount) * marketInfo.rate
-            console.log("amountOut:",amountOut)
-            setValue('buyAsset.amount', amountOut)
+            // let amountOut = parseFloat(currentBuyAsset.amount) * marketInfo.rate
+            // console.log("amountOut:",amountOut)
+            // setValue('buyAsset.amount', amountOut)
         } else {
             console.log(' cant update, no market status ')
         }

@@ -17,10 +17,13 @@ export const TradeConfirm = ({ history }: RouterProps) => {
   let onSubmit = async function(){
     try{
       console.log("onSubmit")
-      //submit transaction
-      let result = await buildTransaction()
-      console.log("result:  ",result)
+      const currentSellAsset = getValues('sellAsset')
+      const currentBuyAsset = getValues('buyAsset')
 
+      //submit transaction
+      let result = await buildTransaction(currentSellAsset,currentBuyAsset)
+      console.log("result:  ",result)
+      //history.push('/trade/status')
     }catch(e){
       console.error(e)
     }
@@ -87,7 +90,7 @@ export const TradeConfirm = ({ history }: RouterProps) => {
             size='lg'
             width='full'
             mt={6}
-            onClick={() => history.push('/trade/status')}
+            onClick={onSubmit}
           >
             Confirm and Trade
           </Button>
