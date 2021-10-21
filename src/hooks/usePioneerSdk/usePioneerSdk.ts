@@ -100,7 +100,7 @@ export const Pioneer = () => {
           console.log("balance: ",balance)
           setValue('sellAsset.currency',balance)
           setValue('sellAsset.amount',balance?.balance)
-          setValue('fiatAmount',balance?.valueUsd)
+          setValue('fiatAmount',1)
           console.log("amountUsd: ",balance?.valueUsd)
 
           //output
@@ -109,7 +109,6 @@ export const Pioneer = () => {
           setValue('buyAsset.currency',balanceOutput)
           setValue('buyAsset.currency.image',balanceOutput?.image)
           setValue('buyAsset.currency.symbol',balanceOutput?.symbol)
-          setValue('buyAsset.amount',balanceOutput?.balance)
           //setValue('fiatAmount',balanceOutput.valueUsd)
           console.log("amountUsd: output (buy) ",balanceOutput?.valueUsd)
         } else {
@@ -133,11 +132,12 @@ export const Pioneer = () => {
             let marketInfo = status.exchanges.markets.filter((e:any) => e.pair == pair)
             marketInfo = marketInfo[0]
             console.log("marketInfo: ",marketInfo)
-
-            //amountOut = amountIn * rate
-            let amountOut = parseFloat(currentSellAsset.amount) * marketInfo.rate
-            console.log("amountOut:",amountOut)
-            setValue('buyAsset.amount', amountOut)
+            if(marketInfo && marketInfo.rate){
+                //amountOut = amountIn * rate
+                let amountOut = parseFloat(currentSellAsset.amount) * marketInfo.rate
+                console.log("amountOut:",amountOut)
+                setValue('buyAsset.amount', amountOut)
+            }
         } else {
             console.log(' cant update, no market status ')
         }

@@ -7,7 +7,7 @@ import {SUPPORTED_WALLETS} from "../../../../context/WalletProvider/config";
 
 export const PioneerButton: FC<FlexProps> = props => {
     let { state, connect, dispatch } = useWallet()
-    const { isConnected, account } = state
+    const { isConnected, account, context } = state
     const [routePath, setRoutePath] = useState<string | readonly string[] | undefined>()
 
     const clickPioneer = () => {
@@ -34,7 +34,7 @@ export const PioneerButton: FC<FlexProps> = props => {
                         maxH='28px'
                         ml={2}
                     />
-                    {/*<Text fontSize='sm'>{pioneer.context && shortenAddress(pioneer.context, 4)}</Text>*/}
+                    <Text fontSize='sm'>{context}</Text>
                     <ChevronDownIcon h={8} w={8} />
                 </HStack>
             ) : (

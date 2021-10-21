@@ -59,12 +59,14 @@ export const WalletButton: FC<FlexProps> = () => {
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
   }
 
-  const openSend = function(){
+  const openSend = function(wallet:string){
+    console.log("wallet: ",wallet)
     setRoutePath('/Send/Send')
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
   }
 
-  const openReceive = function(){
+  const openReceive = function(wallet:string){
+    console.log("wallet: ",wallet)
     setRoutePath('/Receive/Receive')
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
   }
@@ -107,7 +109,7 @@ export const WalletButton: FC<FlexProps> = () => {
                         <ArrowUpIcon />
                       </Circle>
                     }
-                    onClick={openSend}
+                    onClick={ () => openSend('onboard')}
                 >
                   Send
                 </MenuItem>
@@ -117,7 +119,7 @@ export const WalletButton: FC<FlexProps> = () => {
                         <ArrowDownIcon />
                       </Circle>
                     }
-                    onClick={openReceive}
+                    onClick={ () => openReceive('onboard')}
                 >
                   Receive
                 </MenuItem>
@@ -127,7 +129,7 @@ export const WalletButton: FC<FlexProps> = () => {
                       <RepeatIcon />
                     </Circle>
                   }
-                  onClick={openReceive}
+                  onClick={ () => openReceive('onboard')}
                 >
                   Switch Wallet Provider
                 </MenuItem>
@@ -154,7 +156,36 @@ export const WalletButton: FC<FlexProps> = () => {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
-                *keplr wallet info
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <ArrowUpIcon />
+                      </Circle>
+                    }
+                    onClick={ () => openSend('keplr')}
+                >
+                  Send
+                </MenuItem>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <ArrowDownIcon />
+                      </Circle>
+                    }
+                    onClick={ () => openReceive('keplr')}
+                >
+                  Receive
+                </MenuItem>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <CloseIcon />
+                      </Circle>
+                    }
+                    onClick={disconnect}
+                >
+                  Disconnect
+                </MenuItem>
               </AccordionPanel>
             </AccordionItem>
 
@@ -168,7 +199,36 @@ export const WalletButton: FC<FlexProps> = () => {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
-                *pioneer wallet info
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <ArrowUpIcon />
+                      </Circle>
+                    }
+                    onClick={ () => openSend('pioneer')}
+                >
+                  Send
+                </MenuItem>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <ArrowDownIcon />
+                      </Circle>
+                    }
+                    onClick={ () => openReceive('pioneer')}
+                >
+                  Receive
+                </MenuItem>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <CloseIcon />
+                      </Circle>
+                    }
+                    onClick={disconnect}
+                >
+                  Disconnect
+                </MenuItem>
               </AccordionPanel>
             </AccordionItem>
           </Accordion>

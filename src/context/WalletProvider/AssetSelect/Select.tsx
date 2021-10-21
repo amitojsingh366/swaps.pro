@@ -35,7 +35,11 @@ export const Select = ({ }: any) => {
 
     const onSelectAsset = function(asset:string){
         console.log("onSelectAsset: ",asset)
-        dispatch({ type: WalletActions.SET_TRADE_OUTPUT, payload:asset })
+        if(selectType === 'input'){
+            dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:asset })
+        }else{
+            dispatch({ type: WalletActions.SET_TRADE_OUTPUT, payload:asset })
+        }
         dispatch({ type: WalletActions.SET_WALLET_MODAL, payload:false })
     }
 
