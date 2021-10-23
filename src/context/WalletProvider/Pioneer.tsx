@@ -33,10 +33,10 @@ let {
 let BigNumber = require('@ethersproject/bignumber')
 
 export class PioneerService {
-  private App: any
-  private Api: any
-  private queryKey: string
-  private pairingCode: string | undefined
+  public App: any
+  public Api: any
+  public queryKey: string
+  public pairingCode: string | undefined
   public isInitialized: boolean = false
   public username: string | undefined
   public context: string | undefined
@@ -52,16 +52,16 @@ export class PioneerService {
   public events: any
   public userParams: any
   public user: any
-  private totalValueUsd: any
-  private walletsIds: any
-  private walletDescriptions: any
+  public totalValueUsd: any
+  public walletsIds: any
+  public walletDescriptions: any
   //internal (state not synced remotely)
-  private sendToAddress: string | undefined
-  private sendToAmountNative: string | undefined
-  private sendToNetwork: string | undefined
-  private sendToAsset: string | undefined
-  private sendToFeeLevel: string | undefined
-  private sendInvocation: string | undefined
+  public sendToAddress: string | undefined
+  public sendToAmountNative: string | undefined
+  public sendToNetwork: string | undefined
+  public sendToAsset: string | undefined
+  public sendToFeeLevel: string | undefined
+  public sendInvocation: string | undefined
   constructor() {
     this.invocations = []
     this.balances = []
@@ -80,7 +80,8 @@ export class PioneerService {
     }
   }
 
-  getStatus(): any {
+  async getStatus(): Promise<any> {
+    let statusResp = await this.Api.Status()
     return this.status
   }
 
@@ -284,6 +285,12 @@ export class PioneerService {
         }
       })
 
+      const response = await this.App.createPairingCode()
+      if (!response.code) {
+        throw Error('102: invalid response! createPairingCode')
+      }
+      this.pairingCode = response.code
+
       const info = await this.App.getUserInfo()
       console.log('INFO: ', info)
       if (!info || info.error) {
@@ -328,11 +335,14 @@ export class PioneerService {
         this.balances = contextInfo.balances
         console.log("*** pioneer: this.balances: ",this.balances)
 
+        this.pubkeys = contextInfo.pubkeys
+        console.log("*** pioneer: this.pubkeys: ",this.pubkeys)
+
         if (this.username != null) {
           localStorage.setItem('username', this.username)
         }
-        this.user = await this.App.getUserParams()
-        console.log('userParams: ', this.user)
+        // this.user = await this.App.getUserParams()
+        // console.log('userParams: ', this.user)
         /*
          */
         //set context
@@ -353,6 +363,7 @@ export class PioneerService {
         //TODO use x-chain User() class (x-chain compatiblity)?
         return {
           status: 'Online',
+          code: this.pairingCode,
           paired: true,
           assetContext: this.assetContext,
           assetBalanceNativeContext: this.assetBalanceNativeContext,
@@ -361,6 +372,7 @@ export class PioneerService {
           context: this.context,
           wallets: this.wallets,
           balances: this.balances,
+          pubkeys: this.pubkeys,
           walletsIds: this.walletsIds,
           valueUsdContext: this.valueUsdContext,
           totalValueUsd: this.totalValueUsd
@@ -371,6 +383,7 @@ export class PioneerService {
       return {
         status: 'Online',
         paired: true,
+        code: this.pairingCode,
         assetContext: this.assetContext,
         assetBalanceNativeContext: this.assetBalanceNativeContext,
         assetBalanceUsdValueContext: this.assetBalanceUsdValueContext,
@@ -378,6 +391,7 @@ export class PioneerService {
         context: this.context,
         wallets: this.wallets,
         balances: this.balances,
+        pubkeys: this.pubkeys,
         walletsIds: this.walletsIds,
         valueUsdContext: this.valueUsdContext,
         totalValueUsd: this.totalValueUsd

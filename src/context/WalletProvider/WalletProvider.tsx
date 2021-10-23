@@ -279,10 +279,22 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   const buildTransaction = async function(currentSellAsset:any,currentBuyAsset:any){
     try{
       console.log("Build TX~!")
+      //build swap
+      if(!pioneer.isInitialized){
+        await pioneer.init()
+      }
+      let contextInput = currentSellAsset.currency.context
+      console.log("contextInput: ",contextInput)
+
+      //wallets
+      console.log("wallets: ",pioneer.wallets)
+
+      //get walletDescription for context
+      //state.balances.filter((balance:any) => balance.symbol === state.tradeOutput)[0]
 
       //TODO switch on context/wallet?
-        //if onboard
-        //if keplr
+      //if onboard
+      //if keplr
       console.log("currentSellAsset: ",currentSellAsset)
       console.log("currentBuyAsset: ",currentBuyAsset)
 
@@ -292,13 +304,18 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       console.log("tradeOutput: ",state.tradeOutput)
       let tradePair = state.assetContext+"_"+state.tradeOutput
       console.log("tradePair: ",tradePair)
-      console.log("status: ",state.status)
-      console.log("status.pools: ",state.status.exchanges.pools)
+
+      let status = await pioneer.getStatus()
+      console.log("status: ",status)
+
+      // console.log("status: ",state.status)
+      console.log("status.pools: ",status.exchanges.pools)
 
       //get pool address
-      let thorVault = state.status.exchanges.pools.filter((e:any) => e.chain === state.assetContext)
+      let thorVault = status.exchanges.pools.filter((e:any) => e.chain === state.assetContext)
       thorVault = thorVault[0]
       console.log("thorVault: ",thorVault)
+
       let vaultAddress = thorVault.address
       console.log("vaultAddress: ",vaultAddress)
 
@@ -313,34 +330,123 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       let amountBase = currentSellAsset.amount
       let amountTestNative = baseAmountToNative(state.assetContext,amountBase)
       console.log("amountTestNative: ",amountTestNative)
+      console.log("amountBase: ",amountBase)
+
+      //get context of input selection
 
 
-      let transfer:Transfer = {
-        context:state.context,
-        recipient: vaultAddress,
-        fee:{
-          // gasLimit: 20000,
-          priority:3, //1-5 5 = highest
-        },
-        asset: state.assetContext,
-        network: state.assetContext,
-        memo,
-        "amount":{
-          // "type":"BASE",
-          // "decimal":18,
-          amount: function(){
-            return BigNumber.BigNumber.from(amountTestNative)
+      //if context is metamask
+      let contextType = 'MetaMask'
+      if(contextType === 'MetaMask'){
+        console.log("Build Transaction with onBoard: MetaMask")
+        if(state.wallet && state.wallet.provider && state.account){
+
+          //build swap
+          let swap:any = {
+            inboundAddress: thorVault,
+            addressFrom:currentSellAsset.currency.address,
+            coin: "ETH",
+            asset: "ETH",
+            memo,
+            amount:amountBase
           }
-        },
-        noBroadcast:true //TODO configurable
+          let options:any = {
+            verbose: true,
+            txidOnResp: false, // txidOnResp is the output format
+          }
+
+          let responseSwap = await pioneer.App.buildSwap(swap,options)
+          console.log("responseSwap: ",responseSwap)
+
+          /*
+          {
+              "network": "ETH",
+              "asset": "ETH",
+              "swap": {
+                  "inboundAddress": {
+                      "chain": "ETH",
+                      "pub_key": "thorpub1addwnpepqdr4386mnkqyqzpqlydtat0k82f8xvkfwzh4xtjc84cuaqmwx5vjvgnf6v5",
+                      "address": "0xf56cba49337a624e94042e325ad6bc864436e370",
+                      "router": "0xC145990E84155416144C532E31f89B840Ca8c2cE",
+                      "halted": false,
+                      "gas_rate": "180"
+                  },
+                  "addressFrom": "0xC3aFFff54122658b89C31183CeC4F15514F34624",
+                  "coin": "ETH",
+                  "asset": "ETH",
+                  "memo": "=:BCH.BCH:bitcoincash:qzxp0xc6vsj8apg9ym4n4jl45pyxtkpshuvr9smjp3",
+                  "amount": 0.004912764988780645
+              },
+              "HDwalletPayload": {
+                  "addressNList": [
+                      2147483692,
+                      2147483708,
+                      2147483648,
+                      0,
+                      0
+                  ],
+                  "nonce": "0x40",
+                  "gasPrice": "0xdf65f8067",
+                  "gasLimit": "0x13880",
+                  "value": "0x1174223c057065",
+                  "to": "0xC145990E84155416144C532E31f89B840Ca8c2cE",
+                  "data": "0x1fece7b4000000000000000000000000f56cba49337a624e94042e325ad6bc864436e3700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001174223c057065000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000403d3a4243482e4243483a626974636f696e636173683a717a78703078633676736a3861706739796d346e346a6c3435707978746b70736875767239736d6a7033",
+                  "chainId": 1
+              },
+              "verbal": "Ethereum transaction"
+          }
+           */
+          await onStartOnboard()
+          //sign and broadcast
+          const signedTx = await state.wallet?.provider?.getSigner().sendTransaction({
+            from: state.account,
+            to: responseSwap.HDwalletPayload.to,
+            data: responseSwap.HDwalletPayload.data,
+            value: responseSwap.HDwalletPayload.value,
+            gasLimit: responseSwap.HDwalletPayload.gasLimit,
+            gasPrice: responseSwap.HDwalletPayload.gasPrice,
+            nonce: responseSwap.HDwalletPayload.nonce,
+            chainId: 1
+          })
+
+          console.log("signedTx: ",signedTx)
+
+        }
+
+
+      }else if(contextType === 'pioneer'){
+        console.log("Build Transaction with pioneer: ")
+        let transfer:Transfer = {
+          context:state.context,
+          recipient: vaultAddress,
+          fee:{
+            // gasLimit: 20000,
+            priority:3, //1-5 5 = highest
+          },
+          asset: state.assetContext,
+          network: state.assetContext,
+          memo,
+          "amount":{
+            // "type":"BASE",
+            // "decimal":18,
+            amount: function(){
+              return BigNumber.BigNumber.from(amountTestNative)
+            }
+          },
+          noBroadcast:true //TODO configurable
+        }
+        console.log("transfer: ",transfer)
+
+        let result = await pioneer.buildTx(transfer)
+        dispatch({ type: WalletActions.SET_INVOCATION_CONTEXT, payload: result })
       }
-      console.log("transfer: ",transfer)
-
-      let result = await pioneer.buildTx(transfer)
-      dispatch({ type: WalletActions.SET_INVOCATION_CONTEXT, payload: result })
 
 
-      return result
+
+
+
+
+      //return result
     }catch(e){
       console.error(e)
     }
@@ -410,6 +516,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         //only start once!
         isPioneerStarted = true
         let initResult = await pioneer.init()
+        console.log("initResult: ",initResult)
+        if(initResult.code){
+          //set code
+          dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
+        }
 
         //pioneer status
         let status = await pioneer.getStatus()
@@ -420,21 +531,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         console.log('Pioneer initResult: ', initResult)
         dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
         //pairing code
-        if (initResult && initResult.code) {
-          console.log('wallet not paired! code: ', initResult.code)
-          //set code
-          dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
-
-          //open modal
-          const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
-          console.log("previouslySelectedWallet: ",previouslySelectedWallet)
-          if (previouslySelectedWallet && onboard) {
-            console.log("previouslySelectedWallet: CHECKPOINT1")
-            //connectPrevious(previouslySelectedWallet)
-          } else {
-            console.log("previouslySelectedWallet: CHECKPOINT1 fail")
-          }
-        } else if (initResult) {
+        if (initResult) {
           //get user info
           //let userInfo = await pioneer.refresh()
           // console.log('userInfo: ', userInfo)
@@ -442,13 +539,13 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           let context:any = initResult.context
           setUsername(initResult.username)
 
-          dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'BCH' })
+          dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
 
           //TODO use remote context asset
           //get first ETH symbol in balances
           console.log("initResult.balances: ",initResult)
           if(initResult.balances){
-            let ETHbalance = initResult.balances.filter((balance:any) => balance.symbol === 'BCH')[0]
+            let ETHbalance = initResult.balances.filter((balance:any) => balance.symbol === 'ETH')[0]
             console.log("ETHbalance: ",ETHbalance)
             dispatch({ type: WalletActions.SET_BALANCES, payload:initResult.balances })
           }
@@ -490,9 +587,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   const onStartOnboard = async function(){
     try{
-      if(!pioneer.isInitialized){
-        await onStartPioneer()
-      }
       console.log("CHECKPOINT ONBOARD")
       console.log("state init: ",state.isInitPioneer)
       if(!state.isInitOnboard){
@@ -549,13 +643,13 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
                 dispatch({type: WalletActions.SET_BALANCES, payload: pioneer.balances})
 
                 //set context balance
-                let ETHbalance = pioneer.balances.filter((balance:any) => balance.symbol === 'BCH')[0]
+                let ETHbalance = pioneer.balances.filter((balance:any) => balance.symbol === 'ETH')[0]
                 console.log("ETHbalance: ",ETHbalance)
               }
               if (pioneer.username) {
                 dispatch({type: WalletActions.SET_USERNAME, username: 'metamask'})
               }
-              dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'BCH' })
+              dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
               dispatch({type: WalletActions.SET_PIONEER, pioneer: pioneer})
               dispatch({type: WalletActions.SET_WALLET_INFO, payload: {name: 'pioneer', icon: 'Pioneer'}})
 
@@ -592,8 +686,12 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       console.log("ON START!!!! isStarted: ")
 
       //TODO persistance
-      // let currentDb = await db.find()
-      // console.log("currentDb: ",currentDb)
+      let currentDb = await db.find()
+      console.log("currentDb: ",currentDb)
+
+      if(currentDb){
+        console.log("db found! loading pubkeys")
+      }
 
       //isStarted = true
       await onStartPioneer()
