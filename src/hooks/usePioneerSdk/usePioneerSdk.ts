@@ -70,9 +70,14 @@ export const Pioneer = () => {
         console.log("HOOK: selectInput")
     }
 
-    const selectOutput = async (
-    ) => {
+    const selectOutput = async () => {
         console.log("HOOK: selectOutput")
+    }
+
+    const updateAmountInNative = async (value:any) => {
+        console.log("HOOK: updateAmountInNative value: ",value)
+        setValue('sellAsset.amount',value)
+        //update amount Out fiat
     }
 
     const switchAssets = async (
@@ -152,6 +157,7 @@ export const Pioneer = () => {
 
     return {
         reset,
+        updateAmountInNative,
         getCryptoQuote,
         getFiatQuote,
         setMaxInput,
