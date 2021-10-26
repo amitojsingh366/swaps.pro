@@ -15,7 +15,7 @@ export enum TradeActions {
 
 export const Pioneer = () => {
     const { state, dispatch, setRoutePath } = useWallet()
-    const { assetContext, balances, tradeOutput, status } = state
+    const { assetContext, balances, tradeOutput, status, pioneer } = state
     const {
         setValue,
         getValues,

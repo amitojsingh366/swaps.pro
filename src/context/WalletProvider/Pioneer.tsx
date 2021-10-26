@@ -85,6 +85,11 @@ export class PioneerService {
     return this.status
   }
 
+  async getInvocationStatus(invocationId:string): Promise<any> {
+    let statusResp = await this.App.getInvocation(invocationId)
+    return statusResp
+  }
+
   getQueryKey(): string {
     return this.queryKey
   }
