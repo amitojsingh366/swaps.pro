@@ -57,6 +57,9 @@ export enum WalletActions {
   SET_INVOCATION_CONTEXT = 'SET_INVOCATION_CONTEXT',
   SET_TRADE_INPUT = 'SET_TRADE_INPUT',
   SET_TRADE_OUTPUT = 'SET_TRADE_OUTPUT',
+  SET_TRADE_STATUS = 'SET_TRADE_STATUS',
+  SET_TRADE_FULLFILLMENT_TXID = 'SET_TRADE_FULLFILLMENT_TXID',
+  SET_INVOCATION_TXID = 'SET_INVOCATION_TXID',
   SET_TOTAL_VALUE_USD = 'SET_TOTAL_VALUE_USD',
   SET_EXCHANGE_INFO = 'SET_EXCHANGE_INFO',
   RESET_STATE = 'RESET_STATE'
@@ -91,6 +94,9 @@ export interface InitialState {
   tradeOutput: any
   exchangeInfo: any
   selectType: any
+  tradeStatus: string | null,
+  fullfillmentTxid: string | null,
+  invocationTxid: string | null,
 }
 
 const initialState: InitialState = {
@@ -121,6 +127,9 @@ const initialState: InitialState = {
   context: null,
   totalValueUsd: null,
   tradeOutput: null,
+  tradeStatus: null,
+  fullfillmentTxid: null,
+  invocationTxid: null,
   exchangeInfo:null
 }
 
@@ -144,6 +153,8 @@ export type ActionTypes =
   | { type: WalletActions.SET_USERNAME; payload: String | null }
   | { type: WalletActions.SET_TRADE_INPUT; payload: any }
   | { type: WalletActions.SET_TRADE_OUTPUT; payload: any }
+  | { type: WalletActions.SET_TRADE_STATUS; payload: string }
+  | { type: WalletActions.SET_TRADE_FULLFILLMENT_TXID; payload: string }
   | { type: WalletActions.SET_ASSET_CONTEXT; payload: String | null }
   | { type: WalletActions.SET_WALLET_CONTEXT; context: String | null }
   | { type: WalletActions.SET_WALLET_INFO; payload: { name: string; icon: string } }
@@ -163,6 +174,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_ACTIVE; payload: boolean }
   | { type: WalletActions.SET_TOTAL_VALUE_USD; payload: string }
   | { type: WalletActions.SET_INVOCATION_CONTEXT; payload: string }
+  | { type: WalletActions.SET_INVOCATION_TXID; payload: string }
   | { type: WalletActions.SET_CONTEXT; payload: string }
   | { type: WalletActions.SET_EXCHANGE_CONTEXT; payload: string }
 
@@ -218,6 +230,12 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, selectType: action.payload }
     case WalletActions.SET_TRADE_OUTPUT:
       return { ...state, tradeOutput: action.payload }
+    case WalletActions.SET_TRADE_STATUS:
+      return { ...state, tradeStatus: action.payload }
+    case WalletActions.SET_TRADE_FULLFILLMENT_TXID:
+      return { ...state, fullfillmentTxid: action.payload }
+    case WalletActions.SET_INVOCATION_TXID:
+      return { ...state, invocationTxid: action.payload }
     case WalletActions.SET_SELECT_MODAL:
       return { ...state, modalSelect: action.payload }
     case WalletActions.RESET_STATE:
@@ -304,6 +322,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           console.log("status.pools: ",state.status)
           console.log("status.pools: ",state.status.exchanges.pools)
           console.log("state.assetContext: ",state.assetContext)
+
           //get pool address
           let thorVault = state.status.exchanges.pools.filter((e:any) => e.chain === state.assetContext)
           thorVault = thorVault[0]
@@ -344,10 +363,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
                 verbose: true,
                 txidOnResp: false, // txidOnResp is the output format
               }
-
-              let responseSwap = await pioneer.App.buildSwap(swap, options)
+              // console.log("swap: ", swap)
+              let responseSwap = await pioneer.App.buildSwapTx(swap, options, swap.asset)
               console.log("responseSwap: ", responseSwap)
-
+              dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'built' })
               /*
 
                 swap
@@ -373,6 +392,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
               console.log("responseInvoke: ",responseInvoke)
               let invocationId = responseInvoke.invocationId
               transaction.invocationId = invocationId
+              dispatch({ type: WalletActions.SET_INVOCATION_CONTEXT, payload: invocationId })
+              dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'invoked' })
 
               let txPayload:any = {
                 from:state.account,
@@ -385,8 +406,54 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
                 chainId: 1
               }
               console.log("txPayload: ",txPayload)
-              const signedTx = await state.provider.getSigner().sendTransaction(txPayload)
-              console.log("signedTx:",signedTx)
+              const signedTx:any = await state.provider.getSigner().sendTransaction(txPayload)
+              console.log("*** signedTx:",signedTx)
+
+              //mock send for debugging
+              // let signedTx:any = {
+              //   "hash": "0xa4fd92ae21345de0b218f8951b9229d504cd55ef50780a7e5e18a81ecfa22a74",
+              //   "type": 2,
+              //   "accessList": null,
+              //   "blockHash": null,
+              //   "blockNumber": null,
+              //   "transactionIndex": null,
+              //   "confirmations": 0,
+              //   "from": "0xC3aFFff54122658b89C31183CeC4F15514F34624",
+              //   "gasPrice": {
+              //     "type": "BigNumber",
+              //     "hex": "0x1b5320a25b"
+              //   },
+              //   "maxPriorityFeePerGas": {
+              //     "type": "BigNumber",
+              //     "hex": "0x1b5320a25b"
+              //   },
+              //   "maxFeePerGas": {
+              //     "type": "BigNumber",
+              //     "hex": "0x1b5320a25b"
+              //   },
+              //   "gasLimit": {
+              //     "type": "BigNumber",
+              //     "hex": "0x013880"
+              //   },
+              //   "to": "0xC145990E84155416144C532E31f89B840Ca8c2cE",
+              //   "value": {
+              //     "type": "BigNumber",
+              //     "hex": "0x2386f26fc10000"
+              //   },
+              //   "nonce": 87,
+              //   "data": "0x1fece7b4000000000000000000000000f56cba49337a624e94042e325ad6bc864436e3700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002386f26fc10000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000403d3a4243482e4243483a626974636f696e636173683a717a78703078633676736a3861706739796d346e346a6c3435707978746b70736875767239736d6a7033",
+              //   "r": "0x1ccaf7e8e8ee44807686e209cb78972766387a2a59050d6ef7c4467b2bb6d6d0",
+              //   "s": "0x1a74183927cd0b07ac247156cdfa3b7df9a073b2fa44f684364ac68a04a1afac",
+              //   "v": 1,
+              //   "creates": null,
+              //   "chainId": 0
+              // }
+              dispatch({ type: WalletActions.SET_INVOCATION_TXID, payload: signedTx.hash })
+              dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'pending' })
+              signedTx.serialized = "fobarfixme"
+              signedTx.txid = signedTx.hash
+              signedTx.network = transaction.network
+              signedTx.type = 'MetaMask'
 
               //get invcation from api
               let invocation = await state.pioneer.App.getInvocation(invocationId)
@@ -414,6 +481,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
               console.log("state: ",invocationView3.state)
               if(invocationView3.state !== 'broadcasted'){
                 console.error("failed to init tx lifecycle hook correctly")
+                throw Error('Fail fast bro, shits whack')
               }
 
               //start loop
@@ -428,15 +496,18 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
                   if(invocationStatus && invocationStatus.isConfirmed){
                     isConfirmed = true
+                    dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'confirmed' })
                     console.log('WINNING! TX CONFIRMED!')
                     //TODO push to state?
                   } else {
                     console.log('not confirmed!')
                   }
 
-                  if(invocationStatus && invocationStatus.isFullfilled){
+                  if(invocationStatus && invocationStatus.isFullfilled && invocationStatus.fullfillmentTxid){
                     console.log('WINNING2! TX FULLFILLED YOU GOT PAID BRO!')
-
+                    dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'fullfilled' })
+                    dispatch({ type: WalletActions.SET_TRADE_FULLFILLMENT_TXID, payload:invocationStatus.fullfillmentTxid })
+                    fullfillmentTxid = invocationStatus.fullfillmentTxid
                     isFullfilled = true
                     //TODO push to state?
                     console.log("destroyed interval: ",interval)
@@ -448,7 +519,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
                   console.error(e)
                 }
               }
-
               interval = setInterval(checkStatus,6000)
             }
           }
@@ -701,6 +771,13 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
               // code block
               break
             case 'pairing':
+              //set context
+              dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+              dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
+              if(pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:pioneer.balances })
+              if(pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:pioneer.context })
+              if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
+              if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
               //console.log('pairing event!: ', event.username)
               dispatch({ type: WalletActions.SET_USERNAME, payload: initResult.username })
               dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
