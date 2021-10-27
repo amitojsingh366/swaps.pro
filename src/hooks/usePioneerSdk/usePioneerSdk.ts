@@ -65,6 +65,11 @@ export const Pioneer = () => {
         console.log("formState: ",{ errors, isDirty, isValid })
     }
 
+    //selectExchange
+    const selectExchange = async (exchange:string) => {
+        console.log("HOOK: selectExchange: ",exchange)
+    }
+
     const selectInput = async (
     ) => {
         console.log("HOOK: selectInput")
@@ -164,6 +169,7 @@ export const Pioneer = () => {
         selectInput,
         selectOutput,
         switchAssets,
-        update
+        update,
+        selectExchange
     }
 }
