@@ -62,6 +62,9 @@ export enum WalletActions {
   SET_INVOCATION_TXID = 'SET_INVOCATION_TXID',
   SET_TOTAL_VALUE_USD = 'SET_TOTAL_VALUE_USD',
   SET_EXCHANGE_INFO = 'SET_EXCHANGE_INFO',
+  SET_KEPLR = 'SET_KEPLR',
+  SET_KEPLR_CONTEXT = 'SET_KEPLR_CONTEXT',
+  SET_KEPLR_NETWORK = 'SET_KEPLR_NETWORK',
   RESET_STATE = 'RESET_STATE'
 }
 
@@ -97,6 +100,9 @@ export interface InitialState {
   tradeStatus: string | null,
   fullfillmentTxid: string | null,
   invocationTxid: string | null,
+  keplr:any,
+  keplrContext:string | null,
+  keplrNetworkContext:any
 }
 
 const initialState: InitialState = {
@@ -130,7 +136,10 @@ const initialState: InitialState = {
   tradeStatus: null,
   fullfillmentTxid: null,
   invocationTxid: null,
-  exchangeInfo:null
+  exchangeInfo:null,
+  keplr:null,
+  keplrContext:null,
+  keplrNetworkContext:null
 }
 
 export interface IWalletContext {
@@ -177,6 +186,9 @@ export type ActionTypes =
   | { type: WalletActions.SET_INVOCATION_TXID; payload: string }
   | { type: WalletActions.SET_CONTEXT; payload: string }
   | { type: WalletActions.SET_EXCHANGE_CONTEXT; payload: string }
+  | { type: WalletActions.SET_KEPLR; payload: string }
+  | { type: WalletActions.SET_KEPLR_CONTEXT; payload: string }
+  | { type: WalletActions.SET_KEPLR_NETWORK; payload: any }
 
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
@@ -202,6 +214,12 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, adapters: action.payload }
     case WalletActions.SET_PIONEER:
       return { ...state, pioneer: action.payload }
+    case WalletActions.SET_KEPLR:
+      return { ...state, keplr: action.payload }
+    case WalletActions.SET_KEPLR_CONTEXT:
+      return { ...state, keplrContext: action.payload }
+    case WalletActions.SET_KEPLR_NETWORK:
+      return { ...state, keplrNetworkContext: { name: action?.payload?.name, icon: action?.payload?.icon } }
     case WalletActions.SET_PAIRING_CODE:
       return { ...state, code: action.payload }
     case WalletActions.SET_USERNAME:
@@ -247,6 +265,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         username: null,
         setAssetContext: null,
         pioneer: null,
+        keplr: null,
+        onboard: null,
         balances: null
       }
     default:
@@ -731,6 +751,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       },
       address: address => {
         dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
+        //if account not in balances object
+        console.log("Register MetaMask Account")
       },
       wallet: (wallet: Wallet) => {
         if (wallet.provider) {
@@ -792,6 +814,67 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       }
     }
     startPioneer()
+
+    //start keplr
+    async function startKeplr(){
+      try{
+        console.log("onStartKeplr")
+        // Keplr extension injects the offline signer that is compatible with cosmJS.
+        // You can get this offline signer from `window.getOfflineSigner(chainId:string)` after load event.
+        // And it also injects the helper function to `window.keplr`.
+        // If `window.getOfflineSigner` or `window.keplr` is null, Keplr extension may be not installed on browser.
+        // @ts-ignore
+        if (!window.getOfflineSigner || !window.keplr) {
+          alert("Please install keplr extension");
+        }
+
+        //cosmos info
+        let cosmosInfo = {
+          rpc: 'https://rpc-cosmoshub.keplr.app',
+          rest: 'https://lcd-cosmoshub.keplr.app',
+          chainId: 'cosmoshub-4',
+          chainName: 'Cosmos Hub',
+          coinImageUrl:'https://app.osmosis.zone/public/assets/tokens/cosmos.svg',
+        }
+
+        const chainId = cosmosInfo.chainId;
+
+        //TODO if pair process iterate over all chains and register addresses?
+
+        // You should request Keplr to enable the wallet.
+        // This method will ask the user whether or not to allow access if they haven't visited this website.
+        // Also, it will request user to unlock the wallet if the wallet is locked.
+        // If you don't request enabling before usage, there is no guarantee that other methods will work.
+        // @ts-ignore
+        await window.keplr.enable(chainId);
+        // @ts-ignore
+        const offlineSigner = window.getOfflineSigner(chainId);
+
+        // You can get the address/public keys by `getAccounts` method.
+        // It can return the array of address/public key.
+        // But, currently, Keplr extension manages only one address/public key pair.
+        // XXX: This line is needed to set the sender address for SigningCosmosClient.
+        const accounts = await offlineSigner.getAccounts();
+        console.log("accounts: ",accounts)
+        dispatch({ type: WalletActions.SET_KEPLR, payload: offlineSigner })
+        dispatch({ type: WalletActions.SET_KEPLR_CONTEXT, payload: accounts[0].address })
+        dispatch({ type: WalletActions.SET_KEPLR_NETWORK, payload: {icon:cosmosInfo.coinImageUrl,name:chainId} })
+
+        //TODO register account
+
+        //TODO handle signing
+        // Initialize the gaia api with the offline signer that is injected by Keplr extension.
+        // const cosmJS = new SigningCosmosClient(
+        //     "https://node-cosmoshub-3.keplr.app/rest",
+        //     accounts[0].address,
+        //     offlineSigner,
+        // );
+      }catch(e){
+        console.error(e)
+      }
+    }
+    startKeplr()
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // we explicitly only want this to happen once
 
