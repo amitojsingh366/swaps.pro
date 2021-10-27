@@ -1,11 +1,20 @@
-import { Transfer } from '@pioneer-platform/pioneer-types'
+/*
+    Wallet Provider
+      This provider manages all wallet connections
+
+    supported:
+      onboard.js
+      pioneer SDK
+      keplr plugin
+      KeepKey SDK
+
+    Notes:
+      This project uses the Pioneer SDK to manage all pubkeys and tx lifecycle hooks
+    docs: https://ahead-respect-850.notion.site/Pioneer-Developer-Platform-de0ed9bdaaf44133b6fb1a29e4d29bdf
+ */
 let {
-  supportedBlockchains,
   baseAmountToNative,
-  nativeToBaseAmount,
-  COIN_MAP_LONG,
 } = require("@pioneer-platform/pioneer-coins")
-let BigNumber = require('@ethersproject/bignumber')
 import { Keyring } from '@shapeshiftoss/hdwallet-core'
 import { Web3Provider } from '@ethersproject/providers'
 import { API as OnboardAPI, Wallet } from 'bnc-onboard/dist/src/interfaces'
@@ -173,7 +182,6 @@ export type ActionTypes =
   | { type: WalletActions.SET_WALLET_MODAL; payload: boolean }
   | { type: WalletActions.SET_SELECT_MODAL_TYPE; payload: string }
   | { type: WalletActions.SET_SELECT_MODAL; payload: boolean }
-  | { type: WalletActions.RESET_STATE }
   | { type: WalletActions.SET_ONBOARD; payload: OnboardAPI }
   | { type: WalletActions.SET_BLOCK_NUMBER; payload: number | null }
   | { type: WalletActions.SET_ACCOUNT; payload: string }
@@ -189,6 +197,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_KEPLR; payload: string }
   | { type: WalletActions.SET_KEPLR_CONTEXT; payload: string }
   | { type: WalletActions.SET_KEPLR_NETWORK; payload: any }
+  | { type: WalletActions.RESET_STATE }
 
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
@@ -661,89 +670,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       [state.blockNumber, state?.provider]
   )
 
-  // const onStartPioneer = async function(){
-  //   try{
-  //
-  //     console.log("state init: ",state.isInitPioneer)
-  //     if(!state.isInitPioneer){
-  //       console.log("CHECKPOINT PIONEER")
-  //       dispatch({ type: WalletActions.INIT_PIONEER, payload: true })
-  //       console.log("state init2: ",state.isInitPioneer)
-  //       //onboard
-  //       let lastConnect = window.localStorage.getItem('selectedWallet')
-  //       console.log('lastConnect: ', lastConnect)
-  //       //only start once!
-  //       isPioneerStarted = true
-  //       let initResult = await pioneer.init()
-  //       console.log("initResult: ",initResult)
-  //       if(initResult.code){
-  //         //set code
-  //         dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
-  //       }
-  //
-  //       //pioneer status
-  //       let status = await pioneer.getStatus()
-  //       console.log("status: ",status)
-  //       dispatch({ type: WalletActions.SET_STATUS, payload: status })
-  //       console.log('status: ', status)
-  //
-  //       console.log('Pioneer initResult: ', initResult)
-  //       dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-  //       //pairing code
-  //       if (initResult) {
-  //         //get user info
-  //         //let userInfo = await pioneer.refresh()
-  //         // console.log('userInfo: ', userInfo)
-  //         username = initResult.username
-  //         let context:any = initResult.context
-  //         setUsername(initResult.username)
-  //
-  //         dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
-  //
-  //         //TODO use remote context asset
-  //         //get first ETH symbol in balances
-  //         console.log("initResult.balances: ",initResult)
-  //         if(initResult.balances){
-  //           let ETHbalance = initResult.balances.filter((balance:any) => balance.symbol === 'ETH')[0]
-  //           console.log("ETHbalance: ",ETHbalance)
-  //           dispatch({ type: WalletActions.SET_BALANCES, payload:initResult.balances })
-  //         }
-  //
-  //
-  //         dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
-  //         dispatch({ type: WalletActions.SET_CONTEXT, payload:context })
-  //         dispatch({ type: WalletActions.SET_USERNAME, username })
-  //         dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
-  //         dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-  //       }
-  //       /*
-  //         Pioneer events
-  //       * */
-  //       pioneer.events.on('message', async (event: any) => {
-  //         //console.log('pioneer event: ', event)
-  //         switch (event.type) {
-  //           case 'context':
-  //             // code block
-  //             break
-  //           case 'pairing':
-  //             //console.log('pairing event!: ', event.username)
-  //             dispatch({ type: WalletActions.SET_USERNAME, username: initResult.username })
-  //             dispatch({ type: WalletActions.SET_PIONEER, pioneer: initResult })
-  //             dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-  //             dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-  //             break
-  //           default:
-  //             console.error(' message unknown type:',event)
-  //         }
-  //       })
-  //     } else {
-  //       console.log("ALREADY INIT PIONEER!")
-  //     }
-  //   }catch(e){
-  //     console.error(e)
-  //   }
-  // }
-
   useEffect(() => {
     const onboard = initOnboard({
       network: network => {
@@ -859,9 +785,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         dispatch({ type: WalletActions.SET_KEPLR, payload: offlineSigner })
         dispatch({ type: WalletActions.SET_KEPLR_CONTEXT, payload: accounts[0].address })
         dispatch({ type: WalletActions.SET_KEPLR_NETWORK, payload: {icon:cosmosInfo.coinImageUrl,name:chainId} })
-
         //TODO register account
-
         //TODO handle signing
         // Initialize the gaia api with the offline signer that is injected by Keplr extension.
         // const cosmJS = new SigningCosmosClient(

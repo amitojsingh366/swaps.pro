@@ -1,6 +1,7 @@
 import { Keyring } from '@shapeshiftoss/hdwallet-core'
 import { NativeAdapter } from '@shapeshiftoss/hdwallet-native'
 import METAMASK_ICON from 'assets/png/metamask.png'
+import KEEPKEY_ICON from 'assets/png/metamask.png'
 import KEPLR_ICON from 'assets/png/keplr.png'
 import ONBOARD_ICON from 'assets/png/blocknative.png'
 import PIONEER_ICON from 'assets/png/pioneer.png'
@@ -44,5 +45,12 @@ export const SUPPORTED_WALLETS: { [key: string]: SupportedWalletInfo } = {
     type: 'tendermint',
     setup: () => {},
     routes: [{ path: '/onboard/keplr', component: Onboard }]
+  },
+  keepkey: {
+    icon: KEEPKEY_ICON,
+    name: 'KeepKey',
+    type: 'hardware',
+    setup: () => {},
+    routes: [{ path: '/onboard/keepkey', component: Onboard }]
   },
 }

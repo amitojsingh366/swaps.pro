@@ -3,7 +3,6 @@ import {
   ArrowUpIcon,
   ChevronRightIcon,
   CloseIcon,
-  CopyIcon,
   RepeatIcon,
   TriangleDownIcon
 } from '@chakra-ui/icons'
@@ -12,8 +11,6 @@ import {
   Button,
   Circle,
   FlexProps,
-  HStack,
-  IconButton,
   Image,
   Menu,
   MenuButton,
@@ -21,19 +18,18 @@ import {
   MenuGroup,
   MenuItem,
   MenuList,
-  Tooltip,
   Accordion,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
 } from '@chakra-ui/react'
-import { shortenAddress } from 'utils/helpers'
 import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 import { FC } from 'react'
 import { OnboardButton } from './OnboardButton'
 import { KeplrButton } from './KeplrButton'
 import { PioneerButton } from './PioneerButton'
+import { KeepKeyButton } from './KeepKeyButton'
 type WalletImageProps = {
   isConnected: Boolean
 } & Pick<InitialState, 'walletInfo'>
@@ -94,6 +90,14 @@ export const WalletButton: FC<FlexProps> = () => {
           context: {context?.substring(0, 28)}
           <Accordion>
             <AccordionItem>
+              <h2>
+                <AccordionButton>
+                  <Box flex="1" textAlign="left">
+                    KeepKey: <KeepKeyButton />
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
               <h2>
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
