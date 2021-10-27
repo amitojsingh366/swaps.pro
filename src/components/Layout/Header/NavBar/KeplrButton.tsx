@@ -28,7 +28,7 @@ export const KeplrButton: FC<FlexProps> = props => {
                         src={keplrNetworkContext?.icon}
                     />
                     <Text fontSize='sm'>{"" && shortenAddress(keplrContext, 4)}</Text>
-                    <small>{keplrNetworkContext.name}</small>
+                    <small>{keplrNetworkContext?.name}</small>
                     <ChevronDownIcon h={8} w={8} />
                 </HStack>
             ) : (

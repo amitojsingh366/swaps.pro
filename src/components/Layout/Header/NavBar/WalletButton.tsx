@@ -89,6 +89,7 @@ export const WalletButton: FC<FlexProps> = () => {
         <MenuGroup title='Wallet Overview'>
           context: {context?.substring(0, 28)}
           <Accordion>
+
             <AccordionItem>
               <h2>
                 <AccordionButton>
@@ -98,6 +99,40 @@ export const WalletButton: FC<FlexProps> = () => {
                   <AccordionIcon />
                 </AccordionButton>
               </h2>
+              <AccordionPanel pb={4}>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <ArrowUpIcon />
+                      </Circle>
+                    }
+                    onClick={ () => openSend('keepkey')}
+                >
+                  Send
+                </MenuItem>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <ArrowDownIcon />
+                      </Circle>
+                    }
+                    onClick={ () => openReceive('keepkey')}
+                >
+                  Receive
+                </MenuItem>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <CloseIcon />
+                      </Circle>
+                    }
+                    onClick={disconnect}
+                >
+                  Disconnect
+                </MenuItem>
+              </AccordionPanel>
+            </AccordionItem>
+            <AccordionItem>
               <h2>
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
