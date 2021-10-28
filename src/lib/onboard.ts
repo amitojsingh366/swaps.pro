@@ -25,66 +25,70 @@ export function getLibrary(provider: any): Web3Provider {
 }
 
 const wallets = [
-  { walletName: 'detectedwallet', preferred: true },
+  // { walletName: 'detectedwallet', preferred: true },
+  // {
+  //   walletName: 'keepkey',
+  //   preferred: true,
+  //   rpcUrl: RPC_URL,
+  //   label: hasWebUSB ? undefined : 'Supported on Chrome or Brave'
+  // },
+  // {
+  //   walletName: 'portis',
+  //   apiKey: PORTIS_KEY,
+  //   preferred: true,
+  //   label: 'Portis By ShapeShift'
+  // },
   {
-    walletName: 'keepkey',
+    walletName: 'metamask',
     preferred: true,
-    rpcUrl: RPC_URL,
-    label: hasWebUSB ? undefined : 'Supported on Chrome or Brave'
+    label: 'MetaMask Wallet'
   },
-  {
-    walletName: 'portis',
-    apiKey: PORTIS_KEY,
-    preferred: true,
-    label: 'Portis By ShapeShift'
-  },
-  { walletName: 'metamask', preferred: true },
-  {
-    walletName: 'walletConnect',
-    rpc: {
-      1: RPC_URL
-    },
-    bridge: 'https://walletconnect.shapeshift.com',
-    preferred: true
-  },
-  {
-    walletName: 'trezor',
-    appUrl: APP_URL,
-    email: CONTACT_EMAIL,
-    rpcUrl: RPC_URL,
-    preferred: true
-  },
-  {
-    walletName: 'ledger',
-    rpcUrl: RPC_URL,
-    preferred: true
-  },
-  { walletName: 'coinbase', preferred: true },
-  { walletName: 'trust', preferred: true, rpcUrl: RPC_URL },
-  {
-    walletName: 'fortmatic',
-    apiKey: FORTMATIC_KEY,
-    preferred: true
-  },
-  { walletName: 'opera' },
-  { walletName: 'operaTouch' },
-  { walletName: 'torus', preferred: true },
-  { walletName: 'status' },
-  { walletName: 'trust' },
-  { walletName: 'walletLink', rpcUrl: RPC_URL, appName: APP_NAME, preferred: true },
-  { walletName: 'imToken', rpcUrl: RPC_URL },
-  { walletName: 'meetone' },
-  { walletName: 'mykey', rpcUrl: RPC_URL },
-  { walletName: 'huobiwallet', rpcUrl: RPC_URL },
-  { walletName: 'hyperpay' },
-  { walletName: 'wallet.io', rpcUrl: RPC_URL },
-  { walletName: 'atoken' },
-  { walletName: 'frame' },
-  { walletName: 'ownbit' },
-  { walletName: 'alphawallet' },
-  { walletName: 'gnosis' },
-  { walletName: 'xdefi' },
-  { walletName: 'bitpie' }
+  // {
+  //   walletName: 'walletConnect',
+  //   rpc: {
+  //     1: RPC_URL
+  //   },
+  //   bridge: 'https://walletconnect.shapeshift.com',
+  //   preferred: true
+  // },
+  // {
+  //   walletName: 'trezor',
+  //   appUrl: APP_URL,
+  //   email: CONTACT_EMAIL,
+  //   rpcUrl: RPC_URL,
+  //   preferred: true
+  // },
+  // {
+  //   walletName: 'ledger',
+  //   rpcUrl: RPC_URL,
+  //   preferred: true
+  // },
+  // { walletName: 'coinbase', preferred: true },
+  // { walletName: 'trust', preferred: true, rpcUrl: RPC_URL },
+  // {
+  //   walletName: 'fortmatic',
+  //   apiKey: FORTMATIC_KEY,
+  //   preferred: true
+  // },
+  // { walletName: 'opera' },
+  // { walletName: 'operaTouch' },
+  // { walletName: 'torus', preferred: true },
+  // { walletName: 'status' },
+  // { walletName: 'trust' },
+  // { walletName: 'walletLink', rpcUrl: RPC_URL, appName: APP_NAME, preferred: true },
+  // { walletName: 'imToken', rpcUrl: RPC_URL },
+  // { walletName: 'meetone' },
+  // { walletName: 'mykey', rpcUrl: RPC_URL },
+  // { walletName: 'huobiwallet', rpcUrl: RPC_URL },
+  // { walletName: 'hyperpay' },
+  // { walletName: 'wallet.io', rpcUrl: RPC_URL },
+  // { walletName: 'atoken' },
+  // { walletName: 'frame' },
+  // { walletName: 'ownbit' },
+  // { walletName: 'alphawallet' },
+  // { walletName: 'gnosis' },
+  // { walletName: 'xdefi' },
+  // { walletName: 'bitpie' }
 ]
 
 const walletCheck = [
@@ -94,11 +98,12 @@ const walletCheck = [
   { checkName: 'network' }
 ]
 
-export function initOnboard(subscriptions: Subscriptions) {
+export function initOnboard(subscriptions: Subscriptions, networkId: number) {
   return Onboard({
-    networkId: 1,
+    networkId,
+    darkMode:true,
+    hideBranding: true,
     blockPollingInterval: POLLING_INTERVAL,
-    hideBranding: false,
     walletSelect: {
       wallets: wallets,
       agreement: {

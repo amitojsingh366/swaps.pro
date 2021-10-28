@@ -139,7 +139,7 @@ export const Pioneer = () => {
             let pair = symbolIn+"_"+symbolOut
             console.log("HOOK: pair",pair)
             //market Info
-            let marketInfo = status.exchanges.markets.filter((e:any) => e.pair == pair)
+            let marketInfo = status?.exchanges?.thorchain?.markets.filter((e:any) => e.pair == pair)
             marketInfo = marketInfo[0]
             console.log("marketInfo: ",marketInfo)
             if(marketInfo && marketInfo.rate){

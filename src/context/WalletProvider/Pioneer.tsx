@@ -161,6 +161,17 @@ export class PioneerService {
     }
   }
 
+/*        //if account not in balances object
+        console.log("Register MetaMask Account")
+        let pairWalletOnboard:any = {
+          name:'MetaMask',
+          network:1,
+          initialized:true,
+          address
+        }
+        console.log("pairWalletOnboard: ",pairWalletOnboard)
+        pioneer.registerWallet(pairWalletOnboard) */
+
   async setSendToNetwork(network: string): Promise<any> {
     //console.log('sendToNetwork: ', network)
     if (this.sendToNetwork && this.sendToNetwork !== network) {

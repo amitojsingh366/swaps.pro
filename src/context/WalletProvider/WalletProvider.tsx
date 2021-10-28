@@ -439,44 +439,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
               console.log("*** signedTx:",signedTx)
 
               //mock send for debugging
-              // let signedTx:any = {
-              //   "hash": "0xa4fd92ae21345de0b218f8951b9229d504cd55ef50780a7e5e18a81ecfa22a74",
-              //   "type": 2,
-              //   "accessList": null,
-              //   "blockHash": null,
-              //   "blockNumber": null,
-              //   "transactionIndex": null,
-              //   "confirmations": 0,
-              //   "from": "0xC3aFFff54122658b89C31183CeC4F15514F34624",
-              //   "gasPrice": {
-              //     "type": "BigNumber",
-              //     "hex": "0x1b5320a25b"
-              //   },
-              //   "maxPriorityFeePerGas": {
-              //     "type": "BigNumber",
-              //     "hex": "0x1b5320a25b"
-              //   },
-              //   "maxFeePerGas": {
-              //     "type": "BigNumber",
-              //     "hex": "0x1b5320a25b"
-              //   },
-              //   "gasLimit": {
-              //     "type": "BigNumber",
-              //     "hex": "0x013880"
-              //   },
-              //   "to": "0xC145990E84155416144C532E31f89B840Ca8c2cE",
-              //   "value": {
-              //     "type": "BigNumber",
-              //     "hex": "0x2386f26fc10000"
-              //   },
-              //   "nonce": 87,
-              //   "data": "0x1fece7b4000000000000000000000000f56cba49337a624e94042e325ad6bc864436e3700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002386f26fc10000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000403d3a4243482e4243483a626974636f696e636173683a717a78703078633676736a3861706739796d346e346a6c3435707978746b70736875767239736d6a7033",
-              //   "r": "0x1ccaf7e8e8ee44807686e209cb78972766387a2a59050d6ef7c4467b2bb6d6d0",
-              //   "s": "0x1a74183927cd0b07ac247156cdfa3b7df9a073b2fa44f684364ac68a04a1afac",
-              //   "v": 1,
-              //   "creates": null,
-              //   "chainId": 0
-              // }
+              //let signedTx:any = {"hash": "0xa4fd92ae21345de0b218f8951b9229d504cd55ef50780a7e5e18a81ecfa22a74", "type": 2, "accessList": null, "blockHash": null, "blockNumber": null, "transactionIndex": null, "confirmations": 0, "from": "0xC3aFFff54122658b89C31183CeC4F15514F34624", "gasPrice": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "maxPriorityFeePerGas": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "maxFeePerGas": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "gasLimit": {"type": "BigNumber", "hex": "0x013880"}, "to": "0xC145990E84155416144C532E31f89B840Ca8c2cE", "value": {"type": "BigNumber", "hex": "0x2386f26fc10000"}, "nonce": 87, "data": "0x1fece7b4000000000000000000000000f56cba49337a624e94042e325ad6bc864436e3700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002386f26fc10000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000403d3a4243482e4243483a626974636f696e636173683a717a78703078633676736a3861706739796d346e346a6c3435707978746b70736875767239736d6a7033", "r": "0x1ccaf7e8e8ee44807686e209cb78972766387a2a59050d6ef7c4467b2bb6d6d0", "s": "0x1a74183927cd0b07ac247156cdfa3b7df9a073b2fa44f684364ac68a04a1afac", "v": 1, "creates": null, "chainId": 0}
               dispatch({ type: WalletActions.SET_INVOCATION_TXID, payload: signedTx.hash })
               dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'pending' })
               signedTx.serialized = "fobarfixme"
@@ -580,12 +543,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
    */
   const connect = useCallback(async (type: string) => {
     setType(type)
-    console.log("type: ",type)
+
     switch (type) {
       case 'pioneer':
         console.log('Pioneer connect selected!')
         setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
-
         break
       case 'native':
         console.log('Swap connect selected!')
@@ -639,6 +601,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           if (selected && state?.onboard?.walletCheck) {
             const ready = await state.onboard.walletCheck()
             if (ready && state.isInitPioneer) {
+
               dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
               dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
               dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
@@ -671,14 +634,14 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   )
 
   useEffect(() => {
+    let networkId = 1
+    //TODO support more networks
     const onboard = initOnboard({
       network: network => {
         setNetwork(network)
       },
       address: address => {
         dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
-        //if account not in balances object
-        console.log("Register MetaMask Account")
       },
       wallet: (wallet: Wallet) => {
         if (wallet.provider) {
@@ -689,7 +652,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           disconnect()
         }
       }
-    })
+    },networkId)
+
     dispatch({ type: WalletActions.SET_ONBOARD, payload: onboard })
 
     async function startPioneer(){
@@ -745,15 +709,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
     async function startKeplr(){
       try{
         console.log("onStartKeplr")
-        // Keplr extension injects the offline signer that is compatible with cosmJS.
-        // You can get this offline signer from `window.getOfflineSigner(chainId:string)` after load event.
-        // And it also injects the helper function to `window.keplr`.
-        // If `window.getOfflineSigner` or `window.keplr` is null, Keplr extension may be not installed on browser.
         // @ts-ignore
         if (!window.getOfflineSigner || !window.keplr) {
           alert("Please install keplr extension");
         }
-
         //cosmos info
         let cosmosInfo = {
           rpc: 'https://rpc-cosmoshub.keplr.app',
@@ -766,33 +725,15 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         const chainId = cosmosInfo.chainId;
 
         //TODO if pair process iterate over all chains and register addresses?
-
-        // You should request Keplr to enable the wallet.
-        // This method will ask the user whether or not to allow access if they haven't visited this website.
-        // Also, it will request user to unlock the wallet if the wallet is locked.
-        // If you don't request enabling before usage, there is no guarantee that other methods will work.
         // @ts-ignore
         await window.keplr.enable(chainId);
         // @ts-ignore
         const offlineSigner = window.getOfflineSigner(chainId);
-
-        // You can get the address/public keys by `getAccounts` method.
-        // It can return the array of address/public key.
-        // But, currently, Keplr extension manages only one address/public key pair.
-        // XXX: This line is needed to set the sender address for SigningCosmosClient.
         const accounts = await offlineSigner.getAccounts();
         console.log("accounts: ",accounts)
         dispatch({ type: WalletActions.SET_KEPLR, payload: offlineSigner })
         dispatch({ type: WalletActions.SET_KEPLR_CONTEXT, payload: accounts[0].address })
         dispatch({ type: WalletActions.SET_KEPLR_NETWORK, payload: {icon:cosmosInfo.coinImageUrl,name:chainId} })
-        //TODO register account
-        //TODO handle signing
-        // Initialize the gaia api with the offline signer that is injected by Keplr extension.
-        // const cosmJS = new SigningCosmosClient(
-        //     "https://node-cosmoshub-3.keplr.app/rest",
-        //     accounts[0].address,
-        //     offlineSigner,
-        // );
       }catch(e){
         console.error(e)
       }
@@ -812,12 +753,23 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   }, [state.onboard, disconnect, state.active, connectPrevious])
 
   useEffect(() => {
-    if (state.wallet && state.active && state.account) {
+    if (state.wallet && state.active && state.account && pioneer.isInitialized) {
+      //register
+      console.log("Register MetaMask Account")
+      let pairWalletOnboard:any = {
+        name:'MetaMask',
+        network:1,
+        initialized:true,
+        address:state.account
+      }
+      console.log("pairWalletOnboard: ",pairWalletOnboard)
+      pioneer.registerWallet(pairWalletOnboard)
+
       dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
     } else {
       dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: false })
     }
-  }, [state.account, state.active, state.wallet])
+  }, [state.account, state.active, state.wallet, pioneer?.isInitialized])
 
   useEffect(() => {
     if (network && state.active && state.wallet && !SUPPORTED_NETWORKS.includes(network)) {
