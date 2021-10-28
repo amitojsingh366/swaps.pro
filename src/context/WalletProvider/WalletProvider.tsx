@@ -20,7 +20,6 @@ import { Web3Provider } from '@ethersproject/providers'
 import { API as OnboardAPI, Wallet } from 'bnc-onboard/dist/src/interfaces'
 import { getLibrary, initOnboard } from 'lib/onboard'
 import { PioneerService } from './Pioneer'
-
 import React, {
   createContext,
   useCallback,
@@ -34,6 +33,10 @@ import { useState } from 'react'
 import { SUPPORTED_WALLETS } from './config'
 import { WalletViewsRouter } from './WalletViewsRouter'
 const Datastore = require('nedb-promises')
+import * as keepkeyWebUSB from "@shapeshiftoss/hdwallet-keepkey-webusb";
+import * as core from "@shapeshiftoss/hdwallet-core";
+import * as keepkeyTcp from "@shapeshiftoss/hdwallet-keepkey-tcp";
+
 
 //TODO expand networks
 const SUPPORTED_NETWORKS = [1]
@@ -50,6 +53,7 @@ export enum WalletActions {
   SET_ACTIVE = 'SET_ACTIVE',
   SET_ADAPTERS = 'SET_ADAPTERS',
   SET_PIONEER = 'SET_PIONEER',
+  SET_KEEPKEY = 'SET_KEEPKEY',
   SET_BALANCES = 'SET_BALANCES',
   SET_PAIRING_CODE = 'SET_PAIRING_CODE',
   SET_USERNAME = 'SET_USERNAME',
@@ -78,6 +82,7 @@ export enum WalletActions {
 }
 
 export interface InitialState {
+  keyring: Keyring
   status: any
   isInitPioneer: boolean | null
   isInitOnboard: boolean | null
@@ -88,7 +93,6 @@ export interface InitialState {
   wallet: Wallet | null
   balances: any | null
   active: boolean
-  keyring: Keyring
   adapters: Record<string, unknown> | null
   walletInfo: { name: string; icon: string } | null
   isConnected: boolean
@@ -96,6 +100,7 @@ export interface InitialState {
   modal: boolean
   modalSelect: boolean
   pioneer: any
+  keepkey: any
   code: any
   username: any
   assetContext: any
@@ -115,6 +120,7 @@ export interface InitialState {
 }
 
 const initialState: InitialState = {
+  keyring: new Keyring(),
   isInitPioneer: false,
   isInitOnboard: false,
   status: null,
@@ -125,7 +131,6 @@ const initialState: InitialState = {
   wallet: null,
   balances: null,
   active: false,
-  keyring: new Keyring(),
   adapters: null,
   walletInfo: null,
   isConnected: false,
@@ -134,6 +139,7 @@ const initialState: InitialState = {
   modalSelect: false,
   selectType: null,
   pioneer: null,
+  keepkey: null,
   code: null,
   username: null,
   assetContext: null,
@@ -167,6 +173,7 @@ export type ActionTypes =
   | { type: WalletActions.INIT_ONBOARD; payload: boolean }
   | { type: WalletActions.SET_ADAPTERS; payload: Record<string, unknown> }
   | { type: WalletActions.SET_PIONEER; payload: any | null }
+  | { type: WalletActions.SET_KEEPKEY; payload: any | null }
   | { type: WalletActions.SET_PAIRING_CODE; payload: String | null }
   | { type: WalletActions.SET_USERNAME; payload: String | null }
   | { type: WalletActions.SET_TRADE_INPUT; payload: any }
@@ -207,6 +214,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, isInitOnboard: action.payload }
     case WalletActions.SET_ONBOARD:
       return { ...state, onboard: action.payload }
+    case WalletActions.SET_KEEPKEY:
+      return { ...state, keepkey: action.payload }
     case WalletActions.SET_BLOCK_NUMBER:
       return { ...state, blockNumber: action.payload }
     case WalletActions.SET_ACCOUNT:
@@ -557,6 +566,17 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         break
       case 'keepkey':
         console.log('keepkey connect selected!')
+        const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(state.keyring);
+        // @ts-ignore
+        const kkbridgeAdapter = keepkeyTcp.TCPKeepKeyAdapter.useKeyring(state.keyring);
+
+        //webusb
+        let wallet = await keepkeyAdapter.pairDevice(undefined, /*tryDebugLink=*/ true);
+        console.log('wallet: ',wallet)
+
+        dispatch({ type: WalletActions.SET_KEEPKEY, payload: wallet })
+
+        setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
         break
       case 'onboard':
       case 'MetaMask':
@@ -634,6 +654,41 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   )
 
   useEffect(() => {
+
+    // async function deviceConnected(deviceId:string) {
+    //   let wallet = state.keyring.get(deviceId);
+    //   console.log("wallet: ",wallet)
+    // }
+    //
+    // //Start Keepkey
+    // async function onStartKeepKey(){
+    //   try{
+    //
+    //
+    //     console.log('onStartKeepKey *** ')
+    //     state.keyring.on(["*", "*", core.Events.CONNECT], async (deviceId:string) => {
+    //       await deviceConnected(deviceId);
+    //     });
+    //
+    //     //detect if bridge is online
+    //     //let wallet = await kkbridgeAdapter.pairDevice("http://localhost:1646");
+    //     //console.log('onStartKeepKey *** wallet: ',wallet)
+    //     /**
+    //      * START UP
+    //      * Initialize all adapters on page load
+    //      */
+    //
+    //
+    //
+    //
+    //
+    //   }catch(e){
+    //     console.error(e)
+    //   }
+    // }
+    // onStartKeepKey()
+
+    //Start Onboard.js
     let networkId = 1
     //TODO support more networks
     const onboard = initOnboard({

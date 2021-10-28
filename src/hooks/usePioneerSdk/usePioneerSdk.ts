@@ -133,8 +133,8 @@ export const Pioneer = () => {
             console.log("HOOK: currentSellAsset",currentSellAsset)
             console.log("HOOK: currentBuyAsset",currentBuyAsset)
 
-            let symbolIn = currentSellAsset.currency.symbol
-            let symbolOut = currentBuyAsset.currency.symbol
+            let symbolIn = currentSellAsset?.currency?.symbol
+            let symbolOut = currentBuyAsset?.currency?.symbol
 
             let pair = symbolIn+"_"+symbolOut
             console.log("HOOK: pair",pair)
