@@ -78,6 +78,8 @@ export enum WalletActions {
   SET_KEPLR = 'SET_KEPLR',
   SET_KEPLR_CONTEXT = 'SET_KEPLR_CONTEXT',
   SET_KEPLR_NETWORK = 'SET_KEPLR_NETWORK',
+  SET_KEEPKEY_STATUS = 'SET_KEEPKEY_STATUS',
+  SET_KEEPKEY_STATE = 'SET_KEEPKEY_STATE',
   RESET_STATE = 'RESET_STATE'
 }
 
@@ -117,6 +119,8 @@ export interface InitialState {
   keplr:any,
   keplrContext:string | null,
   keplrNetworkContext:any
+  keepkeyStatus:string | null,
+  keepkeyState:number
 }
 
 const initialState: InitialState = {
@@ -154,7 +158,9 @@ const initialState: InitialState = {
   exchangeInfo:null,
   keplr:null,
   keplrContext:null,
-  keplrNetworkContext:null
+  keplrNetworkContext:null,
+  keepkeyStatus:null,
+  keepkeyState:0
 }
 
 export interface IWalletContext {
@@ -180,6 +186,8 @@ export type ActionTypes =
   | { type: WalletActions.SET_TRADE_OUTPUT; payload: any }
   | { type: WalletActions.SET_TRADE_STATUS; payload: string }
   | { type: WalletActions.SET_TRADE_FULLFILLMENT_TXID; payload: string }
+  | { type: WalletActions.SET_KEEPKEY_STATUS; payload: string }
+  | { type: WalletActions.SET_KEEPKEY_STATE; payload: number }
   | { type: WalletActions.SET_ASSET_CONTEXT; payload: String | null }
   | { type: WalletActions.SET_WALLET_CONTEXT; context: String | null }
   | { type: WalletActions.SET_WALLET_INFO; payload: { name: string; icon: string } }
@@ -268,6 +276,10 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, tradeOutput: action.payload }
     case WalletActions.SET_TRADE_STATUS:
       return { ...state, tradeStatus: action.payload }
+    case WalletActions.SET_KEEPKEY_STATUS:
+      return { ...state, keepkeyStatus: action.payload }
+    case WalletActions.SET_KEEPKEY_STATE:
+      return { ...state, keepkeyState: action.payload }
     case WalletActions.SET_TRADE_FULLFILLMENT_TXID:
       return { ...state, fullfillmentTxid: action.payload }
     case WalletActions.SET_INVOCATION_TXID:
@@ -565,18 +577,42 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         console.log('Kepler connect selected!')
         break
       case 'keepkey':
+        setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
         console.log('keepkey connect selected!')
         const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(state.keyring);
+        //TODO optional bridge (default if live)
         // @ts-ignore
-        const kkbridgeAdapter = keepkeyTcp.TCPKeepKeyAdapter.useKeyring(state.keyring);
-
+        //const kkbridgeAdapter = keepkeyTcp.TCPKeepKeyAdapter.useKeyring(state.keyring);
         //webusb
-        let wallet = await keepkeyAdapter.pairDevice(undefined, /*tryDebugLink=*/ true);
-        console.log('wallet: ',wallet)
+        try{
+          let wallet = await keepkeyAdapter.pairDevice(undefined, /*tryDebugLink=*/ true);
+          console.log('wallet: ',wallet)
+          dispatch({ type: WalletActions.SET_KEEPKEY, payload: wallet })
+          let lockStatus = await wallet.isLocked()
+          if(lockStatus){
+            dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'device locked!' })
+            dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 3 })
+          }else{
+            //get pubkeys
+            let pubkeys
+            //pair
 
-        dispatch({ type: WalletActions.SET_KEEPKEY, payload: wallet })
+            dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'unlocked' })
+            dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 4 })
+          }
+        }catch(e:any){
+          if(e.message.indexOf("no devices found") >= 0){
+            dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'no devices connected' })
+            dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 1 })
+          } else if(e.message.indexOf("claimInterface")>= 0){
+            dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: "Unable to claim!" })
+            dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: -1 })
+          } else {
+            console.error('Unknown KeepKey Error! e: ',e)
+          }
+        }
 
-        setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
+
         break
       case 'onboard':
       case 'MetaMask':

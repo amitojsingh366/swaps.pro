@@ -7,16 +7,22 @@ import { NativeSetupProps } from './setup'
 
 export const Pair = ({ }: NativeSetupProps) => {
   const { state } = useWallet()
-  const { code } = state
-  const { hasCopied, onCopy } = useClipboard(code)
+  const { keepkey, keepkeyState, keepkeyStatus } = state
 
   useEffect(() => {
-    console.log("code: ",code)
-  }, [code])
+    console.log("code: ",)
+  }, [])
 
   return (
     <>
-      <ModalHeader>Pair KeepKey</ModalHeader>
+      <ModalHeader><Image
+          boxSize='24px'
+          loading='lazy'
+          // showBorder={false}
+          objectFit='contain'
+          bg='transparent'
+          src={KEEPKEY_ICON}
+      />Pair KeepKey</ModalHeader>
       <ModalBody>
         <RawText mb={4} color='gray.500'>
           Dont have pioneer installed? download it
@@ -26,27 +32,20 @@ export const Pair = ({ }: NativeSetupProps) => {
             target='_blank'
             rel='noreferrer'
           >
-            <Button colorScheme="white"><Image
-                boxSize='24px'
-                loading='lazy'
-                // showBorder={false}
-                objectFit='contain'
-                bg='transparent'
-                src={KEEPKEY_ICON}
-            /><div>Install KeepKey Bridge</div></Button>
+            <Button colorScheme="white"><div>Install KeepKey Bridge</div></Button>
           </a>
         </RawText>
         <Stack my={6} spacing={4}>
-          {!code ? (
+          {!keepkey ? (
               <div>
-                <h3>Waiting on pairing...</h3>
+                <h3>Failed to connect...</h3>
               </div>
           ) : (
-              <h3>not paired
-              <Button onClick={onCopy} ml={2}>
-                {hasCopied ? "Copied" : "Copy"}
-              </Button>
-              </h3>
+            <div>
+              state: {keepkeyState}
+              <br/>
+              keepkeyStatus: {keepkeyStatus}
+            </div>
           )}
         </Stack>
       </ModalBody>
