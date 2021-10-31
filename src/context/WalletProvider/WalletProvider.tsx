@@ -806,7 +806,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
         //TODO if pair process iterate over all chains and register addresses?
         // @ts-ignore
-        await window.keplr.enable(chainId);
+        // await window.keplr.enable(chainId);
         // @ts-ignore
         const offlineSigner = window.getOfflineSigner(chainId);
         const accounts = await offlineSigner.getAccounts();

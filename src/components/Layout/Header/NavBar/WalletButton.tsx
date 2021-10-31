@@ -1,28 +1,28 @@
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  ChevronRightIcon,
-  CloseIcon,
-  RepeatIcon,
-  TriangleDownIcon
+    ArrowDownIcon,
+    ArrowUpIcon, ChevronDownIcon,
+    ChevronRightIcon,
+    CloseIcon,
+    RepeatIcon,
+    TriangleDownIcon
 } from '@chakra-ui/icons'
 import {
-  Box,
-  Button,
-  Circle,
-  FlexProps,
-  Image,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuGroup,
-  MenuItem,
-  MenuList,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
+    Box,
+    Button,
+    Circle,
+    FlexProps,
+    Image,
+    Menu,
+    MenuButton,
+    MenuDivider,
+    MenuGroup,
+    MenuItem,
+    MenuList,
+    Accordion,
+    AccordionItem,
+    AccordionButton,
+    AccordionPanel,
+    AccordionIcon, HStack, Text, Flex,
 } from '@chakra-ui/react'
 import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 import { FC } from 'react'
@@ -30,6 +30,7 @@ import { OnboardButton } from './OnboardButton'
 import { KeplrButton } from './KeplrButton'
 import { PioneerButton } from './PioneerButton'
 import { KeepKeyButton } from './KeepKeyButton'
+import {shortenAddress} from "../../../../utils/helpers";
 type WalletImageProps = {
   isConnected: Boolean
 } & Pick<InitialState, 'walletInfo'>
@@ -47,13 +48,8 @@ const WalletImage: React.FC<WalletImageProps> = ({ isConnected, walletInfo }) =>
   ) : null
 
 export const WalletButton: FC<FlexProps> = () => {
-  const { state, dispatch, disconnect, setRoutePath } = useWallet()
-  const { isConnected, walletInfo, username, context } = state
-
-  const openWalletConnect = function(){
-    setRoutePath('/')
-    dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
-  }
+  const { state, dispatch, disconnect, setRoutePath, connect } = useWallet()
+  const { isConnected, walletInfo, username, context, keepkey, onboard } = state
 
   const openSend = function(wallet:string){
     console.log("wallet: ",wallet)
@@ -100,36 +96,43 @@ export const WalletButton: FC<FlexProps> = () => {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <ArrowUpIcon />
-                      </Circle>
-                    }
-                    onClick={ () => openSend('keepkey')}
-                >
-                  Send
-                </MenuItem>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <ArrowDownIcon />
-                      </Circle>
-                    }
-                    onClick={ () => openReceive('keepkey')}
-                >
-                  Receive
-                </MenuItem>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <CloseIcon />
-                      </Circle>
-                    }
-                    onClick={disconnect}
-                >
-                  Disconnect
-                </MenuItem>
+                  {!keepkey ? (
+                      <div>
+                      <MenuItem
+                          icon={
+                              <Circle bg='whiteAlpha.200' size={8}>
+                                  <ArrowUpIcon />
+                              </Circle>
+                          }
+                          onClick={ () => openSend('keepkey')}
+                      >
+                          Send
+                      </MenuItem>
+                      <MenuItem
+                          icon={
+                              <Circle bg='whiteAlpha.200' size={8}>
+                                  <ArrowDownIcon />
+                              </Circle>
+                          }
+                          onClick={ () => openReceive('keepkey')}
+                      >
+                          Receive
+                      </MenuItem>
+                      <MenuItem
+                          icon={
+                              <Circle bg='whiteAlpha.200' size={8}>
+                                  <CloseIcon />
+                              </Circle>
+                          }
+                          onClick={disconnect}
+                      >
+                          Disconnect
+                      </MenuItem>
+                      </div>
+                  ) : (
+                      <>
+                      </>
+                  )}
               </AccordionPanel>
             </AccordionItem>
             <AccordionItem>
@@ -142,46 +145,53 @@ export const WalletButton: FC<FlexProps> = () => {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <ArrowUpIcon />
-                      </Circle>
-                    }
-                    onClick={ () => openSend('onboard')}
-                >
-                  Send
-                </MenuItem>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <ArrowDownIcon />
-                      </Circle>
-                    }
-                    onClick={ () => openReceive('onboard')}
-                >
-                  Receive
-                </MenuItem>
-                <MenuItem
-                  icon={
-                    <Circle bg='whiteAlpha.200' size={8}>
-                      <RepeatIcon />
-                    </Circle>
-                  }
-                  onClick={ () => openReceive('onboard')}
-                >
-                  Switch Wallet Provider
-                </MenuItem>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <CloseIcon />
-                      </Circle>
-                    }
-                    onClick={disconnect}
-                >
-                  Disconnect
-                </MenuItem>
+                  {onboard ? (
+                      <div>
+                          <MenuItem
+                              icon={
+                                  <Circle bg='whiteAlpha.200' size={8}>
+                                      <ArrowUpIcon />
+                                  </Circle>
+                              }
+                              onClick={ () => openSend('onboard')}
+                          >
+                              Send
+                          </MenuItem>
+                          <MenuItem
+                              icon={
+                                  <Circle bg='whiteAlpha.200' size={8}>
+                                      <ArrowDownIcon />
+                                  </Circle>
+                              }
+                              onClick={ () => openReceive('onboard')}
+                          >
+                              Receive
+                          </MenuItem>
+                          <MenuItem
+                              icon={
+                                  <Circle bg='whiteAlpha.200' size={8}>
+                                      <RepeatIcon />
+                                  </Circle>
+                              }
+                              onClick={ () => openReceive('onboard')}
+                          >
+                              Switch Wallet Provider
+                          </MenuItem>
+                          <MenuItem
+                              icon={
+                                  <Circle bg='whiteAlpha.200' size={8}>
+                                      <CloseIcon />
+                                  </Circle>
+                              }
+                              onClick={disconnect}
+                          >
+                              Disconnect
+                          </MenuItem>
+                      </div>
+                  ) : (
+                      <>
+                      </>
+                  )}
               </AccordionPanel>
             </AccordionItem>
 
@@ -195,36 +205,43 @@ export const WalletButton: FC<FlexProps> = () => {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <ArrowUpIcon />
-                      </Circle>
-                    }
-                    onClick={ () => openSend('keplr')}
-                >
-                  Send
-                </MenuItem>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <ArrowDownIcon />
-                      </Circle>
-                    }
-                    onClick={ () => openReceive('keplr')}
-                >
-                  Receive
-                </MenuItem>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <CloseIcon />
-                      </Circle>
-                    }
-                    onClick={disconnect}
-                >
-                  Disconnect
-                </MenuItem>
+                  {!false ? (
+                      <div>
+                          <MenuItem
+                              icon={
+                                  <Circle bg='whiteAlpha.200' size={8}>
+                                      <ArrowUpIcon />
+                                  </Circle>
+                              }
+                              onClick={ () => openSend('keplr')}
+                          >
+                              Send
+                          </MenuItem>
+                          <MenuItem
+                              icon={
+                                  <Circle bg='whiteAlpha.200' size={8}>
+                                      <ArrowDownIcon />
+                                  </Circle>
+                              }
+                              onClick={ () => openReceive('keplr')}
+                          >
+                              Receive
+                          </MenuItem>
+                          <MenuItem
+                              icon={
+                                  <Circle bg='whiteAlpha.200' size={8}>
+                                      <CloseIcon />
+                                  </Circle>
+                              }
+                              onClick={disconnect}
+                          >
+                              Disconnect
+                          </MenuItem>
+                      </div>
+                  ) : (
+                      <>
+                      </>
+                  )}
               </AccordionPanel>
             </AccordionItem>
 
