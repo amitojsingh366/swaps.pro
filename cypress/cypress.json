@@ -3,6 +3,7 @@
   "projectId": "627kg1",
   "viewportWidth": 1280,
   "viewportHeight": 720,
+  "defaultCommandTimeout": 100000000,
   "fixturesFolder": "fixtures",
   "integrationFolder": "integration",
   "pluginsFile": "plugins/index.js",

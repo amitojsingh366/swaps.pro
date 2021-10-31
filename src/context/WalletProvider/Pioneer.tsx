@@ -106,8 +106,15 @@ export class PioneerService {
 
   async registerWallet(wallet: any): Promise<any> {
     try{
-      //
       if(this.App){
+        if(!this.isInitialized){
+          console.log("App not initialized!")
+          await this.init()
+        }
+
+        console.log("checkpoint App: ",this.App)
+        console.log("isInitialized: ",this.isInitialized)
+
         console.log("pioneer: registerWallet: Checkpoint")
         let resultRegister = await this.App.registerWallet(wallet)
         console.log("resultRegister: ",resultRegister)

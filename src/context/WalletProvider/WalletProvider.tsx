@@ -36,7 +36,7 @@ const Datastore = require('nedb-promises')
 import * as keepkeyWebUSB from "@shapeshiftoss/hdwallet-keepkey-webusb";
 import * as core from "@shapeshiftoss/hdwallet-core";
 import * as keepkeyTcp from "@shapeshiftoss/hdwallet-keepkey-tcp";
-
+let SDK = require("@keepkey/keepkey-sdk")
 
 //TODO expand networks
 const SUPPORTED_NETWORKS = [1]
@@ -586,19 +586,40 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         //webusb
         try{
           let wallet = await keepkeyAdapter.pairDevice(undefined, /*tryDebugLink=*/ true);
-          console.log('wallet: ',wallet)
           dispatch({ type: WalletActions.SET_KEEPKEY, payload: wallet })
+          //TODO get blockchains from status
+          let blockchains = [
+            'bitcoin','ethereum','thorchain','bitcoincash','litecoin','binance','cosmos','dogecoin'
+          ]
+          let sdk = new SDK(wallet,blockchains)
+
           let lockStatus = await wallet.isLocked()
           if(lockStatus){
             dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'device locked!' })
             dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 3 })
           }else{
             //get pubkeys
-            let pubkeys
+            let pubkeys = await sdk.getPubkeys()
             //pair
-
+            let pairWalletKeepKey:any = {
+              name:'keepkey',
+              format:'citadel',
+              isWatch:'true',
+              wallet:pubkeys.wallet,
+              pubkeys:pubkeys.pubkeys,
+            }
+            console.log("pairWalletKeepKey: ",pairWalletKeepKey)
+            await pioneer.registerWallet(pairWalletKeepKey)
             dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'unlocked' })
             dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 4 })
+
+            //close modal
+            dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+            //set username
+            if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
+            dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+            dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+            dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
           }
         }catch(e:any){
           if(e.message.indexOf("no devices found") >= 0){
@@ -626,7 +647,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           if (ready) {
             console.log("ready: ",ready)
             dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
-            // onStartOnboard()
+            dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+            dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
           } else {
             console.log("not ready: ",ready)
             //dont think I want to do this? keep memory of what used
@@ -641,7 +663,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       default:
         throw Error('Wallet not supported: ' + type)
     }
-  }, [state?.onboard])
+  }, [state?.onboard, state?.pioneer])
 
   const disconnect = useCallback(() => {
     setType(null)
@@ -672,7 +694,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           }
         } catch (error) {
           console.warn(error)
-          dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
           disconnect()
           window.localStorage.removeItem('selectedWallet')
         }
@@ -691,39 +712,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   useEffect(() => {
 
-    // async function deviceConnected(deviceId:string) {
-    //   let wallet = state.keyring.get(deviceId);
-    //   console.log("wallet: ",wallet)
-    // }
-    //
-    // //Start Keepkey
-    // async function onStartKeepKey(){
-    //   try{
-    //
-    //
-    //     console.log('onStartKeepKey *** ')
-    //     state.keyring.on(["*", "*", core.Events.CONNECT], async (deviceId:string) => {
-    //       await deviceConnected(deviceId);
-    //     });
-    //
-    //     //detect if bridge is online
-    //     //let wallet = await kkbridgeAdapter.pairDevice("http://localhost:1646");
-    //     //console.log('onStartKeepKey *** wallet: ',wallet)
-    //     /**
-    //      * START UP
-    //      * Initialize all adapters on page load
-    //      */
-    //
-    //
-    //
-    //
-    //
-    //   }catch(e){
-    //     console.error(e)
-    //   }
-    // }
-    // onStartKeepKey()
-
     //Start Onboard.js
     let networkId = 1
     //TODO support more networks
@@ -733,12 +721,14 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       },
       address: address => {
         dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
+        if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
       },
       wallet: (wallet: Wallet) => {
         if (wallet.provider) {
           dispatch({ type: WalletActions.SET_WALLET, payload: wallet })
           dispatch({ type: WalletActions.SET_PROVIDER, payload: getLibrary(wallet.provider) })
           window.localStorage.setItem('selectedWallet', wallet.name as string)
+          if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
         } else {
           disconnect()
         }
@@ -771,7 +761,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           //console.log('pioneer event: ', event)
           switch (event.type) {
             case 'context':
-              // code block
+              console.log("context event! event: ",event)
               break
             case 'pairing':
               //set context
@@ -812,7 +802,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           chainName: 'Cosmos Hub',
           coinImageUrl:'https://app.osmosis.zone/public/assets/tokens/cosmos.svg',
         }
-
         const chainId = cosmosInfo.chainId;
 
         //TODO if pair process iterate over all chains and register addresses?
@@ -822,6 +811,14 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         const offlineSigner = window.getOfflineSigner(chainId);
         const accounts = await offlineSigner.getAccounts();
         console.log("accounts: ",accounts)
+        // let pairWalletKeplr:any = {
+        //   name:'keplr',
+        //   format:'keplr',
+        //   wallet:accounts,
+        //   chainId:chainId
+        // }
+        // console.log("pairWalletKeplr: ",pairWalletKeplr)
+        // pioneer.registerWallet(pairWalletKeplr)
         dispatch({ type: WalletActions.SET_KEPLR, payload: offlineSigner })
         dispatch({ type: WalletActions.SET_KEPLR_CONTEXT, payload: accounts[0].address })
         dispatch({ type: WalletActions.SET_KEPLR_NETWORK, payload: {icon:cosmosInfo.coinImageUrl,name:chainId} })
@@ -849,12 +846,15 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       console.log("Register MetaMask Account")
       let pairWalletOnboard:any = {
         name:'MetaMask',
+        format:'onboard',
         network:1,
         initialized:true,
         address:state.account
       }
       console.log("pairWalletOnboard: ",pairWalletOnboard)
       pioneer.registerWallet(pairWalletOnboard)
+
+      if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username})
 
       dispatch({ type: WalletActions.SET_IS_CONNECTED, payload: true })
     } else {
