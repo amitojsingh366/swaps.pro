@@ -20,6 +20,8 @@ export const TradeConfirm = ({ history }: RouterProps) => {
       console.log("onSubmit")
       const currentSellAsset = getValues('sellAsset')
       const currentBuyAsset = getValues('buyAsset')
+      console.log("currentSellAsset: ",currentSellAsset)
+      console.log("onSubmit: ",currentBuyAsset)
 
       //submit transaction
       let result = await buildTransaction(currentSellAsset,currentBuyAsset)

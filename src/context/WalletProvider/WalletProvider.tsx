@@ -334,8 +334,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   const buildTransaction = useCallback(
       async (currentSellAsset:any,currentBuyAsset:any) => {
         if (
-            state?.provider &&
-            state?.account &&
+            // state?.provider &&
+            // state?.account &&
             state?.assetContext &&
             state?.status &&
             state?.balances &&
@@ -374,7 +374,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           console.log("state.assetContext: ",state.assetContext)
 
           //get pool address
-          let thorVault = state.status.exchanges.pools.filter((e:any) => e.chain === state.assetContext)
+          let thorVault = state.status.exchanges.thorchain.pools.filter((e:any) => e.chain === state.assetContext)
           thorVault = thorVault[0]
           console.log("thorVault: ",thorVault)
 
@@ -394,162 +394,180 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           console.log("amountTestNative: ",amountTestNative)
           console.log("amountBase: ",amountBase)
 
+          /*
+
+            swap
+
+           */
+          let swap: any = {
+            inboundAddress: thorVault,
+            addressFrom: currentSellAsset.currency.address,
+            coin: "ETH",
+            asset: "ETH",
+            memo,
+            amount: amountBase
+          }
+          let options: any = {
+            verbose: true,
+            txidOnResp: false, // txidOnResp is the output format
+          }
+          // console.log("swap: ", swap)
+          let responseSwap = await pioneer.App.buildSwapTx(swap, options, swap.asset)
+          console.log("responseSwap: ", responseSwap)
+          dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'built' })
+
+
+          console.log("state.wallet: ",swap)
+          console.log("state.wallet.getSigner: ",swap)
+          console.log("currentSellAsset.currency.address: ",currentSellAsset.currency.address)
+          // console.log("wallet.account: ",state.account)
+
+          //
+          let transaction:any = {
+            type:'keepkey-sdk',
+            fee:{
+              priority:3
+            },
+            unsignedTx:responseSwap,
+            context:contextInput,
+            network:state.assetContext
+          }
+          console.log("unsigned transaction: ",transaction)
+          let responseInvoke = await state.pioneer.App.invokeUnsigned(transaction,options,state.assetContext)
+          console.log("responseInvoke: ",responseInvoke)
+          let invocationId = responseInvoke.invocationId
+          transaction.invocationId = invocationId
+          dispatch({ type: WalletActions.SET_INVOCATION_CONTEXT, payload: invocationId })
+          dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'invoked' })
+
+          //metamask payload
+          // let txPayload:any = {
+          //   from:state.account,
+          //   to: responseSwap.HDwalletPayload.to,
+          //   data: responseSwap.HDwalletPayload.data,
+          //   value: responseSwap.HDwalletPayload.value,
+          //   gasLimit: responseSwap.HDwalletPayload.gasLimit,
+          //   gasPrice: responseSwap.HDwalletPayload.gasPrice,
+          //   nonce: responseSwap.HDwalletPayload.nonce,
+          //   chainId: 1
+          // }
+
+          console.log("unsignedTx: ",transaction.unsignedTx)
+          let signedTx = await state.keepkey.ethSignTx(transaction.unsignedTx.HDwalletPayload)
+          console.log("signedTx: ",signedTx)
+
           //TODO get contextType from walletDescripts, filter by context of input
-          let contextType = 'MetaMask'
-          if(contextType === 'MetaMask'){
-            console.log("Build Transaction with onBoard: MetaMask")
-            //if(state.wallet && state.wallet.provider && state.account){
-            if(state.onboard && state.wallet) {
-              //build swap
-              let swap: any = {
-                inboundAddress: thorVault,
-                addressFrom: currentSellAsset.currency.address,
-                coin: "ETH",
-                asset: "ETH",
-                memo,
-                amount: amountBase
-              }
-              let options: any = {
-                verbose: true,
-                txidOnResp: false, // txidOnResp is the output format
-              }
-              // console.log("swap: ", swap)
-              let responseSwap = await pioneer.App.buildSwapTx(swap, options, swap.asset)
-              console.log("responseSwap: ", responseSwap)
-              dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'built' })
-              /*
+          // console.log("unsignedTx: ",transaction.unsignedTx)
+          // let signedTx = await state.pioneer.App.signTx(transaction.unsignedTx)
+          // console.log("signedTx: ",signedTx)
 
-                swap
+          //TODO fix metamask again
+          // let contextType = 'MetaMask'
+          // if(contextType === 'MetaMask'){
+          //   console.log("Build Transaction with onBoard: MetaMask")
+          //   if(state.onboard && state.wallet) {
+          //     console.log("txPayload: ",txPayload)
+          //     signedTx = await state.provider.getSigner().sendTransaction(txPayload)
+          //     console.log("*** signedTx:",signedTx)
+          //     //mock send for debugging
+          //     //let signedTx:any = {"hash": "0xa4fd92ae21345de0b218f8951b9229d504cd55ef50780a7e5e18a81ecfa22a74", "type": 2, "accessList": null, "blockHash": null, "blockNumber": null, "transactionIndex": null, "confirmations": 0, "from": "0xC3aFFff54122658b89C31183CeC4F15514F34624", "gasPrice": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "maxPriorityFeePerGas": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "maxFeePerGas": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "gasLimit": {"type": "BigNumber", "hex": "0x013880"}, "to": "0xC145990E84155416144C532E31f89B840Ca8c2cE", "value": {"type": "BigNumber", "hex": "0x2386f26fc10000"}, "nonce": 87, "data": "0x1fece7b4000000000000000000000000f56cba49337a624e94042e325ad6bc864436e3700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002386f26fc10000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000403d3a4243482e4243483a626974636f696e636173683a717a78703078633676736a3861706739796d346e346a6c3435707978746b70736875767239736d6a7033", "r": "0x1ccaf7e8e8ee44807686e209cb78972766387a2a59050d6ef7c4467b2bb6d6d0", "s": "0x1a74183927cd0b07ac247156cdfa3b7df9a073b2fa44f684364ac68a04a1afac", "v": 1, "creates": null, "chainId": 0}
+          //   } else {
+          //
+          //   }
+          // }
 
-               */
-              console.log("state.wallet: ",swap)
-              console.log("state.wallet.getSigner: ",swap)
-              console.log("currentSellAsset.currency.address: ",currentSellAsset.currency.address)
-              console.log("wallet.account: ",state.account)
 
-              //
-              let transaction:any = {
-                type:'MetaMask',
-                fee:{
-                  priority:3
-                },
-                unsignedTx:responseSwap,
-                context:contextInput,
-                network:state.assetContext
-              }
+          dispatch({ type: WalletActions.SET_INVOCATION_TXID, payload: signedTx.hash })
+          dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'pending' })
+          signedTx.serialized = "fobarfixme"
+          signedTx.txid = signedTx.hash
+          signedTx.network = transaction.network
+          signedTx.type = 'MetaMask'
 
-              let responseInvoke = await state.pioneer.App.invokeUnsigned(transaction,options,state.assetContext)
-              console.log("responseInvoke: ",responseInvoke)
-              let invocationId = responseInvoke.invocationId
-              transaction.invocationId = invocationId
-              dispatch({ type: WalletActions.SET_INVOCATION_CONTEXT, payload: invocationId })
-              dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'invoked' })
+          //get invcation from api
+          let invocation = await state.pioneer.App.getInvocation(invocationId)
 
-              let txPayload:any = {
-                from:state.account,
-                to: responseSwap.HDwalletPayload.to,
-                data: responseSwap.HDwalletPayload.data,
-                value: responseSwap.HDwalletPayload.value,
-                gasLimit: responseSwap.HDwalletPayload.gasLimit,
-                gasPrice: responseSwap.HDwalletPayload.gasPrice,
-                nonce: responseSwap.HDwalletPayload.nonce,
-                chainId: 1
-              }
-              console.log("txPayload: ",txPayload)
-              const signedTx:any = await state.provider.getSigner().sendTransaction(txPayload)
-              console.log("*** signedTx:",signedTx)
+          //updateTx
+          let updateBody = {
+            network:state.assetContext,
+            invocationId,
+            invocation,
+            context:contextInput,
+            unsignedTx:responseSwap,
+            signedTx
+          }
 
-              //mock send for debugging
-              //let signedTx:any = {"hash": "0xa4fd92ae21345de0b218f8951b9229d504cd55ef50780a7e5e18a81ecfa22a74", "type": 2, "accessList": null, "blockHash": null, "blockNumber": null, "transactionIndex": null, "confirmations": 0, "from": "0xC3aFFff54122658b89C31183CeC4F15514F34624", "gasPrice": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "maxPriorityFeePerGas": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "maxFeePerGas": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "gasLimit": {"type": "BigNumber", "hex": "0x013880"}, "to": "0xC145990E84155416144C532E31f89B840Ca8c2cE", "value": {"type": "BigNumber", "hex": "0x2386f26fc10000"}, "nonce": 87, "data": "0x1fece7b4000000000000000000000000f56cba49337a624e94042e325ad6bc864436e3700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002386f26fc10000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000403d3a4243482e4243483a626974636f696e636173683a717a78703078633676736a3861706739796d346e346a6c3435707978746b70736875767239736d6a7033", "r": "0x1ccaf7e8e8ee44807686e209cb78972766387a2a59050d6ef7c4467b2bb6d6d0", "s": "0x1a74183927cd0b07ac247156cdfa3b7df9a073b2fa44f684364ac68a04a1afac", "v": 1, "creates": null, "chainId": 0}
-              dispatch({ type: WalletActions.SET_INVOCATION_TXID, payload: signedTx.hash })
-              dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'pending' })
-              signedTx.serialized = "fobarfixme"
-              signedTx.txid = signedTx.hash
-              signedTx.network = transaction.network
-              signedTx.type = 'MetaMask'
+          //update invocation remote
+          let resultUpdate = await state.pioneer.App.updateInvocation(updateBody)
+          console.log("resultUpdate: ",resultUpdate)
 
-              //get invcation from api
-              let invocation = await state.pioneer.App.getInvocation(invocationId)
+          //broadcast transaction
+          let broadcastResult = await state.pioneer.App.broadcastTransaction(updateBody)
+          console.log("broadcastResult: ",broadcastResult)
 
-              //updateTx
-              let updateBody = {
-                network:state.assetContext,
-                invocationId,
-                invocation,
-                unsignedTx:responseSwap,
-                signedTx
+          //verify broadcasted
+          let invocationView3 = await state.pioneer.App.getInvocation(invocationId)
+          console.log("invocationView3: (VIEW) ",invocationView3)
+          console.log("state: ",invocationView3.state)
+          // if(invocationView3.state !== 'broadcasted'){
+          //   console.error("failed to init tx lifecycle hook correctly")
+          //   throw Error('Fail fast bro, shits whack')
+          // }
+
+          //start loop
+          let isConfirmed = false
+          let isFullfilled = false
+          let fullfillmentTxid = false
+          let interval:any
+          let checkStatus = async function(){
+            try{
+              let invocationStatus = await state.pioneer.getInvocationStatus(invocationId)
+              console.log("invocationStatus: ",invocationStatus.state)
+
+              if(invocationStatus && invocationStatus.isConfirmed){
+                isConfirmed = true
+                dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'confirmed' })
+                console.log('WINNING! TX CONFIRMED!')
+                //TODO push to state?
+              } else {
+                console.log('not confirmed!')
               }
 
-              //update invocation remote
-              let resultUpdate = await state.pioneer.App.updateInvocation(updateBody)
-              console.log("resultUpdate: ",resultUpdate)
-
-              //broadcast transaction
-              let broadcastResult = await state.pioneer.App.broadcastTransaction(updateBody)
-              console.log("broadcastResult: ",broadcastResult)
-
-              //verify broadcasted
-              let invocationView3 = await state.pioneer.App.getInvocation(invocationId)
-              console.log("invocationView3: (VIEW) ",invocationView3)
-              console.log("state: ",invocationView3.state)
-              if(invocationView3.state !== 'broadcasted'){
-                console.error("failed to init tx lifecycle hook correctly")
-                throw Error('Fail fast bro, shits whack')
+              if(invocationStatus && invocationStatus.isFullfilled && invocationStatus.fullfillmentTxid){
+                console.log('WINNING2! TX FULLFILLED YOU GOT PAID BRO!')
+                dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'fullfilled' })
+                dispatch({ type: WalletActions.SET_TRADE_FULLFILLMENT_TXID, payload:invocationStatus.fullfillmentTxid })
+                fullfillmentTxid = invocationStatus.fullfillmentTxid
+                isFullfilled = true
+                //TODO push to state?
+                console.log("destroyed interval: ",interval)
+                interval.destroy()
+              } else {
+                console.log('not fullfilled!')
               }
-
-              //start loop
-              let isConfirmed = false
-              let isFullfilled = false
-              let fullfillmentTxid = false
-              let interval:any
-              let checkStatus = async function(){
-                try{
-                  let invocationStatus = await state.pioneer.getInvocationStatus(invocationId)
-                  console.log("invocationStatus: ",invocationStatus.state)
-
-                  if(invocationStatus && invocationStatus.isConfirmed){
-                    isConfirmed = true
-                    dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'confirmed' })
-                    console.log('WINNING! TX CONFIRMED!')
-                    //TODO push to state?
-                  } else {
-                    console.log('not confirmed!')
-                  }
-
-                  if(invocationStatus && invocationStatus.isFullfilled && invocationStatus.fullfillmentTxid){
-                    console.log('WINNING2! TX FULLFILLED YOU GOT PAID BRO!')
-                    dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'fullfilled' })
-                    dispatch({ type: WalletActions.SET_TRADE_FULLFILLMENT_TXID, payload:invocationStatus.fullfillmentTxid })
-                    fullfillmentTxid = invocationStatus.fullfillmentTxid
-                    isFullfilled = true
-                    //TODO push to state?
-                    console.log("destroyed interval: ",interval)
-                    interval.destroy()
-                  } else {
-                    console.log('not fullfilled!')
-                  }
-                }catch(e){
-                  console.error(e)
-                }
-              }
-              interval = setInterval(checkStatus,6000)
+            }catch(e){
+              console.error(e)
             }
           }
+          interval = setInterval(checkStatus,6000)
+
+
         } else {
           //state?.provider && state?.account && state?.assetContext && state?.status
-          if(!state?.provider) console.error("Wallet not initialized")
-          if(!state?.account) console.error("state missing account")
+          // if(!state?.provider) console.error("Wallet not initialized")
+          // if(!state?.account) console.error("state missing account")
           if(!state?.assetContext) console.error("state missing assetContext")
           if(!state?.status) console.error("state missing status")
           if(!state?.balances) console.error("state missing balances")
           if(!state?.tradeOutput) console.error("state missing tradeOutput")
           if(!state?.pioneer) console.error("state missing pioneer")
           if(!state?.pioneer?.App) console.error("state missing pioneer App")
+          console.error("Failed to buildTx")
         }
       },
       [
-        state?.provider,
-        state?.account,
+        // state?.provider,
+        // state?.account,
         state?.status,
         state?.assetContext,
         state?.balances,
@@ -614,6 +632,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             console.log("pairWalletKeepKey: ",pairWalletKeepKey)
             let resultPair = await pioneer.pairWallet(pairWalletKeepKey)
             console.log("resultPair: ",resultPair)
+            console.log("context: ",pioneer.context)
             dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'unlocked' })
             dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 4 })
             if(pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:pioneer.balances })
@@ -621,6 +640,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
             //set username
             if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
+            if(pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload: pioneer.context })
             dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
             dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
             dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })

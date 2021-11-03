@@ -69,6 +69,7 @@ export class PioneerService {
     let queryKey: string | null = localStorage.getItem('queryKey')
     let username: string | null = localStorage.getItem('username')
     if (!queryKey) {
+      console.log("Creating new queryKey~!")
       queryKey = 'key:' + uuidv4()
       localStorage.setItem('queryKey', queryKey)
       this.queryKey = queryKey
@@ -76,8 +77,10 @@ export class PioneerService {
       this.queryKey = queryKey
     }
     if (!username) {
+      console.log("Creating new username~!")
       username = 'user:' + uuidv4()
       username = username.substring(0, 13);
+      console.log("Creating new username~! username: ",username)
       localStorage.setItem('username', username)
       this.username = username
     } else {
