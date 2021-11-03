@@ -598,21 +598,25 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'device locked!' })
             dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 3 })
           }else{
-            //get pubkeys
-            let pubkeys = await sdk.getPubkeys()
+            let pubkeysResp = await sdk.getPubkeys()
+            let walletWatch = pubkeysResp.wallet
+            let pubkeys = pubkeysResp.pubkeys
             //pair
             let pairWalletKeepKey:any = {
               name:'keepkey',
-              format:'citadel',
+              format:'keepkey',
+              type:'keepkey',
               isWatch:'true',
-              wallet:pubkeys.wallet,
-              pubkeys:pubkeys.pubkeys,
+              wallet,
+              serialized:walletWatch,
+              pubkeys:pubkeys,
             }
             console.log("pairWalletKeepKey: ",pairWalletKeepKey)
-            await pioneer.registerWallet(pairWalletKeepKey)
+            let resultPair = await pioneer.pairWallet(pairWalletKeepKey)
+            console.log("resultPair: ",resultPair)
             dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'unlocked' })
             dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 4 })
-
+            if(pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:pioneer.balances })
             //close modal
             dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
             //set username
@@ -684,8 +688,12 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
               dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
               dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
             } else if(ready){
+              console.log("ready to start!")
+              //starting pioneer!
+              console.log("starting pioneer!")
               //start pioneer
-              let initResult = await pioneer.init()
+              // let initResult = await pioneer.init()
+              // console.log("initResult: ",initResult)
             } else {
               dispatch({ type: WalletActions.SET_ACTIVE, payload: false })
               dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
@@ -721,14 +729,12 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       },
       address: address => {
         dispatch({ type: WalletActions.SET_ACCOUNT, payload: address })
-        if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
       },
       wallet: (wallet: Wallet) => {
         if (wallet.provider) {
           dispatch({ type: WalletActions.SET_WALLET, payload: wallet })
           dispatch({ type: WalletActions.SET_PROVIDER, payload: getLibrary(wallet.provider) })
           window.localStorage.setItem('selectedWallet', wallet.name as string)
-          if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
         } else {
           disconnect()
         }
@@ -808,9 +814,9 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         // @ts-ignore
         // await window.keplr.enable(chainId);
         // @ts-ignore
-        const offlineSigner = window.getOfflineSigner(chainId);
-        const accounts = await offlineSigner.getAccounts();
-        console.log("accounts: ",accounts)
+        // const offlineSigner = window.getOfflineSigner(chainId);
+        // const accounts = await offlineSigner.getAccounts();
+        // console.log("accounts: ",accounts)
         // let pairWalletKeplr:any = {
         //   name:'keplr',
         //   format:'keplr',
@@ -818,10 +824,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         //   chainId:chainId
         // }
         // console.log("pairWalletKeplr: ",pairWalletKeplr)
-        // pioneer.registerWallet(pairWalletKeplr)
-        dispatch({ type: WalletActions.SET_KEPLR, payload: offlineSigner })
-        dispatch({ type: WalletActions.SET_KEPLR_CONTEXT, payload: accounts[0].address })
-        dispatch({ type: WalletActions.SET_KEPLR_NETWORK, payload: {icon:cosmosInfo.coinImageUrl,name:chainId} })
+        // pioneer.pairWallet(pairWalletKeplr)
+        // dispatch({ type: WalletActions.SET_KEPLR, payload: offlineSigner })
+        // dispatch({ type: WalletActions.SET_KEPLR_CONTEXT, payload: accounts[0].address })
+        // dispatch({ type: WalletActions.SET_KEPLR_NETWORK, payload: {icon:cosmosInfo.coinImageUrl,name:chainId} })
       }catch(e){
         console.error(e)
       }
@@ -852,7 +858,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         address:state.account
       }
       console.log("pairWalletOnboard: ",pairWalletOnboard)
-      pioneer.registerWallet(pairWalletOnboard)
+      pioneer.pairWallet(pairWalletOnboard)
 
       if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username})
 

@@ -67,15 +67,20 @@ export class PioneerService {
     this.balances = []
     this.pubkeys = []
     let queryKey: string | null = localStorage.getItem('queryKey')
-    const username: string | null = localStorage.getItem('username')
+    let username: string | null = localStorage.getItem('username')
     if (!queryKey) {
-      queryKey = 'sdk:' + uuidv4()
+      queryKey = 'key:' + uuidv4()
       localStorage.setItem('queryKey', queryKey)
       this.queryKey = queryKey
     } else {
       this.queryKey = queryKey
     }
-    if (username) {
+    if (!username) {
+      username = 'user:' + uuidv4()
+      username = username.substring(0, 13);
+      localStorage.setItem('username', username)
+      this.username = username
+    } else {
       this.username = username
     }
   }
@@ -104,7 +109,7 @@ export class PioneerService {
     return true
   }
 
-  async registerWallet(wallet: any): Promise<any> {
+  async pairWallet(wallet: any): Promise<any> {
     try{
       if(this.App){
         if(!this.isInitialized){
@@ -115,8 +120,9 @@ export class PioneerService {
         console.log("checkpoint App: ",this.App)
         console.log("isInitialized: ",this.isInitialized)
 
-        console.log("pioneer: registerWallet: Checkpoint")
-        let resultRegister = await this.App.registerWallet(wallet)
+        console.log("pioneer: pairWallet: Checkpoint")
+        let resultRegister = await this.App.pairWallet(wallet)
+        await this.App.updateContext()
         console.log("resultRegister: ",resultRegister)
         if(resultRegister.username){
           this.username = resultRegister.username
@@ -177,7 +183,7 @@ export class PioneerService {
           address
         }
         console.log("pairWalletOnboard: ",pairWalletOnboard)
-        pioneer.registerWallet(pairWalletOnboard) */
+        pioneer.pairWallet(pairWalletOnboard) */
 
   async setSendToNetwork(network: string): Promise<any> {
     //console.log('sendToNetwork: ', network)
@@ -247,6 +253,9 @@ export class PioneerService {
     if (!this.queryKey) {
       throw Error('Failed to init! missing queryKey')
     }
+    if (!this.username) {
+      throw Error('Failed to init! missing username')
+    }
     if(!this.isInitialized) {
       this.isInitialized = true
       const config: any = {
@@ -274,7 +283,7 @@ export class PioneerService {
         'osmosis'
       ]
       this.Api = await this.App.init(seedChains)
-
+      await this.App.updateContext()
       //TODO get api health
 
       //TODO get api status
