@@ -336,6 +336,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         if (
             // state?.provider &&
             // state?.account &&
+            state?.pioneer?.App?.isPaired &&
+            state?.username &&
             state?.assetContext &&
             state?.status &&
             state?.balances &&
@@ -343,6 +345,16 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             state?.pioneer &&
             state?.pioneer.App) {
           console.log("Build TX~!")
+          await pioneer.App.updateContext()
+          if(!pioneer.username){
+            throw Error("Pioneer username is required!")
+          }
+          if(!pioneer.App.username){
+            throw Error("Pioneer App username is required!")
+          }
+          if(!pioneer.App.isPaired){
+            throw Error("app is not isPaired!")
+          }
           //     //build swap
           //     if(!pioneer.isInitialized){
           //       await pioneer.init()
@@ -413,6 +425,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           }
           // console.log("swap: ", swap)
           let responseSwap = await pioneer.App.buildSwapTx(swap, options, swap.asset)
+          responseSwap.context = contextInput
+          responseSwap.swap.context = contextInput
           console.log("responseSwap: ", responseSwap)
           dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'built' })
 
@@ -434,6 +448,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           }
           console.log("unsigned transaction: ",transaction)
           let responseInvoke = await state.pioneer.App.invokeUnsigned(transaction,options,state.assetContext)
+          if(!responseInvoke.invocationId){
+            console.error('responseInvoke: ',responseInvoke)
+            //display error modal
+            throw Error("Failed to build invocation!")
+          }
           console.log("responseInvoke: ",responseInvoke)
           let invocationId = responseInvoke.invocationId
           transaction.invocationId = invocationId
@@ -453,13 +472,13 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           // }
 
           console.log("unsignedTx: ",transaction.unsignedTx)
-          let signedTx = await state.keepkey.ethSignTx(transaction.unsignedTx.HDwalletPayload)
-          console.log("signedTx: ",signedTx)
+          // let signedTx = await state.keepkey.ethSignTx(transaction.unsignedTx.HDwalletPayload)
+          // console.log("signedTx: ",signedTx)
 
           //TODO get contextType from walletDescripts, filter by context of input
           // console.log("unsignedTx: ",transaction.unsignedTx)
-          // let signedTx = await state.pioneer.App.signTx(transaction.unsignedTx)
-          // console.log("signedTx: ",signedTx)
+          let signedTx = await state.pioneer.App.signTx(transaction.unsignedTx)
+          console.log("signedTx: ",signedTx)
 
           //TODO fix metamask again
           // let contextType = 'MetaMask'
@@ -476,16 +495,20 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           //   }
           // }
 
-
           dispatch({ type: WalletActions.SET_INVOCATION_TXID, payload: signedTx.hash })
           dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'pending' })
-          signedTx.serialized = "fobarfixme"
-          signedTx.txid = signedTx.hash
+          //signedTx.serialized = "fobarfixme"
           signedTx.network = transaction.network
-          signedTx.type = 'MetaMask'
+          signedTx.type = 'keepkey'
+          signedTx.invocationId = invocationId
+          // signedTx.type = 'MetaMask'
+
+          if(!signedTx.serialized) throw Error("103: failed to build serialized tx")
+          if(!signedTx.txid) throw Error("104: failed to build txid")
 
           //get invcation from api
           let invocation = await state.pioneer.App.getInvocation(invocationId)
+          console.log("2invocation: ",invocation)
 
           //updateTx
           let updateBody = {
@@ -556,6 +579,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           //state?.provider && state?.account && state?.assetContext && state?.status
           // if(!state?.provider) console.error("Wallet not initialized")
           // if(!state?.account) console.error("state missing account")
+          if(!state?.pioneer?.App?.isPaired) console.error("state missing pioneer App isPaired")
           if(!state?.assetContext) console.error("state missing assetContext")
           if(!state?.status) console.error("state missing status")
           if(!state?.balances) console.error("state missing balances")
@@ -568,12 +592,14 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       [
         // state?.provider,
         // state?.account,
+        state?.username,
         state?.status,
         state?.assetContext,
         state?.balances,
         state?.tradeOutput,
         state?.pioneer,
-        state?.pioneer?.App
+        state?.pioneer?.App,
+        state?.pioneer?.App?.isPaired
       ]
   )
 
@@ -615,7 +641,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           if(lockStatus){
             dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'device locked!' })
             dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 3 })
-          }else{
+          } else {
             let pubkeysResp = await sdk.getPubkeys()
             let walletWatch = pubkeysResp.wallet
             let pubkeys = pubkeysResp.pubkeys
@@ -768,28 +794,36 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         console.log("onStartPioneer")
         //pioneer
         let initResult = await pioneer.init()
+        if(pioneer.App.isPaired){
+          //sit init
+          dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+          //set context
+          dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+          dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
+          if(initResult.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:initResult.balances })
+          if(initResult.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:initResult.context })
+          if(initResult.username) dispatch({ type: WalletActions.SET_USERNAME, payload:initResult.username })
+          if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
+          dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+        } else {
+          console.log("app is not paired! can not start. please connect a wallet")
+        }
+        console.log("initResult: ",initResult)
+
         if(initResult.code) dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
         //pioneer status
         let status = await pioneer.getStatus()
         if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
-        //sit init
-        dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-        //set context
-        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
-        dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
-        if(initResult.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:initResult.balances })
-        if(initResult.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:initResult.context })
-        if(initResult.username) dispatch({ type: WalletActions.SET_USERNAME, payload:initResult.username })
-        if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
-        dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+
 
         pioneer.events.on('message', async (event: any) => {
-          //console.log('pioneer event: ', event)
+          console.log('pioneer event: ', event)
           switch (event.type) {
             case 'context':
               console.log("context event! event: ",event)
               break
             case 'pairing':
+              console.log('Paired!', event)
               //set context
               dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
               dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })

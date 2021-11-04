@@ -122,21 +122,21 @@ export class PioneerService {
 
         console.log("checkpoint App: ",this.App)
         console.log("isInitialized: ",this.isInitialized)
-
         console.log("pioneer: pairWallet: Checkpoint")
         let resultRegister = await this.App.pairWallet(wallet)
-        await this.App.updateContext()
         console.log("resultRegister: ",resultRegister)
-        if(resultRegister.username){
+
+        await this.App.updateContext()
+        if(resultRegister?.username){
           this.username = resultRegister.username
         }
-        if(resultRegister.balances){
+        if(resultRegister?.balances){
           this.balances = resultRegister.balances
         }
-        if(resultRegister.pubkeys){
+        if(resultRegister?.pubkeys){
           this.pubkeys = resultRegister.pubkeys
         }
-        if(resultRegister.context){
+        if(resultRegister?.context){
           this.context = resultRegister.context
         }
         return resultRegister
@@ -271,6 +271,7 @@ export class PioneerService {
       }
       if (this.username) {
         config.username = this.username
+
       }
       console.log("config: ",config)
       this.App = new SDK(config.spec, config)
@@ -299,8 +300,8 @@ export class PioneerService {
         this.events = await this.App.startSocket()
       } catch (e) {
         // delete keypair (force repair)
-        localStorage.removeItem('username')
-        localStorage.removeItem('queryKey')
+        // localStorage.removeItem('username')
+        // localStorage.removeItem('queryKey')
       }
 
       // handle events
@@ -331,8 +332,8 @@ export class PioneerService {
       if (!info || info.error) {
         if (this.username) {
           // delete keypair (force repair)
-          localStorage.removeItem('username')
-          localStorage.removeItem('queryKey')
+          // localStorage.removeItem('username')
+          // localStorage.removeItem('queryKey')
         }
         // not paired
         const response = await this.App.createPairingCode()
@@ -376,6 +377,7 @@ export class PioneerService {
         if (this.username != null) {
           localStorage.setItem('username', this.username)
         }
+        await this.App.updateContext()
         // this.user = await this.App.getUserParams()
         // console.log('userParams: ', this.user)
         /*
@@ -449,32 +451,6 @@ export class PioneerService {
   //build transfer
   async buildTx(transfer:any): Promise<any> {
 
-    let options:any = {
-      verbose: true,
-      txidOnResp: false, // txidOnResp is the output format
-    }
-
-    //toLongName
-    let blockchain = COIN_MAP_LONG[transfer.network]
-    if(blockchain === 'bitcoincash') blockchain = 'bitcoinCash'
-    console.log("blockchain: ",blockchain)
-
-    //if not init, init again
-    //TODO WHY THE FUCK THIS HAPPENING!!
-    if(!this.isInitialized){
-      await this.init()
-    }
-
-    console.log("App: ",this.user)
-    console.log("clients: ",this.user.clients)
-    let responseTransfer = await this.user.clients[blockchain].transfer(transfer,options)
-    console.log('responseTransfer: ',responseTransfer)
-
-    //if got invocation back
-    //clear all state
-
-    if(responseTransfer) this.invocations.push(responseTransfer)
-    return responseTransfer
   }
 
   async createPairingCode(): Promise<any> {

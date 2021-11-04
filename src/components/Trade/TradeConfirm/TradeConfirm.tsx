@@ -7,7 +7,7 @@ import { SlideTransition } from 'components/SlideTransition'
 import { useFormContext } from 'react-hook-form'
 import { RouterProps } from 'react-router-dom'
 import { AssetToAsset } from './AssetToAsset'
-import {useWallet, WalletActions} from "context/WalletProvider/WalletProvider";
+import { useWallet, WalletActions } from "context/WalletProvider/WalletProvider";
 
 
 export const TradeConfirm = ({ history }: RouterProps) => {
