@@ -30,8 +30,6 @@ import { useState } from 'react'
 import { SUPPORTED_WALLETS } from './config'
 import { WalletViewsRouter } from './WalletViewsRouter'
 import * as keepkeyWebUSB from "@shapeshiftoss/hdwallet-keepkey-webusb";
-import * as core from "@shapeshiftoss/hdwallet-core";
-import * as keepkeyTcp from "@shapeshiftoss/hdwallet-keepkey-tcp";
 const Datastore = require('nedb-promises')
 let SDK = require("@keepkey/keepkey-sdk")
 let {
