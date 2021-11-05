@@ -12,9 +12,6 @@
       This project uses the Pioneer SDK to manage all pubkeys and tx lifecycle hooks
     docs: https://ahead-respect-850.notion.site/Pioneer-Developer-Platform-de0ed9bdaaf44133b6fb1a29e4d29bdf
  */
-let {
-  baseAmountToNative,
-} = require("@pioneer-platform/pioneer-coins")
 import { Keyring } from '@shapeshiftoss/hdwallet-core'
 import { Web3Provider } from '@ethersproject/providers'
 import { API as OnboardAPI, Wallet } from 'bnc-onboard/dist/src/interfaces'
@@ -37,7 +34,9 @@ import * as keepkeyWebUSB from "@shapeshiftoss/hdwallet-keepkey-webusb";
 import * as core from "@shapeshiftoss/hdwallet-core";
 import * as keepkeyTcp from "@shapeshiftoss/hdwallet-keepkey-tcp";
 let SDK = require("@keepkey/keepkey-sdk")
-
+let {
+  baseAmountToNative,
+} = require("@pioneer-platform/pioneer-coins")
 //TODO expand networks
 const SUPPORTED_NETWORKS = [1]
 
