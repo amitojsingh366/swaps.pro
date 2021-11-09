@@ -245,109 +245,51 @@ export const WalletButton: FC<FlexProps> = () => {
               </AccordionPanel>
             </AccordionItem>
 
-            {/*<AccordionItem>*/}
-            {/*  <h2>*/}
-            {/*    <AccordionButton>*/}
-            {/*      <Box flex="1" textAlign="left">*/}
-            {/*        pioneer: <PioneerButton />*/}
-            {/*      </Box>*/}
-            {/*      <AccordionIcon />*/}
-            {/*    </AccordionButton>*/}
-            {/*  </h2>*/}
-            {/*  <AccordionPanel pb={4}>*/}
-            {/*    <MenuItem*/}
-            {/*        icon={*/}
-            {/*          <Circle bg='whiteAlpha.200' size={8}>*/}
-            {/*            <ArrowUpIcon />*/}
-            {/*          </Circle>*/}
-            {/*        }*/}
-            {/*        onClick={ () => openSend('pioneer')}*/}
-            {/*    >*/}
-            {/*      Send*/}
-            {/*    </MenuItem>*/}
-            {/*    <MenuItem*/}
-            {/*        icon={*/}
-            {/*          <Circle bg='whiteAlpha.200' size={8}>*/}
-            {/*            <ArrowDownIcon />*/}
-            {/*          </Circle>*/}
-            {/*        }*/}
-            {/*        onClick={ () => openReceive('pioneer')}*/}
-            {/*    >*/}
-            {/*      Receive*/}
-            {/*    </MenuItem>*/}
-            {/*    <MenuItem*/}
-            {/*        icon={*/}
-            {/*          <Circle bg='whiteAlpha.200' size={8}>*/}
-            {/*            <CloseIcon />*/}
-            {/*          </Circle>*/}
-            {/*        }*/}
-            {/*        onClick={disconnect}*/}
-            {/*    >*/}
-            {/*      Disconnect*/}
-            {/*    </MenuItem>*/}
-            {/*  </AccordionPanel>*/}
-            {/*</AccordionItem>*/}
+            <AccordionItem>
+              <h2>
+                <AccordionButton>
+                  <Box flex="1" textAlign="left">
+                    pioneer: <PioneerButton />
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4}>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <ArrowUpIcon />
+                      </Circle>
+                    }
+                    onClick={ () => openSend('pioneer')}
+                >
+                  Send
+                </MenuItem>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <ArrowDownIcon />
+                      </Circle>
+                    }
+                    onClick={ () => openReceive('pioneer')}
+                >
+                  Receive
+                </MenuItem>
+                <MenuItem
+                    icon={
+                      <Circle bg='whiteAlpha.200' size={8}>
+                        <CloseIcon />
+                      </Circle>
+                    }
+                    onClick={disconnect}
+                >
+                  Disconnect
+                </MenuItem>
+              </AccordionPanel>
+            </AccordionItem>
           </Accordion>
-          {/*<Box*/}
-          {/*  borderRadius={0}*/}
-          {/*  justifyContent='space-between'*/}
-          {/*  flexDir='row'*/}
-          {/*  alignItems='center'*/}
-          {/*  px={4}*/}
-          {/*  py={2}*/}
-          {/*  display='flex'*/}
-          {/*  flexWrap='nowrap'*/}
-          {/*  icon={<WalletImage isConnected={true} walletInfo={pioneer.walletInfo} />}*/}
-          {/*>*/}
-          {/*  <Button*/}
-          {/*    bg='whiteAlpha.200'*/}
-          {/*    borderRadius='lg'*/}
-          {/*    px={3}*/}
-          {/*  >*/}
-          {/*    <div><small>total value: {JSON.stringify(pioneer?.totalValueUsd)}</small></div>*/}
-          {/*  </Button>*/}
-          {/*  <HStack ml={4}>*/}
-
-          {/*  </HStack>*/}
-          {/*</Box>*/}
         </MenuGroup>
         <MenuDivider />
-        {/*<MenuItem>*/}
-        {/*  OnBoard: <OnboardButton />*/}
-        {/*</MenuItem>*/}
-        {/*<MenuItem>*/}
-        {/*  keplr: <KeplrButton />*/}
-        {/*</MenuItem>*/}
-        {/*<MenuItem*/}
-        {/*  icon={*/}
-        {/*    <Circle bg='whiteAlpha.200' size={8}>*/}
-        {/*      <RepeatIcon />*/}
-        {/*    </Circle>*/}
-        {/*  }*/}
-        {/*  onClick={() => dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })}*/}
-        {/*>*/}
-        {/*  Switch Wallet Provider*/}
-        {/*</MenuItem>*/}
-        {/*<MenuItem*/}
-        {/*  icon={*/}
-        {/*    <Circle bg='whiteAlpha.200' size={8}>*/}
-        {/*      <CloseIcon />*/}
-        {/*    </Circle>*/}
-        {/*  }*/}
-        {/*  onClick={pioneer.forget}*/}
-        {/*>*/}
-        {/*  forget*/}
-        {/*</MenuItem>*/}
-        {/*<MenuItem*/}
-        {/*    icon={*/}
-        {/*      <Circle bg='whiteAlpha.200' size={8}>*/}
-        {/*        <CloseIcon />*/}
-        {/*      </Circle>*/}
-        {/*    }*/}
-        {/*    onClick={disconnect}*/}
-        {/*>*/}
-        {/*  Disconnect*/}
-        {/*</MenuItem>*/}
       </MenuList>
     </Menu>
   )

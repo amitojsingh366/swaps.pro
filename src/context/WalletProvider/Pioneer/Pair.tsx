@@ -5,7 +5,7 @@ import React, {useEffect} from 'react'
 import PIONEER_ICON from 'assets/png/pioneer.png'
 import { NativeSetupProps } from './setup'
 
-export const Pair = ({ }: NativeSetupProps) => {
+export const PairPioneer = ({ }: NativeSetupProps) => {
   const { state } = useWallet()
   const { code } = state
   const { hasCopied, onCopy } = useClipboard(code)

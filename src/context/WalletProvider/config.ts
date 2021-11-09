@@ -9,6 +9,7 @@ import { RouteProps } from 'react-router-dom'
 
 import { Onboard } from './Onboard/Onboard'
 import { Pair } from './KeepKey/Pair'
+import { PairPioneer } from './Pioneer/Pair'
 
 export interface SupportedWalletInfo {
   adapter?: any
@@ -24,13 +25,6 @@ export interface SupportedWalletInfo {
 }
 
 export const SUPPORTED_WALLETS: { [key: string]: SupportedWalletInfo } = {
-  // pioneer: {
-  //   icon: PIONEER_ICON,
-  //   type: 'multichain',
-  //   name: 'Pioneer',
-  //   setup: () => {},
-  //   routes: [{ path: '/pioneer/pair', component: Pair }]
-  // },
   keepkey: {
     icon: KEEPKEY_ICON,
     name: 'KeepKey',
@@ -52,5 +46,12 @@ export const SUPPORTED_WALLETS: { [key: string]: SupportedWalletInfo } = {
     type: 'tendermint',
     setup: () => {},
     routes: [{ path: '/onboard/keplr', component: Onboard }]
+  },
+  pioneer: {
+    icon: PIONEER_ICON,
+    type: 'multichain',
+    name: 'Pioneer',
+    setup: () => {},
+    routes: [{ path: '/pioneer/pair', component: PairPioneer }]
   },
 }
