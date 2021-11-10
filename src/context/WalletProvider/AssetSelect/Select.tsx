@@ -47,32 +47,11 @@ export const Select = ({ }: any) => {
     const fetchTokens = useCallback(async () => {
         try {
             //if input get available balance
-            if(selectType === 'input'){
-                let data:any = {}
-                console.log("FINAL BALANCES: ",balances)
-                selectOptions = balances
-                // data.tokens = balances
-                // // const sorted = sortBy(data?.tokens, ['name', 'symbol'])
-                // console.log("exchangeInfo.assets: ",exchangeInfo?.assets)
-                // const sorted = balances?.filter((entry: { symbol: any }) => exchangeInfo?.assets.indexOf(entry?.symbol) > -1);
-                // console.log("sorted: ",exchangeInfo?.assets)
-                // setSortedAssets(sorted)
-            }else if(selectType === 'output'){
-                //
-                console.log("status: ",status)
-                console.log("status: ",status.exchanges.markets)
-                for(let i = 0; i < status.exchanges.markets.length; i++){
-                    let market = status.exchanges.markets[i]
-                    if(market.pair.indexOf(assetContext+"_")>= 0){
-                        console.log("VALID MARKET! add output to options!", market)
-                    }
-                }
-
-                //selectOptions
-            }
-
-
-
+            console.log("FINAL BALANCES: ",balances)
+            console.log("exchangeContext: ",exchangeContext)
+            selectOptions = balances.filter((balance:any) => balance.protocols.indexOf(exchangeContext) >= 0)
+            setSortedAssets(selectOptions)
+            console.log("selectOptions: ",selectOptions)
         } catch (e) {
             console.warn(e)
         }
@@ -102,11 +81,11 @@ export const Select = ({ }: any) => {
                 <Input placeholder="Search name or paste contract" />
             </Card>
             <Box flex={1}>
-                {balances?.map((key:any)=>(
+                {sortedAssets?.map((key:any)=>(
                     <div>
                         <button onClick={() => onSelectAsset(key.symbol)}>
                             <AssetIcon src={key?.image} boxSize='24px' mr={4} />
-                            {key.symbol} status: {key.balance}
+                            {key.symbol} balance: {key.balance}
                         </button>
                     </div>
                 ))}
