@@ -710,7 +710,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       default:
         throw Error('Wallet not supported: ' + type)
     }
-  }, [state?.onboard, state?.pioneer])
+  }, [state?.onboard, state?.pioneer, state?.username])
 
   const disconnect = useCallback(() => {
     setType(null)

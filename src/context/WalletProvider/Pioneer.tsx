@@ -55,7 +55,6 @@ export class PioneerService {
   public totalValueUsd: any
   public walletsIds: any
   public walletDescriptions: any
-  //internal (state not synced remotely)
   public sendToAddress: string | undefined
   public sendToAmountNative: string | undefined
   public sendToNetwork: string | undefined
@@ -114,7 +113,8 @@ export class PioneerService {
 
   async pairWallet(wallet: any): Promise<any> {
     try{
-      if(this.App){
+
+      if(this.App && this.App.pairWallet){
         if(!this.isInitialized){
           console.log("App not initialized!")
           await this.init()
@@ -123,10 +123,12 @@ export class PioneerService {
         console.log("checkpoint App: ",this.App)
         console.log("isInitialized: ",this.isInitialized)
         console.log("pioneer: pairWallet: Checkpoint")
+        console.log("pioneer: pairWallet:",wallet)
         let resultRegister = await this.App.pairWallet(wallet)
         console.log("resultRegister: ",resultRegister)
 
-        await this.App.updateContext()
+        let userInfo = await this.App.updateContext()
+        console.log("userInfo: ",userInfo)
         if(resultRegister?.username){
           this.username = resultRegister.username
         }
@@ -141,6 +143,9 @@ export class PioneerService {
         }
         return resultRegister
       } else {
+        console.log("checkpoint App: ",this.App)
+        console.log("checkpoint this: ",this)
+        console.log("isInitialized: ",this.isInitialized)
         throw Error("App not initialized!")
       }
     }catch(e){
@@ -263,15 +268,12 @@ export class PioneerService {
       this.isInitialized = true
       const config: any = {
         network,
+        username: this.username,
         service: process.env.REACT_APP_PIONEER_SERVICE,
         url: process.env.REACT_APP_APP_URL,
         queryKey: this.queryKey,
         wss: process.env.REACT_APP_URL_PIONEER_SOCKET,
         spec: process.env.REACT_APP_URL_PIONEER_SPEC
-      }
-      if (this.username) {
-        config.username = this.username
-
       }
       console.log("config: ",config)
       this.App = new SDK(config.spec, config)
@@ -330,11 +332,6 @@ export class PioneerService {
       const info = await this.App.getUserInfo()
       console.log('INFO: ', info)
       if (!info || info.error) {
-        if (this.username) {
-          // delete keypair (force repair)
-          // localStorage.removeItem('username')
-          // localStorage.removeItem('queryKey')
-        }
         // not paired
         const response = await this.App.createPairingCode()
         if (!response.code) {
@@ -366,20 +363,17 @@ export class PioneerService {
         )[0]
         console.log("contextInfo: ",contextInfo)
 
-        this.valueUsdContext = contextInfo.valueUsdContext
+        if(contextInfo){
+          this.valueUsdContext = contextInfo.valueUsdContext
+          this.balances = contextInfo.balances
+          console.log("*** pioneer: this.balances: ",this.balances)
 
-        this.balances = contextInfo.balances
-        console.log("*** pioneer: this.balances: ",this.balances)
-
-        this.pubkeys = contextInfo.pubkeys
-        console.log("*** pioneer: this.pubkeys: ",this.pubkeys)
-
-        if (this.username != null) {
-          localStorage.setItem('username', this.username)
+          this.pubkeys = contextInfo.pubkeys
+          console.log("*** pioneer: this.pubkeys: ",this.pubkeys)
         }
-        await this.App.updateContext()
-        // this.user = await this.App.getUserParams()
-        // console.log('userParams: ', this.user)
+
+        //await this.App.updateContext()
+
         /*
          */
         //set context

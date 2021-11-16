@@ -1,4 +1,3 @@
-
 import { debounce } from 'lodash'
 import { useCallback, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
@@ -70,13 +69,12 @@ export const Pioneer = () => {
         console.log("HOOK: selectExchange: ",exchange)
     }
 
-    const selectInput = async (
-    ) => {
-        console.log("HOOK: selectInput")
+    const selectInput = async (asset:string) => {
+        console.log("HOOK: selectInput: ",asset)
     }
 
-    const selectOutput = async () => {
-        console.log("HOOK: selectOutput")
+    const selectOutput = async (asset:string) => {
+        console.log("HOOK: selectOutput: ",asset)
     }
 
     const updateAmountInNative = async (value:any) => {
