@@ -382,56 +382,75 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           console.log("status.pools: ",state.status.exchanges.pools)
           console.log("state.assetContext: ",state.assetContext)
 
-          //get pool address
-          let thorVault = state.status.exchanges.thorchain.pools.filter((e:any) => e.chain === state.assetContext)
-          thorVault = thorVault[0]
-          console.log("thorVault: ",thorVault)
+          //get protocal
+          console.log("exchangeContext: ",state.exchangeContext)
 
-          let vaultAddress = thorVault.address
-          console.log("vaultAddress: ",vaultAddress)
+          let unsignedTx
 
-          //from pubkeys gets output address
-          let pubkeyOutput = state.balances.filter((balance:any) => balance.symbol === state.tradeOutput)[0]
-          console.log("pubkeyOutput: ",pubkeyOutput)
-
-          //TODO buildThorChain memo function coolness
-          let memo = '=:'+state.tradeOutput+'.'+state.tradeOutput+":"+pubkeyOutput.master
-          console.log("memo: ",memo)
-
-          let amountBase = currentSellAsset.amount
-          let amountTestNative = baseAmountToNative(state.assetContext,amountBase)
-          console.log("amountTestNative: ",amountTestNative)
-          console.log("amountBase: ",amountBase)
-
-          /*
-
-            swap
-
-           */
-          let swap: any = {
-            inboundAddress: thorVault,
-            addressFrom: currentSellAsset.currency.address,
-            coin: "ETH",
-            asset: "ETH",
-            memo,
-            amount: amountBase
-          }
           let options: any = {
             verbose: true,
             txidOnResp: false, // txidOnResp is the output format
           }
-          // console.log("swap: ", swap)
-          let responseSwap = await pioneer.App.buildSwapTx(swap, options, swap.asset)
-          responseSwap.context = contextInput
-          responseSwap.swap.context = contextInput
-          console.log("responseSwap: ", responseSwap)
-          dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'built' })
+
+          if(state.exchangeContext === 'thorchain'){
+            //if thorchain
+            //get pool address
+            let thorVault = state.status.exchanges.thorchain.pools.filter((e:any) => e.chain === state.assetContext)
+            thorVault = thorVault[0]
+            console.log("thorVault: ",thorVault)
+
+            let vaultAddress = thorVault.address
+            console.log("vaultAddress: ",vaultAddress)
+
+            //from pubkeys gets output address
+            let pubkeyOutput = state.balances.filter((balance:any) => balance.symbol === state.tradeOutput)[0]
+            console.log("pubkeyOutput: ",pubkeyOutput)
+
+            //TODO buildThorChain memo function coolness
+            let memo = '=:'+state.tradeOutput+'.'+state.tradeOutput+":"+pubkeyOutput.master
+            console.log("memo: ",memo)
+
+            let amountBase = currentSellAsset.amount
+            let amountTestNative = baseAmountToNative(state.assetContext,amountBase)
+            console.log("amountTestNative: ",amountTestNative)
+            console.log("amountBase: ",amountBase)
+
+            /*
+
+              swap
+
+             */
+            let swap: any = {
+              inboundAddress: thorVault,
+              addressFrom: currentSellAsset.currency.address,
+              coin: "ETH",
+              asset: "ETH",
+              memo,
+              amount: amountBase
+            }
+
+            // console.log("swap: ", swap)
+            let responseSwap = await pioneer.App.buildSwapTx(swap, options, swap.asset)
+            responseSwap.context = contextInput
+            responseSwap.swap.context = contextInput
+            console.log("responseSwap: ", responseSwap)
+            dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'built' })
 
 
-          console.log("state.wallet: ",swap)
-          console.log("state.wallet.getSigner: ",swap)
-          console.log("currentSellAsset.currency.address: ",currentSellAsset.currency.address)
-          // console.log("wallet.account: ",state.account)
+            console.log("state.wallet: ",swap)
+            console.log("state.wallet.getSigner: ",swap)
+            console.log("currentSellAsset.currency.address: ",currentSellAsset.currency.address)
+            // console.log("wallet.account: ",state.account)
+            unsignedTx = responseSwap
+          }else if(state.exchangeContext === 'osmosis'){
+            //build batch
+            //TODO if ATOM -> OSMO
+            //deposit atom into IBC
+            //submit swap
+          } else {
+            throw Error("protocol not implemented!")
+          }
+
 
           //
           let transaction:any = {
@@ -439,7 +458,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             fee:{
               priority:3
             },
-            unsignedTx:responseSwap,
+            unsignedTx,
             context:contextInput,
             network:state.assetContext
           }
@@ -513,7 +532,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             invocationId,
             invocation,
             context:contextInput,
-            unsignedTx:responseSwap,
+            unsignedTx,
             signedTx
           }
 
