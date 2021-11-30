@@ -8,7 +8,7 @@
 
 
 
-FROM node:12.18.4
+FROM node:14.18.1
 
 ARG NPM_TOKEN
 ARG NODE_ENV
