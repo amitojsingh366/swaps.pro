@@ -13,7 +13,7 @@ export const TradeStatus = ({ history }: RouterProps) => {
     const { getValues } = useFormContext()
     const { sellAsset, buyAsset } = getValues()
     const { state } = useWallet()
-    const { invocationContext } = state
+    const { invocationContext, fullfillmentTxid, invocationTxid, tradeStatus } = state
 
     return (
         <SlideTransition>
@@ -28,7 +28,7 @@ export const TradeStatus = ({ history }: RouterProps) => {
                             isRound
                             onClick={() => history.push('/trade/input')}
                         />
-                        <Card.Heading textAlign='center'>Trade Status <small>{invocationContext}</small></Card.Heading>
+                        <Card.Heading textAlign='center'>Trade Status {tradeStatus}<small>{invocationContext}</small></Card.Heading>
 
                     </SimpleGrid>
                     <AssetToAsset
@@ -48,7 +48,12 @@ export const TradeStatus = ({ history }: RouterProps) => {
                 <Divider />
                 <Card.Body pb={0} px={0}>
                     <Stack spacing={4}>
-
+                    <br/>
+                    <small>deposit txid: {invocationTxid}</small>
+                    <br/>
+                        {fullfillmentTxid &&
+                        <small>fullfillment txid: {fullfillmentTxid}</small>
+                        }
                     </Stack>
                 </Card.Body>
                 <Card.Footer px={0} py={0}>

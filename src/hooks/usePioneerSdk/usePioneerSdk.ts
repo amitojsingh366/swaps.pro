@@ -1,4 +1,3 @@
-
 import { debounce } from 'lodash'
 import { useCallback, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
@@ -15,7 +14,7 @@ export enum TradeActions {
 
 export const Pioneer = () => {
     const { state, dispatch, setRoutePath } = useWallet()
-    const { assetContext, balances, tradeOutput, status } = state
+    const { assetContext, balances, tradeOutput, status, pioneer } = state
     const {
         setValue,
         getValues,
@@ -65,14 +64,23 @@ export const Pioneer = () => {
         console.log("formState: ",{ errors, isDirty, isValid })
     }
 
-    const selectInput = async (
-    ) => {
-        console.log("HOOK: selectInput")
+    //selectExchange
+    const selectExchange = async (exchange:string) => {
+        console.log("HOOK: selectExchange: ",exchange)
     }
 
-    const selectOutput = async (
-    ) => {
-        console.log("HOOK: selectOutput")
+    const selectInput = async (asset:string) => {
+        console.log("HOOK: selectInput: ",asset)
+    }
+
+    const selectOutput = async (asset:string) => {
+        console.log("HOOK: selectOutput: ",asset)
+    }
+
+    const updateAmountInNative = async (value:any) => {
+        console.log("HOOK: updateAmountInNative value: ",value)
+        setValue('sellAsset.amount',value)
+        //update amount Out fiat
     }
 
     const switchAssets = async (
@@ -123,13 +131,13 @@ export const Pioneer = () => {
             console.log("HOOK: currentSellAsset",currentSellAsset)
             console.log("HOOK: currentBuyAsset",currentBuyAsset)
 
-            let symbolIn = currentSellAsset.currency.symbol
-            let symbolOut = currentBuyAsset.currency.symbol
+            let symbolIn = currentSellAsset?.currency?.symbol
+            let symbolOut = currentBuyAsset?.currency?.symbol
 
             let pair = symbolIn+"_"+symbolOut
             console.log("HOOK: pair",pair)
             //market Info
-            let marketInfo = status.exchanges.markets.filter((e:any) => e.pair == pair)
+            let marketInfo = status?.exchanges?.thorchain?.markets.filter((e:any) => e.pair == pair)
             marketInfo = marketInfo[0]
             console.log("marketInfo: ",marketInfo)
             if(marketInfo && marketInfo.rate){
@@ -152,12 +160,14 @@ export const Pioneer = () => {
 
     return {
         reset,
+        updateAmountInNative,
         getCryptoQuote,
         getFiatQuote,
         setMaxInput,
         selectInput,
         selectOutput,
         switchAssets,
-        update
+        update,
+        selectExchange
     }
 }

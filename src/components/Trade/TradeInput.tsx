@@ -35,7 +35,7 @@ const FiatInput = (props: InputProps) => (
 
 export const TradeInput = ({ history }: RouterProps) => {
   const { state, dispatch, setRoutePath } = useWallet()
-  const { assetContext, balances, tradeOutput } = state
+  const { assetContext, balances, tradeOutput, exchangeContext } = state
   const { getCryptoQuote, getFiatQuote, reset, switchAssets, update, setMaxInput } = Pioneer()
   let {
     control,
@@ -84,9 +84,10 @@ export const TradeInput = ({ history }: RouterProps) => {
     <SlideTransition>
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
         <div>
-          input: {assetContext}
-          {/*{JSON.stringify(balances)}*/}
+          protocal: {exchangeContext}
         </div>
+        <br/>
+        <small>status: ...</small>
         <FormControl isInvalid={!!errors.fiatAmount}>
           <Controller
             render={({ field: { value } }) => (

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { SwapActions } from './Swap/SwapActions'
 import { useWallet } from "context/WalletProvider/WalletProvider";
+import {Pioneer} from "hooks/usePioneerSdk/usePioneerSdk";
 // import { AssetBalance } from './AssetCards/AssetBalance'
 // import { Rewards } from './AssetCards/Rewards'
 // import { AssetDetails } from './AssetDetails/AssetDetails'

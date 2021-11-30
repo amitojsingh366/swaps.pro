@@ -5,13 +5,13 @@ import { shortenAddress } from 'utils/helpers'
 import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 import {SUPPORTED_WALLETS} from "../../../../context/WalletProvider/config";
 
-export const OnboardButton: FC<FlexProps> = props => {
+export const KeepKeyButton: FC<FlexProps> = props => {
     const { state, dispatch, setRoutePath } = useWallet()
-    const { isConnected, wallet, account } = state
+    const {  } = state
 
-    const connectOnboard = () => {
+    const connectKeepkey = () => {
         dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
-        setRoutePath(SUPPORTED_WALLETS['onboard']?.routes[0]?.path ?? undefined)
+        setRoutePath(SUPPORTED_WALLETS['keepkey']?.routes[0]?.path ?? undefined)
     }
 
     return (
@@ -25,27 +25,21 @@ export const OnboardButton: FC<FlexProps> = props => {
             _hover={{ cursor: 'pointer', bg: 'whiteAlpha.500' }}
             {...props}
         >
-            {account ? (
+            {false ? (
                 <HStack>
                     <Image
                         maxW='28px'
                         maxH='28px'
                         ml={2}
-                        src={
-                            wallet?.icons?.svg
-                                ? `data:image/svg+xml;base64,${btoa(wallet.icons.svg)}`
-                                : wallet?.icons?.iconSrc
-                        }
                     />
-                    <Text fontSize='sm'>{account && shortenAddress(account, 4)}</Text>
+                    <Text fontSize='sm'>{"" && shortenAddress('', 4)}</Text>
                     <ChevronDownIcon h={8} w={8} />
                 </HStack>
             ) : (
-                <div onClick={connectOnboard}>
+                <div onClick={connectKeepkey}>
                     <Text fontSize='sm' ml={2}>
-                        Connect Wallet
+                        Connect KeepKey
                     </Text>
-                    {/*<ChevronRightIcon h={8} w={8} />*/}
                 </div>
             )}
         </Flex>

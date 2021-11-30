@@ -19,7 +19,7 @@ import {useTranslate} from "react-polyglot";
 
 export const Select = ({ }: any) => {
     const { state, dispatch } = useWallet()
-    const { balances, exchangeContext, exchangeInfo, status, selectType } = state
+    const { balances, exchangeContext, exchangeInfo, status, selectType, assetContext } = state
     const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
     const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])
     const { register, watch } = useForm<{ search: string }>({
@@ -29,6 +29,7 @@ export const Select = ({ }: any) => {
         }
     })
     const translate = useTranslate()
+    let selectOptions:any = []
 
     const searchString = watch('search')
     const searching = useMemo(() => searchString.length > 0, [searchString])
@@ -45,14 +46,12 @@ export const Select = ({ }: any) => {
 
     const fetchTokens = useCallback(async () => {
         try {
-            let data:any = {}
+            //if input get available balance
             console.log("FINAL BALANCES: ",balances)
-            data.tokens = balances
-            // const sorted = sortBy(data?.tokens, ['name', 'symbol'])
-            console.log("exchangeInfo.assets: ",exchangeInfo?.assets)
-            const sorted = balances?.filter((entry: { symbol: any }) => exchangeInfo?.assets.indexOf(entry?.symbol) > -1);
-            console.log("sorted: ",exchangeInfo?.assets)
-            setSortedAssets(sorted)
+            console.log("exchangeContext: ",exchangeContext)
+            selectOptions = balances.filter((balance:any) => balance.protocols.indexOf(exchangeContext) >= 0)
+            setSortedAssets(selectOptions)
+            console.log("selectOptions: ",selectOptions)
         } catch (e) {
             console.warn(e)
         }
@@ -82,11 +81,11 @@ export const Select = ({ }: any) => {
                 <Input placeholder="Search name or paste contract" />
             </Card>
             <Box flex={1}>
-                {balances?.map((key:any)=>(
+                {sortedAssets?.map((key:any)=>(
                     <div>
                         <button onClick={() => onSelectAsset(key.symbol)}>
                             <AssetIcon src={key?.image} boxSize='24px' mr={4} />
-                            {key.symbol} status: {key.balance}
+                            {key.symbol} balance: {key.balance}
                         </button>
                     </div>
                 ))}

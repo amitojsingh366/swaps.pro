@@ -7,7 +7,8 @@ import { SlideTransition } from 'components/SlideTransition'
 import { useFormContext } from 'react-hook-form'
 import { RouterProps } from 'react-router-dom'
 import { AssetToAsset } from './AssetToAsset'
-import {useWallet} from "context/WalletProvider/WalletProvider";
+import { useWallet, WalletActions } from "context/WalletProvider/WalletProvider";
+
 
 export const TradeConfirm = ({ history }: RouterProps) => {
   const { getValues } = useFormContext()
@@ -19,6 +20,8 @@ export const TradeConfirm = ({ history }: RouterProps) => {
       console.log("onSubmit")
       const currentSellAsset = getValues('sellAsset')
       const currentBuyAsset = getValues('buyAsset')
+      console.log("currentSellAsset: ",currentSellAsset)
+      console.log("onSubmit: ",currentBuyAsset)
 
       //submit transaction
       let result = await buildTransaction(currentSellAsset,currentBuyAsset)

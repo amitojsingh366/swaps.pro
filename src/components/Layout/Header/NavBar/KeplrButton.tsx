@@ -6,7 +6,7 @@ import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/W
 
 export const KeplrButton: FC<FlexProps> = props => {
     const { state } = useWallet()
-    const { isConnected, account } = state
+    const { keplr, keplrContext, keplrNetworkContext } = state
 
     return (
         <Flex
@@ -19,14 +19,16 @@ export const KeplrButton: FC<FlexProps> = props => {
             _hover={{ cursor: 'pointer', bg: 'whiteAlpha.500' }}
             {...props}
         >
-            {false ? (
+            {keplrContext ? (
                 <HStack>
                     <Image
                         maxW='28px'
                         maxH='28px'
                         ml={2}
+                        src={keplrNetworkContext?.icon}
                     />
-                    <Text fontSize='sm'>{"" && shortenAddress("", 4)}</Text>
+                    <Text fontSize='sm'>{"" && shortenAddress(keplrContext, 4)}</Text>
+                    <small>{keplrNetworkContext?.name}</small>
                     <ChevronDownIcon h={8} w={8} />
                 </HStack>
             ) : (

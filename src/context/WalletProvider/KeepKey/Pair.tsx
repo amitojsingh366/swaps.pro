@@ -2,21 +2,27 @@ import {ModalBody, ModalHeader, Stack, Button, Image, useClipboard} from '@chakr
 import { RawText } from 'components/Text'
 import { useWallet } from 'context/WalletProvider/WalletProvider'
 import React, {useEffect} from 'react'
-import PIONEER_ICON from 'assets/png/pioneer.png'
+import KEEPKEY_ICON from 'assets/png/keepkey.png'
 import { NativeSetupProps } from './setup'
 
-export const PairPioneer = ({ }: NativeSetupProps) => {
+export const Pair = ({ }: NativeSetupProps) => {
   const { state } = useWallet()
-  const { code } = state
-  const { hasCopied, onCopy } = useClipboard(code)
+  const { keepkey, keepkeyState, keepkeyStatus } = state
 
   useEffect(() => {
-    console.log("code: ",code)
-  }, [code])
+    console.log("code: ",)
+  }, [])
 
   return (
     <>
-      <ModalHeader>Pair Pioneer</ModalHeader>
+      <ModalHeader><Image
+          boxSize='24px'
+          loading='lazy'
+          // showBorder={false}
+          objectFit='contain'
+          bg='transparent'
+          src={KEEPKEY_ICON}
+      />Pair KeepKey</ModalHeader>
       <ModalBody>
         <RawText mb={4} color='gray.500'>
           Dont have pioneer installed? download it
@@ -26,27 +32,20 @@ export const PairPioneer = ({ }: NativeSetupProps) => {
             target='_blank'
             rel='noreferrer'
           >
-            <Button colorScheme="white"><Image
-                boxSize='24px'
-                loading='lazy'
-                // showBorder={false}
-                objectFit='contain'
-                bg='transparent'
-                src={PIONEER_ICON}
-            /><div>Install Pioneer Desktop</div></Button>
+            <Button colorScheme="white"><div>Install KeepKey Bridge</div></Button>
           </a>
         </RawText>
         <Stack my={6} spacing={4}>
-          {!code ? (
+          {!keepkey ? (
               <div>
-                <h3>Waiting on code...</h3>
+                <h3>Failed to connect...</h3>
               </div>
           ) : (
-              <h3>Pair: {code}
-              <Button onClick={onCopy} ml={2}>
-                {hasCopied ? "Copied" : "Copy"}
-              </Button>
-              </h3>
+            <div>
+              state: {keepkeyState}
+              <br/>
+              keepkeyStatus: {keepkeyStatus}
+            </div>
           )}
         </Stack>
       </ModalBody>

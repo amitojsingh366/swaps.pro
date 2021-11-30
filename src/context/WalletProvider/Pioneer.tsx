@@ -33,10 +33,10 @@ let {
 let BigNumber = require('@ethersproject/bignumber')
 
 export class PioneerService {
-  private App: any
-  private Api: any
-  private queryKey: string
-  private pairingCode: string | undefined
+  public App: any
+  public Api: any
+  public queryKey: string
+  public pairingCode: string | undefined
   public isInitialized: boolean = false
   public username: string | undefined
   public context: string | undefined
@@ -52,36 +52,49 @@ export class PioneerService {
   public events: any
   public userParams: any
   public user: any
-  private totalValueUsd: any
-  private walletsIds: any
-  private walletDescriptions: any
-  //internal (state not synced remotely)
-  private sendToAddress: string | undefined
-  private sendToAmountNative: string | undefined
-  private sendToNetwork: string | undefined
-  private sendToAsset: string | undefined
-  private sendToFeeLevel: string | undefined
-  private sendInvocation: string | undefined
+  public totalValueUsd: any
+  public walletsIds: any
+  public walletDescriptions: any
+  public sendToAddress: string | undefined
+  public sendToAmountNative: string | undefined
+  public sendToNetwork: string | undefined
+  public sendToAsset: string | undefined
+  public sendToFeeLevel: string | undefined
+  public sendInvocation: string | undefined
   constructor() {
     this.invocations = []
     this.balances = []
     this.pubkeys = []
     let queryKey: string | null = localStorage.getItem('queryKey')
-    const username: string | null = localStorage.getItem('username')
+    let username: string | null = localStorage.getItem('username')
     if (!queryKey) {
-      queryKey = 'sdk:' + uuidv4()
+      console.log("Creating new queryKey~!")
+      queryKey = 'key:' + uuidv4()
       localStorage.setItem('queryKey', queryKey)
       this.queryKey = queryKey
     } else {
       this.queryKey = queryKey
     }
-    if (username) {
+    if (!username) {
+      console.log("Creating new username~!")
+      username = 'user:' + uuidv4()
+      username = username.substring(0, 13);
+      console.log("Creating new username~! username: ",username)
+      localStorage.setItem('username', username)
+      this.username = username
+    } else {
       this.username = username
     }
   }
 
-  getStatus(): any {
+  async getStatus(): Promise<any> {
+    let statusResp = await this.Api.Status()
     return this.status
+  }
+
+  async getInvocationStatus(invocationId:string): Promise<any> {
+    let statusResp = await this.App.getInvocation(invocationId)
+    return statusResp
   }
 
   getQueryKey(): string {
@@ -98,27 +111,41 @@ export class PioneerService {
     return true
   }
 
-  async registerWallet(wallet: any): Promise<any> {
+  async pairWallet(wallet: any): Promise<any> {
     try{
-      //
-      if(this.App){
-        console.log("pioneer: registerWallet: Checkpoint")
-        let resultRegister = await this.App.registerWallet(wallet)
+
+      if(this.App && this.App.pairWallet){
+        if(!this.isInitialized){
+          console.log("App not initialized!")
+          await this.init()
+        }
+
+        console.log("checkpoint App: ",this.App)
+        console.log("isInitialized: ",this.isInitialized)
+        console.log("pioneer: pairWallet: Checkpoint")
+        console.log("pioneer: pairWallet:",wallet)
+        let resultRegister = await this.App.pairWallet(wallet)
         console.log("resultRegister: ",resultRegister)
-        if(resultRegister.username){
+
+        let userInfo = await this.App.updateContext()
+        console.log("userInfo: ",userInfo)
+        if(resultRegister?.username){
           this.username = resultRegister.username
         }
-        if(resultRegister.balances){
+        if(resultRegister?.balances){
           this.balances = resultRegister.balances
         }
-        if(resultRegister.pubkeys){
+        if(resultRegister?.pubkeys){
           this.pubkeys = resultRegister.pubkeys
         }
-        if(resultRegister.context){
+        if(resultRegister?.context){
           this.context = resultRegister.context
         }
         return resultRegister
       } else {
+        console.log("checkpoint App: ",this.App)
+        console.log("checkpoint this: ",this)
+        console.log("isInitialized: ",this.isInitialized)
         throw Error("App not initialized!")
       }
     }catch(e){
@@ -154,6 +181,17 @@ export class PioneerService {
       return false
     }
   }
+
+/*        //if account not in balances object
+        console.log("Register MetaMask Account")
+        let pairWalletOnboard:any = {
+          name:'MetaMask',
+          network:1,
+          initialized:true,
+          address
+        }
+        console.log("pairWalletOnboard: ",pairWalletOnboard)
+        pioneer.pairWallet(pairWalletOnboard) */
 
   async setSendToNetwork(network: string): Promise<any> {
     //console.log('sendToNetwork: ', network)
@@ -223,18 +261,19 @@ export class PioneerService {
     if (!this.queryKey) {
       throw Error('Failed to init! missing queryKey')
     }
+    if (!this.username) {
+      throw Error('Failed to init! missing username')
+    }
     if(!this.isInitialized) {
       this.isInitialized = true
       const config: any = {
         network,
+        username: this.username,
         service: process.env.REACT_APP_PIONEER_SERVICE,
         url: process.env.REACT_APP_APP_URL,
         queryKey: this.queryKey,
         wss: process.env.REACT_APP_URL_PIONEER_SOCKET,
         spec: process.env.REACT_APP_URL_PIONEER_SPEC
-      }
-      if (this.username) {
-        config.username = this.username
       }
       console.log("config: ",config)
       this.App = new SDK(config.spec, config)
@@ -250,7 +289,7 @@ export class PioneerService {
         'osmosis'
       ]
       this.Api = await this.App.init(seedChains)
-
+      await this.App.updateContext()
       //TODO get api health
 
       //TODO get api status
@@ -263,8 +302,8 @@ export class PioneerService {
         this.events = await this.App.startSocket()
       } catch (e) {
         // delete keypair (force repair)
-        localStorage.removeItem('username')
-        localStorage.removeItem('queryKey')
+        // localStorage.removeItem('username')
+        // localStorage.removeItem('queryKey')
       }
 
       // handle events
@@ -284,14 +323,15 @@ export class PioneerService {
         }
       })
 
+      const response = await this.App.createPairingCode()
+      if (!response.code) {
+        throw Error('102: invalid response! createPairingCode')
+      }
+      this.pairingCode = response.code
+
       const info = await this.App.getUserInfo()
       console.log('INFO: ', info)
       if (!info || info.error) {
-        if (this.username) {
-          // delete keypair (force repair)
-          localStorage.removeItem('username')
-          localStorage.removeItem('queryKey')
-        }
         // not paired
         const response = await this.App.createPairingCode()
         if (!response.code) {
@@ -323,16 +363,17 @@ export class PioneerService {
         )[0]
         console.log("contextInfo: ",contextInfo)
 
-        this.valueUsdContext = contextInfo.valueUsdContext
+        if(contextInfo){
+          this.valueUsdContext = contextInfo.valueUsdContext
+          this.balances = contextInfo.balances
+          console.log("*** pioneer: this.balances: ",this.balances)
 
-        this.balances = contextInfo.balances
-        console.log("*** pioneer: this.balances: ",this.balances)
-
-        if (this.username != null) {
-          localStorage.setItem('username', this.username)
+          this.pubkeys = contextInfo.pubkeys
+          console.log("*** pioneer: this.pubkeys: ",this.pubkeys)
         }
-        this.user = await this.App.getUserParams()
-        console.log('userParams: ', this.user)
+
+        //await this.App.updateContext()
+
         /*
          */
         //set context
@@ -353,6 +394,7 @@ export class PioneerService {
         //TODO use x-chain User() class (x-chain compatiblity)?
         return {
           status: 'Online',
+          code: this.pairingCode,
           paired: true,
           assetContext: this.assetContext,
           assetBalanceNativeContext: this.assetBalanceNativeContext,
@@ -361,6 +403,7 @@ export class PioneerService {
           context: this.context,
           wallets: this.wallets,
           balances: this.balances,
+          pubkeys: this.pubkeys,
           walletsIds: this.walletsIds,
           valueUsdContext: this.valueUsdContext,
           totalValueUsd: this.totalValueUsd
@@ -371,6 +414,7 @@ export class PioneerService {
       return {
         status: 'Online',
         paired: true,
+        code: this.pairingCode,
         assetContext: this.assetContext,
         assetBalanceNativeContext: this.assetBalanceNativeContext,
         assetBalanceUsdValueContext: this.assetBalanceUsdValueContext,
@@ -378,6 +422,7 @@ export class PioneerService {
         context: this.context,
         wallets: this.wallets,
         balances: this.balances,
+        pubkeys: this.pubkeys,
         walletsIds: this.walletsIds,
         valueUsdContext: this.valueUsdContext,
         totalValueUsd: this.totalValueUsd
@@ -400,32 +445,6 @@ export class PioneerService {
   //build transfer
   async buildTx(transfer:any): Promise<any> {
 
-    let options:any = {
-      verbose: true,
-      txidOnResp: false, // txidOnResp is the output format
-    }
-
-    //toLongName
-    let blockchain = COIN_MAP_LONG[transfer.network]
-    if(blockchain === 'bitcoincash') blockchain = 'bitcoinCash'
-    console.log("blockchain: ",blockchain)
-
-    //if not init, init again
-    //TODO WHY THE FUCK THIS HAPPENING!!
-    if(!this.isInitialized){
-      await this.init()
-    }
-
-    console.log("App: ",this.user)
-    console.log("clients: ",this.user.clients)
-    let responseTransfer = await this.user.clients[blockchain].transfer(transfer,options)
-    console.log('responseTransfer: ',responseTransfer)
-
-    //if got invocation back
-    //clear all state
-
-    if(responseTransfer) this.invocations.push(responseTransfer)
-    return responseTransfer
   }
 
   async createPairingCode(): Promise<any> {

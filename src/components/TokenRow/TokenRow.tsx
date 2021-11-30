@@ -9,6 +9,7 @@ import {
 import { useLocaleFormatter } from 'hooks/useLocaleFormatter/useLocaleFormatter'
 import { Control, Controller, ControllerProps } from 'react-hook-form'
 import NumberFormat from 'react-number-format'
+import { Pioneer } from 'hooks/usePioneerSdk/usePioneerSdk'
 
 const CryptoInput = (props: InputProps) => (
   <Input
@@ -41,10 +42,14 @@ export const TokenRow = ({
   const {
     number: { localeParts }
   } = useLocaleFormatter({ fiatType: 'USD' })
+  const { updateAmountInNative } = Pioneer()
+  const onTextChangeNative = (value:any) => {
 
-  const onTextChangeNative = () => {
     //Open Select modal.
-    console.log("onTextChangeNative called! (asset input)")
+    console.log("onTextChangeNative called! (asset input) value: ",value)
+    updateAmountInNative(value.value)
+    //update Amount In native
+
   }
 
 
