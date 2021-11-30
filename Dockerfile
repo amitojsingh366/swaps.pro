@@ -1,14 +1,4 @@
-#FROM node:8
-#
-#COPY /dist /
-#COPY server.js /
-#RUN npm i express body-parser
-#EXPOSE 3080
-#CMD ["server.js"]
-
-
-
-FROM node:14.18.1
+FROM node:16
 
 ARG NPM_TOKEN
 ARG NODE_ENV
