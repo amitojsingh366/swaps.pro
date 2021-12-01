@@ -3,20 +3,21 @@ import {
   Box,
   Flex,
   HStack,
-  IconButton,
+  IconButton, Image,
   Portal,
   Stack,
   useColorModeValue,
   useMediaQuery
 } from '@chakra-ui/react'
-// import { ColorModeSwitcher } from 'components/ColorModeSwitcher/ColorModeSwitcher'
 import { FoxIcon } from 'components/Icons/FoxIcon'
+import SWAPS_ICON from 'assets/png/thorchain.png'
 import { Link as RouterLink } from 'react-router-dom'
 import { pathTo, Route } from 'Routes/helpers'
 import { breakpoints } from 'theme/theme'
 
 import { NavBar } from './NavBar/NavBar'
 import { WalletButton } from './NavBar/WalletButton'
+import React from "react";
 
 export const HeaderContent = ({ route }: { route: Route }) => {
   const [isLargerThanMd] = useMediaQuery(`(min-width: ${breakpoints['md']})`)
@@ -41,11 +42,14 @@ export const HeaderContent = ({ route }: { route: Route }) => {
               )}
             </div>
           ))}
-          <FoxIcon
-            w={{ base: '30px', lg: '40px' }}
-            h={{ base: '30px', lg: '40px' }}
-            display={{ base: 'none', md: 'block' }}
-          />
+          <Image
+              boxSize='24px'
+              loading='lazy'
+              // showBorder={false}
+              objectFit='contain'
+              bg='transparent'
+              src={SWAPS_ICON}
+          /><h3>swaps.pro</h3>
         </Box>
         <FoxIcon
           w={{ base: '30px', lg: '40px' }}
