@@ -1,8 +1,11 @@
 import { AssetsIcon } from 'components/Icons/Assets'
+import { Earn } from 'components/Icons/Earn'
 import { Layout } from 'components/Layout/Layout'
 import { NotFound } from 'pages/NotFound/NotFound'
 import { Swap } from 'pages/Swap/Swap'
+import { RepeatIcon } from '@chakra-ui/icons'
 import { Redirect, Route, Switch } from 'react-router-dom'
+//RepeatIcon
 
 import { generateAppRoutes, Route as NestedRoute } from './helpers'
 
@@ -11,7 +14,7 @@ export const routes: Array<NestedRoute> = [
     path: '/swap',
     label: 'navBar.assets',
     main: <Swap />,
-    icon: <AssetsIcon color='inherit' />,
+    icon: <RepeatIcon color='inherit' />,
     routes: [
       {
         path: '/:network/:address?',
