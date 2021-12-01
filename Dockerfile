@@ -11,8 +11,8 @@ COPY package.json /usr/src/app/
 
 COPY . /usr/src/app
 
-RUN yarn
-RUN yarn build
+RUN npm install
+RUN npm run build
 
 ENV NODE_ENV docker
 
