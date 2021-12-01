@@ -1,7 +1,7 @@
 import { extendTheme } from '@chakra-ui/react'
 import { mode } from '@chakra-ui/theme-tools'
 import { createBreakpoints } from '@chakra-ui/theme-tools'
-
+import BACKGROUND_IMAGE from 'assets/background/thorfox.webp'
 import { colors } from './colors'
 import { ButtonStyle as Button } from './components/Button'
 import { CardStyle as Card } from './components/Card'
@@ -35,7 +35,8 @@ export const breakpoints = createBreakpoints({
 const styles = {
   global: (props: Record<string, any>) => ({
     body: {
-      backgroundColor: mode('gray.50', 'gray.800')(props),
+      // backgroundColor: mode('gray.50', 'gray.800')(props),
+      backgroundImage: BACKGROUND_IMAGE,
       backgroundSize: 'cover'
     },
     html: {
