@@ -15,7 +15,6 @@
     "docker:tag": "docker tag thorchain/asgard-exchange:latest registry.digitalocean.com/pioneer/thorchain/asgard-exchange:latest",
     "docker:push": "docker push registry.digitalocean.com/pioneer/thorchain/asgard-exchange:latest",
     "docker:push:all": "npm run docker:build && npm run docker:tag && npm run docker:push"
-
   },
   "dependencies": {
     "@chainapsis/cosmosjs": "^0.0.3-alpha.3",

@@ -86,8 +86,6 @@ export const TradeInput = ({ history }: RouterProps) => {
         <div>
           protocal: {exchangeContext}
         </div>
-        <br/>
-        <small>status: ...</small>
         <FormControl isInvalid={!!errors.fiatAmount}>
           <Controller
             render={({ field: { value } }) => (

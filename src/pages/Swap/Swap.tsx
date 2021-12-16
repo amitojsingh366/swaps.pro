@@ -29,13 +29,13 @@ export const Swap = () => {
   if (!username)
     return (
         <Box d='flex' width='full' justifyContent='center' alignItems='center'>
-          <Spinner
-              thickness="4px"
-              speed="0.65s"
-              emptyColor="gray.200"
-              color="blue.500"
-              size="xl"
-          />
+            <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="xl"
+            />
         </Box>
     )
 

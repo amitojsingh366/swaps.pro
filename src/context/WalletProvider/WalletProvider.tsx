@@ -35,6 +35,7 @@ let SDK = require("@keepkey/keepkey-sdk")
 let {
   baseAmountToNative,
 } = require("@pioneer-platform/pioneer-coins")
+
 //TODO expand networks
 const SUPPORTED_NETWORKS = [1]
 
@@ -637,69 +638,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         console.log('Kepler connect selected!')
         break
       case 'keepkey':
-        setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
         console.log('keepkey connect selected!')
-        const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(state.keyring);
-        //TODO optional bridge (default if live)
-        // @ts-ignore
-        //const kkbridgeAdapter = keepkeyTcp.TCPKeepKeyAdapter.useKeyring(state.keyring);
-        //webusb
-        try{
-          let wallet = await keepkeyAdapter.pairDevice(undefined, /*tryDebugLink=*/ true);
-          dispatch({ type: WalletActions.SET_KEEPKEY, payload: wallet })
-          //TODO get blockchains from status
-          let blockchains = [
-            'bitcoin','ethereum','thorchain','bitcoincash','litecoin','binance','cosmos','dogecoin'
-          ]
-          let sdk = new SDK(wallet,blockchains)
-
-          let lockStatus = await wallet.isLocked()
-          if(lockStatus){
-            dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'device locked!' })
-            dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 3 })
-          } else {
-            let pubkeysResp = await sdk.getPubkeys()
-            let walletWatch = pubkeysResp.wallet
-            let pubkeys = pubkeysResp.pubkeys
-            //pair
-            let pairWalletKeepKey:any = {
-              name:'keepkey',
-              format:'keepkey',
-              type:'keepkey',
-              isWatch:'true',
-              wallet,
-              serialized:walletWatch,
-              pubkeys:pubkeys,
-            }
-            console.log("pairWalletKeepKey: ",pairWalletKeepKey)
-            let resultPair = await pioneer.pairWallet(pairWalletKeepKey)
-            console.log("resultPair: ",resultPair)
-            console.log("context: ",pioneer.context)
-            dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'unlocked' })
-            dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 4 })
-            if(pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:pioneer.balances })
-            //close modal
-            dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-            //set username
-            if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
-            if(pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload: pioneer.context })
-            dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
-            dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
-            dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-          }
-        }catch(e:any){
-          if(e.message.indexOf("no devices found") >= 0){
-            dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: 'no devices connected' })
-            dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: 1 })
-          } else if(e.message.indexOf("claimInterface")>= 0){
-            dispatch({ type: WalletActions.SET_KEEPKEY_STATUS, payload: "Unable to claim!" })
-            dispatch({ type: WalletActions.SET_KEEPKEY_STATE, payload: -1 })
-          } else {
-            console.error('Unknown KeepKey Error! e: ',e)
-          }
-        }
-
-
+        //check if bridge is running
+        //if running, pair
+        //if pair success
+        setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
         break
       case 'onboard':
       case 'MetaMask':

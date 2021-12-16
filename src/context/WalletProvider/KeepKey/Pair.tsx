@@ -25,10 +25,10 @@ export const Pair = ({ }: NativeSetupProps) => {
       />Pair KeepKey</ModalHeader>
       <ModalBody>
         <RawText mb={4} color='gray.500'>
-          Dont have pioneer installed? download it
+          Dont have the KeepKey Client installed? download it
           <a
             style={{ display: 'table-cell' }}
-            href='https://github.com/BitHighlander/pioneer-desktop/releases/latest'
+            href='https://github.com/BitHighlander/web-keepkey-client/releases/latest'
             target='_blank'
             rel='noreferrer'
           >
