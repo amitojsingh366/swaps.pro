@@ -103,6 +103,28 @@ export class PioneerService {
     return true
   }
 
+  async pairBridge(): Promise<any> {
+    try{
+      let userInfo = await this.App.getBridgeUser()
+      console.log("userInfo: ",userInfo)
+      if(userInfo?.username){
+        this.username = userInfo.username
+      }
+      if(userInfo?.balances){
+        this.balances = userInfo.balances
+      }
+      if(userInfo?.pubkeys){
+        this.pubkeys = userInfo.pubkeys
+      }
+      if(userInfo?.context){
+        this.context = userInfo.context
+      }
+      return userInfo
+    }catch(e){
+      console.error(e)
+    }
+  }
+
   async pairWallet(wallet: any): Promise<any> {
     try{
 

@@ -773,9 +773,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           let bridgeStatus = await pioneer.App.checkBridge()
           console.log("bridgeStatus: ",bridgeStatus)
           //pairBridge
-          let pairStatus = await pioneer.App.pairBridge()
+          let pairStatus = await pioneer.pairBridge()
           console.log("pairStatus: ",pairStatus)
-
+          if(pairStatus.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:pairStatus.balances })
+          if(pairStatus.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:pairStatus.context })
+          if(pairStatus.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pairStatus.username })
         }
         console.log("initResult: ",initResult)
 
