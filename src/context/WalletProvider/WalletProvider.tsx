@@ -751,8 +751,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
     async function startPioneer(){
       try{
         console.log("onStartPioneer")
+        //if no username
+
         //pioneer
         let initResult = await pioneer.init()
+        console.log("pioneer.App.isPaired: ",pioneer.App.isPaired)
         if(pioneer.App.isPaired){
           //sit init
           dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
@@ -765,7 +768,14 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
           dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
         } else {
-          console.log("app is not paired! can not start. please connect a wallet")
+          //check bridge
+          console.log("pioneer.App: ",pioneer.App)
+          let bridgeStatus = await pioneer.App.checkBridge()
+          console.log("bridgeStatus: ",bridgeStatus)
+          //pairBridge
+          let pairStatus = await pioneer.App.pairBridge()
+          console.log("pairStatus: ",pairStatus)
+
         }
         console.log("initResult: ",initResult)
 
@@ -773,7 +783,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         //pioneer status
         let status = await pioneer.getStatus()
         if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
-
 
         pioneer.events.on('message', async (event: any) => {
           console.log('pioneer event: ', event)

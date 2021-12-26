@@ -21,16 +21,8 @@
         * https://github.com/BitHighlander/pioneer/blob/master/docs/pioneerTxs.png
 
 */
-import { SDK } from '@pioneer-platform/pioneer-sdk'
+import { SDK } from '@pioneer-sdk/sdk'
 import { v4 as uuidv4 } from 'uuid'
-import {Transfer} from "@pioneer-platform/pioneer-types";
-let {
-  supportedBlockchains,
-  baseAmountToNative,
-  nativeToBaseAmount,
-  COIN_MAP_LONG,
-} = require("@pioneer-platform/pioneer-coins")
-let BigNumber = require('@ethersproject/bignumber')
 
 export class PioneerService {
   public App: any
@@ -266,6 +258,18 @@ export class PioneerService {
     }
     if(!this.isInitialized) {
       this.isInitialized = true
+
+      const unchainedUrls = {
+        ['bitcoin']: {
+          httpUrl: 'https://dev-api.bitcoin.shapeshift.com',
+          wsUrl: 'wss://dev-api.bitcoin.shapeshift.com'
+        },
+        ['ethereum']: {
+          httpUrl: 'https://dev-api.ethereum.shapeshift.com',
+          wsUrl: 'wss://dev-api.ethereum.shapeshift.com'
+        }
+      }
+
       const config: any = {
         network,
         username: this.username,
@@ -273,7 +277,8 @@ export class PioneerService {
         url: process.env.REACT_APP_APP_URL,
         queryKey: this.queryKey,
         wss: process.env.REACT_APP_URL_PIONEER_SOCKET,
-        spec: process.env.REACT_APP_URL_PIONEER_SPEC
+        spec: process.env.REACT_APP_URL_PIONEER_SPEC,
+        unchainedUrls
       }
       console.log("config: ",config)
       this.App = new SDK(config.spec, config)

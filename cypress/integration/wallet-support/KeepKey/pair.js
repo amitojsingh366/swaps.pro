@@ -15,7 +15,7 @@ import {sleep} from 'wait-promise';
 
 describe('Pair a KeepKey wallet', () => {
     it('Should init app successfully', () => {
-        let result = cy.visit('http://localhost:3000/')
+        let result = cy.visit('http://localhost:3006/')
         //init
         cy.get('.css-1qlxn50 > .chakra-stack > .chakra-button').should('have.text', 'Connect Wallet');
     })
