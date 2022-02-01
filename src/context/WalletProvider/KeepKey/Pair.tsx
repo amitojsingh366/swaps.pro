@@ -28,7 +28,7 @@ export const Pair = ({ }: NativeSetupProps) => {
           Dont have pioneer installed? download it
           <a
             style={{ display: 'table-cell' }}
-            href='https://github.com/BitHighlander/pioneer-desktop/releases/latest'
+            href='https://github.com/keepkey/keepkey-client/releases/latest'
             target='_blank'
             rel='noreferrer'
           >

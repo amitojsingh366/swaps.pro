@@ -21,16 +21,8 @@
         * https://github.com/BitHighlander/pioneer/blob/master/docs/pioneerTxs.png
 
 */
-import { SDK } from '@pioneer-platform/pioneer-sdk'
+import { SDK } from '@pioneer-sdk/sdk'
 import { v4 as uuidv4 } from 'uuid'
-import {Transfer} from "@pioneer-platform/pioneer-types";
-let {
-  supportedBlockchains,
-  baseAmountToNative,
-  nativeToBaseAmount,
-  COIN_MAP_LONG,
-} = require("@pioneer-platform/pioneer-coins")
-let BigNumber = require('@ethersproject/bignumber')
 
 export class PioneerService {
   public App: any
@@ -52,6 +44,7 @@ export class PioneerService {
   public events: any
   public userParams: any
   public user: any
+  public isBridgeOnline: boolean
   public totalValueUsd: any
   public walletsIds: any
   public walletDescriptions: any
@@ -62,6 +55,7 @@ export class PioneerService {
   public sendToFeeLevel: string | undefined
   public sendInvocation: string | undefined
   constructor() {
+    this.isBridgeOnline = false
     this.invocations = []
     this.balances = []
     this.pubkeys = []
@@ -277,78 +271,21 @@ export class PioneerService {
       }
       console.log("config: ",config)
       this.App = new SDK(config.spec, config)
-      //TODO get chains from api endpoint (auto enable new assets)
-      const seedChains = [
-        'bitcoin',
-        'ethereum',
-        'thorchain',
-        'bitcoincash',
-        'binance',
-        'litecoin',
-        'cosmos',
-        'osmosis'
-      ]
-      this.Api = await this.App.init(seedChains)
-      await this.App.updateContext()
-      //TODO get api health
 
-      //TODO get api status
-      let statusResp = await this.Api.Status()
-      this.status = statusResp.data
-      console.log("status: ",this.status)
+      let status = await this.App.checkBridge()
+      if(status && status.username){
+        console.log("bridge ONLINE!!!!: ")
+        console.log("status: ",status.username)
+        //bridge is online!
+        this.username = status.username
+        this.isBridgeOnline = true
 
-      // Sub to events
-      try {
-        this.events = await this.App.startSocket()
-      } catch (e) {
-        // delete keypair (force repair)
-        // localStorage.removeItem('username')
-        // localStorage.removeItem('queryKey')
-      }
+        let pairBridgeResult = await this.App.pairBridge()
+        console.log("pairBridgeResult: ",pairBridgeResult)
 
-      // handle events
-      this.events.on('message', async (event: any) => {
-        //console.log('message:', event)
-        if (event.paired && event.username) {
-          this.username = event.username
-          if (this.username != null) {
-            localStorage.setItem('username', this.username)
-          }
-        }
-        if (event.type === 'context') {
-          //console.log('Switching context!:', event)
-          this.context = event.context
-          await this.App.setContext(event.context)
-          await this.onPair()
-        }
-      })
-
-      const response = await this.App.createPairingCode()
-      if (!response.code) {
-        throw Error('102: invalid response! createPairingCode')
-      }
-      this.pairingCode = response.code
-
-      const info = await this.App.getUserInfo()
-      console.log('INFO: ', info)
-      if (!info || info.error) {
-        // not paired
-        const response = await this.App.createPairingCode()
-        if (!response.code) {
-          throw Error('102: invalid response! createPairingCode')
-        }
-        this.pairingCode = response.code
-
-        //console.log('pairingCode: ', this.pairingCode)
-        return {
-          status: 'App Not Paired!',
-          paired: false,
-          code: this.pairingCode
-        }
-      } else {
-        //get context
-        //balances = context balances
-
+        let info = await this.App.getBridgeUser()
+        console.log("userInfoBridge: ",info)
+        if(info.context) this.App.isPaired = true
         this.context = info.context
         this.valueUsdContext = info.valueUsdContext
         this.walletsIds = info.wallets
@@ -357,39 +294,19 @@ export class PioneerService {
         this.totalValueUsd = info.totalValueUsd
         this.username = info.username
 
-        // set context info
-        let contextInfo = info.walletDescriptions.filter(
-            (e: { context: string | undefined }) => e.context === this.context
-        )[0]
-        console.log("contextInfo: ",contextInfo)
-
-        if(contextInfo){
-          this.valueUsdContext = contextInfo.valueUsdContext
-          this.balances = contextInfo.balances
-          console.log("*** pioneer: this.balances: ",this.balances)
-
-          this.pubkeys = contextInfo.pubkeys
-          console.log("*** pioneer: this.pubkeys: ",this.pubkeys)
-        }
+        if(info.balances) this.balances = info.balances
+        if(info.pubkeys) this.pubkeys = info.pubkeys
 
         //await this.App.updateContext()
 
         /*
          */
         //set context
-        if (contextInfo) {
-          // this.assetContext = 'ATOM'
-          // this.assetBalanceNativeContext = contextInfo.balances[this.assetContext]
-          // this.assetBalanceUsdValueContext = contextInfo.values[this.assetContext]
-        }
-
-        this.events.emit('context', {
-          context: this.context,
-          //valueUsdContext: this.user.valueUsdContext,
-          assetContext: this.assetContext,
-          assetBalanceNativeContext: this.assetBalanceNativeContext,
-          assetBalanceUsdValueContext: this.assetBalanceUsdValueContext
-        })
+        // if (contextInfo) {
+        //   // this.assetContext = 'ATOM'
+        //   // this.assetBalanceNativeContext = contextInfo.balances[this.assetContext]
+        //   // this.assetBalanceUsdValueContext = contextInfo.values[this.assetContext]
+        // }
 
         //TODO use x-chain User() class (x-chain compatiblity)?
         return {
@@ -408,7 +325,65 @@ export class PioneerService {
           valueUsdContext: this.valueUsdContext,
           totalValueUsd: this.totalValueUsd
         }
+
+      } else {
+        //bridge offline!
+        console.log("bridge offline!: ")
       }
+
+      //TODO get chains from api endpoint (auto enable new assets)
+      // const seedChains = [
+      //   'bitcoin',
+      //   'ethereum',
+      //   'thorchain',
+      //   'bitcoincash',
+      //   'binance',
+      //   'litecoin',
+      //   'cosmos',
+      //   'osmosis'
+      // ]
+      // this.Api = await this.App.init(seedChains)
+      // await this.App.updateContext()
+      // //TODO get api health
+      //
+      // //TODO get api status
+      // let statusResp = await this.Api.Status()
+      // this.status = statusResp.data
+      // console.log("status: ",this.status)
+      //
+      // // Sub to events
+      // try {
+      //   this.events = await this.App.startSocket()
+      // } catch (e) {
+      //   // delete keypair (force repair)
+      //   // localStorage.removeItem('username')
+      //   // localStorage.removeItem('queryKey')
+      //
+      // }
+      //
+      // // handle events
+      // this.events.on('message', async (event: any) => {
+      //   //console.log('message:', event)
+      //   if (event.paired && event.username) {
+      //     this.username = event.username
+      //     if (this.username != null) {
+      //       localStorage.setItem('username', this.username)
+      //     }
+      //   }
+      //   if (event.type === 'context') {
+      //     //console.log('Switching context!:', event)
+      //     this.context = event.context
+      //     await this.App.setContext(event.context)
+      //     await this.onPair()
+      //   }
+      // })
+      //
+      // const response = await this.App.createPairingCode()
+      // if (!response.code) {
+      //   throw Error('102: invalid response! createPairingCode')
+      // }
+      // this.pairingCode = response.code
+
     }else{
       console.log("Already initialized!")
       return {
