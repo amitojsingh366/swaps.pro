@@ -244,49 +244,6 @@ export const WalletButton: FC<FlexProps> = () => {
                   )}
               </AccordionPanel>
             </AccordionItem>
-
-            <AccordionItem>
-              <h2>
-                <AccordionButton>
-                  <Box flex="1" textAlign="left">
-                    pioneer: <PioneerButton />
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <ArrowUpIcon />
-                      </Circle>
-                    }
-                    onClick={ () => openSend('pioneer')}
-                >
-                  Send
-                </MenuItem>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <ArrowDownIcon />
-                      </Circle>
-                    }
-                    onClick={ () => openReceive('pioneer')}
-                >
-                  Receive
-                </MenuItem>
-                <MenuItem
-                    icon={
-                      <Circle bg='whiteAlpha.200' size={8}>
-                        <CloseIcon />
-                      </Circle>
-                    }
-                    onClick={disconnect}
-                >
-                  Disconnect
-                </MenuItem>
-              </AccordionPanel>
-            </AccordionItem>
           </Accordion>
         </MenuGroup>
         <MenuDivider />

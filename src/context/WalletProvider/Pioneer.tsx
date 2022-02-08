@@ -83,6 +83,8 @@ export class PioneerService {
 
   async getStatus(): Promise<any> {
     let statusResp = await this.Api.Status()
+    console.log("statusResp: ",statusResp)
+
     return this.status
   }
 

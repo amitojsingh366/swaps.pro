@@ -62,6 +62,7 @@ export const Pioneer = () => {
         setValue('fiatAmount',amountUsd)
         console.log("amountUsd: ",amountUsd)
         console.log("formState: ",{ errors, isDirty, isValid })
+        update()
     }
 
     //selectExchange

@@ -7,7 +7,7 @@ import {SUPPORTED_WALLETS} from "../../../../context/WalletProvider/config";
 
 export const KeepKeyButton: FC<FlexProps> = props => {
     const { state, dispatch, setRoutePath } = useWallet()
-    const {  } = state
+    const { pioneer, context, walletInfo } = state
 
     const connectKeepkey = () => {
         dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
@@ -32,7 +32,7 @@ export const KeepKeyButton: FC<FlexProps> = props => {
                         maxH='28px'
                         ml={2}
                     />
-                    <Text fontSize='sm'>{"" && shortenAddress('', 4)}</Text>
+                    <Text fontSize='sm'>{context && shortenAddress(context, 4)}</Text>
                     <ChevronDownIcon h={8} w={8} />
                 </HStack>
             ) : (
