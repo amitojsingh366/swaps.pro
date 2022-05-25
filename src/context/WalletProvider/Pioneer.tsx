@@ -84,7 +84,7 @@ export class PioneerService {
   async getStatus(): Promise<any> {
     let statusResp = await this.Api.Status()
     console.log("statusResp: ",statusResp)
-
+    if(!this.status) this.status = statusResp.data
     return this.status
   }
 
@@ -346,13 +346,11 @@ export class PioneerService {
       // ]
       // this.Api = await this.App.init(seedChains)
       // await this.App.updateContext()
-      // //TODO get api health
       //
-      // //TODO get api status
       // let statusResp = await this.Api.Status()
       // this.status = statusResp.data
       // console.log("status: ",this.status)
-      //
+
       // // Sub to events
       // try {
       //   this.events = await this.App.startSocket()
