@@ -6,7 +6,7 @@ import {
   useRadioGroup,
   UseRadioProps
 } from '@chakra-ui/react'
-import { HistoryTimeframe } from '@shapeshiftoss/market-service'
+// import { HistoryTimeframe } from '@shapeshiftoss/market-service'
 import { Text } from 'components/Text'
 import { memo } from 'react'
 
@@ -38,7 +38,7 @@ export interface RadioProps<T> {
   colorScheme?: string
 }
 
-type RadioTypes = string | HistoryTimeframe
+type RadioTypes = string | any
 
 export const Radio = <T extends RadioTypes>({
   name,

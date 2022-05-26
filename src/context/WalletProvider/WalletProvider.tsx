@@ -638,7 +638,9 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         break
       case 'keepkey':
         setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
-        console.log('keepkey connect selected!')
+
+        pioneer.pairWallet('keepkey')
+
         break
       case 'onboard':
       case 'MetaMask':
@@ -749,52 +751,52 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         console.log("onStartPioneer")
         //pioneer
         let initResult = await pioneer.init()
-        if(pioneer.App.isPaired){
-          //sit init
-          dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-          //set context
-          dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
-          dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
-          if(initResult.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:initResult.balances })
-          if(initResult.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:initResult.context })
-          if(initResult.username) dispatch({ type: WalletActions.SET_USERNAME, payload:initResult.username })
-          if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
-          dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-        } else {
-          console.log("app is not paired! can not start. please connect a wallet")
-        }
-        console.log("initResult: ",initResult)
-
-        if(initResult.code) dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
-        //pioneer status
-        let status = await pioneer.getStatus()
-        if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
-
-
-        pioneer.events.on('message', async (event: any) => {
-          console.log('pioneer event: ', event)
-          switch (event.type) {
-            case 'context':
-              console.log("context event! event: ",event)
-              break
-            case 'pairing':
-              console.log('Paired!', event)
-              //set context
-              dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
-              dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
-              if(pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:pioneer.balances })
-              if(pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:pioneer.context })
-              if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
-              if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
-              //console.log('pairing event!: ', event.username)
-              dispatch({ type: WalletActions.SET_USERNAME, payload: initResult.username })
-              dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-              dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-              break
-            default:
-              console.error(' message unknown type:',event)
-          }
-        })
+        // if(pioneer.App.isPaired){
+        //   //sit init
+        //   dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+        //   //set context
+        //   dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+        //   dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
+        //   if(initResult.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:initResult.balances })
+        //   if(initResult.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:initResult.context })
+        //   if(initResult.username) dispatch({ type: WalletActions.SET_USERNAME, payload:initResult.username })
+        //   if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
+        //   dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+        // } else {
+        //   console.log("app is not paired! can not start. please connect a wallet")
+        // }
+        // console.log("initResult: ",initResult)
+        //
+        // if(initResult.code) dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
+        // //pioneer status
+        // let status = await pioneer.getStatus()
+        // if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
+        //
+        //
+        // pioneer.events.on('message', async (event: any) => {
+        //   console.log('pioneer event: ', event)
+        //   switch (event.type) {
+        //     case 'context':
+        //       console.log("context event! event: ",event)
+        //       break
+        //     case 'pairing':
+        //       console.log('Paired!', event)
+        //       //set context
+        //       dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+        //       dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
+        //       if(pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:pioneer.balances })
+        //       if(pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:pioneer.context })
+        //       if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
+        //       if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
+        //       //console.log('pairing event!: ', event.username)
+        //       dispatch({ type: WalletActions.SET_USERNAME, payload: initResult.username })
+        //       dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+        //       dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+        //       break
+        //     default:
+        //       console.error(' message unknown type:',event)
+        //   }
+        // })
       }catch(e){
         console.error(e)
       }
@@ -841,7 +843,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         console.error(e)
       }
     }
-    startKeplr()
+    // startKeplr()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // we explicitly only want this to happen once

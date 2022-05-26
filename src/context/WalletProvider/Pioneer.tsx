@@ -24,6 +24,11 @@
 import { SDK } from '@pioneer-sdk/sdk'
 import { v4 as uuidv4 } from 'uuid'
 
+//hdwallet sdk
+import * as core from "@shapeshiftoss/hdwallet-core";
+import * as keepkeyWebUSB from "@shapeshiftoss/hdwallet-keepkey-webusb";
+//end hdwallet sdk
+
 export class PioneerService {
   public App: any
   public Api: any
@@ -110,34 +115,45 @@ export class PioneerService {
   async pairWallet(wallet: any): Promise<any> {
     try{
 
+      const keyring = new core.Keyring();
+      const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(keyring);
+      let wallet = await keepkeyAdapter.pairDevice(undefined /*tryDebugLink=*/ );
+      if(wallet){
+        let result = await app.init(wallet)
+        console.log("result: ",result)
+      } else {
+        console.log("to wallet found! : ")
+      }
+
       if(this.App && this.App.pairWallet){
         if(!this.isInitialized){
           console.log("App not initialized!")
           await this.init()
         }
 
-        console.log("checkpoint App: ",this.App)
-        console.log("isInitialized: ",this.isInitialized)
-        console.log("pioneer: pairWallet: Checkpoint")
-        console.log("pioneer: pairWallet:",wallet)
-        let resultRegister = await this.App.pairWallet(wallet)
-        console.log("resultRegister: ",resultRegister)
 
-        let userInfo = await this.App.updateContext()
-        console.log("userInfo: ",userInfo)
-        if(resultRegister?.username){
-          this.username = resultRegister.username
-        }
-        if(resultRegister?.balances){
-          this.balances = resultRegister.balances
-        }
-        if(resultRegister?.pubkeys){
-          this.pubkeys = resultRegister.pubkeys
-        }
-        if(resultRegister?.context){
-          this.context = resultRegister.context
-        }
-        return resultRegister
+        // console.log("checkpoint App: ",this.App)
+        // console.log("isInitialized: ",this.isInitialized)
+        // console.log("pioneer: pairWallet: Checkpoint")
+        // console.log("pioneer: pairWallet:",wallet)
+        // let resultRegister = await this.App.pairWallet(wallet)
+        // console.log("resultRegister: ",resultRegister)
+        //
+        // let userInfo = await this.App.updateContext()
+        // console.log("userInfo: ",userInfo)
+        // if(resultRegister?.username){
+        //   this.username = resultRegister.username
+        // }
+        // if(resultRegister?.balances){
+        //   this.balances = resultRegister.balances
+        // }
+        // if(resultRegister?.pubkeys){
+        //   this.pubkeys = resultRegister.pubkeys
+        // }
+        // if(resultRegister?.context){
+        //   this.context = resultRegister.context
+        // }
+        // return resultRegister
       } else {
         console.log("checkpoint App: ",this.App)
         console.log("checkpoint this: ",this)
@@ -262,7 +278,13 @@ export class PioneerService {
     }
     if(!this.isInitialized) {
       this.isInitialized = true
+
+      let blockchains = [
+        'bitcoin','ethereum','thorchain','bitcoincash','litecoin','binance','cosmos','dogecoin','osmosis'
+      ]
+
       const config: any = {
+        blockchains,
         network,
         username: this.username,
         service: process.env.REACT_APP_PIONEER_SERVICE,
@@ -274,64 +296,65 @@ export class PioneerService {
       console.log("config: ",config)
       this.App = new SDK(config.spec, config)
 
-      let status = await this.App.checkBridge()
-      if(status && status.username){
-        console.log("bridge ONLINE!!!!: ")
-        console.log("status: ",status.username)
-        //bridge is online!
-        this.username = status.username
-        this.isBridgeOnline = true
+      //init with HDwallet
 
-        let pairBridgeResult = await this.App.pairBridge()
-        console.log("pairBridgeResult: ",pairBridgeResult)
-
-        let info = await this.App.getBridgeUser()
-        console.log("userInfoBridge: ",info)
-        if(info.context) this.App.isPaired = true
-        this.context = info.context
-        this.valueUsdContext = info.valueUsdContext
-        this.walletsIds = info.wallets
-        this.wallets = info.walletDescriptions
-        this.walletDescriptions = info.walletDescriptions
-        this.totalValueUsd = info.totalValueUsd
-        this.username = info.username
-
-        if(info.balances) this.balances = info.balances
-        if(info.pubkeys) this.pubkeys = info.pubkeys
-
-        //await this.App.updateContext()
-
-        /*
-         */
-        //set context
-        // if (contextInfo) {
-        //   // this.assetContext = 'ATOM'
-        //   // this.assetBalanceNativeContext = contextInfo.balances[this.assetContext]
-        //   // this.assetBalanceUsdValueContext = contextInfo.values[this.assetContext]
-        // }
-
-        //TODO use x-chain User() class (x-chain compatiblity)?
-        return {
-          status: 'Online',
-          code: this.pairingCode,
-          paired: true,
-          assetContext: this.assetContext,
-          assetBalanceNativeContext: this.assetBalanceNativeContext,
-          assetBalanceUsdValueContext: this.assetBalanceUsdValueContext,
-          username: this.username,
-          context: this.context,
-          wallets: this.wallets,
-          balances: this.balances,
-          pubkeys: this.pubkeys,
-          walletsIds: this.walletsIds,
-          valueUsdContext: this.valueUsdContext,
-          totalValueUsd: this.totalValueUsd
-        }
-
-      } else {
-        //bridge offline!
-        console.log("bridge offline!: ")
-      }
+      // if(status && status.username){
+      //   console.log("bridge ONLINE!!!!: ")
+      //   console.log("status: ",status.username)
+      //   //bridge is online!
+      //   this.username = status.username
+      //   this.isBridgeOnline = true
+      //
+      //   let pairBridgeResult = await this.App.pairBridge()
+      //   console.log("pairBridgeResult: ",pairBridgeResult)
+      //
+      //   let info = await this.App.getBridgeUser()
+      //   console.log("userInfoBridge: ",info)
+      //   if(info.context) this.App.isPaired = true
+      //   this.context = info.context
+      //   this.valueUsdContext = info.valueUsdContext
+      //   this.walletsIds = info.wallets
+      //   this.wallets = info.walletDescriptions
+      //   this.walletDescriptions = info.walletDescriptions
+      //   this.totalValueUsd = info.totalValueUsd
+      //   this.username = info.username
+      //
+      //   if(info.balances) this.balances = info.balances
+      //   if(info.pubkeys) this.pubkeys = info.pubkeys
+      //
+      //   //await this.App.updateContext()
+      //
+      //   /*
+      //    */
+      //   //set context
+      //   // if (contextInfo) {
+      //   //   // this.assetContext = 'ATOM'
+      //   //   // this.assetBalanceNativeContext = contextInfo.balances[this.assetContext]
+      //   //   // this.assetBalanceUsdValueContext = contextInfo.values[this.assetContext]
+      //   // }
+      //
+      //   //TODO use x-chain User() class (x-chain compatiblity)?
+      //   return {
+      //     status: 'Online',
+      //     code: this.pairingCode,
+      //     paired: true,
+      //     assetContext: this.assetContext,
+      //     assetBalanceNativeContext: this.assetBalanceNativeContext,
+      //     assetBalanceUsdValueContext: this.assetBalanceUsdValueContext,
+      //     username: this.username,
+      //     context: this.context,
+      //     wallets: this.wallets,
+      //     balances: this.balances,
+      //     pubkeys: this.pubkeys,
+      //     walletsIds: this.walletsIds,
+      //     valueUsdContext: this.valueUsdContext,
+      //     totalValueUsd: this.totalValueUsd
+      //   }
+      //
+      // } else {
+      //   //bridge offline!
+      //   console.log("bridge offline!: ")
+      // }
 
       //TODO get chains from api endpoint (auto enable new assets)
       // const seedChains = [
