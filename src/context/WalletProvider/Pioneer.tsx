@@ -88,9 +88,6 @@ export class PioneerService {
   }
 
   async getStatus(): Promise<any> {
-    let statusResp = await this.Api.Status()
-    console.log("statusResp: ",statusResp)
-    if(!this.status) this.status = statusResp.data
     return this.status
   }
 
@@ -123,7 +120,8 @@ export class PioneerService {
       if(wallet){
         let result = await this.App.init(wallet)
         console.log("result: ",result)
-
+        this.status = this.App.markets
+        console.log("STATUS: ",this.status)
         //
         this.context = this.App.context
         this.valueUsdContext = this.App.valueUsdContext
@@ -282,6 +280,8 @@ export class PioneerService {
 
       //init with HDwallet
       if(this.App && this.App.context){
+        this.status = this.App.markets
+        console.log("STATUS: ",this.status)
         this.context = this.App.context
         this.valueUsdContext = this.App.valueUsdContext
         this.walletsIds = this.App.wallets

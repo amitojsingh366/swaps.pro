@@ -642,6 +642,9 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         let pioneerResp = await pioneer.pairWallet('keepkey')
         console.log("pioneerResp: ",pioneerResp)
 
+        let status = await pioneer.getStatus()
+        if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
+
         //on event Prompt Pin
         //listen to events
         // pioneerEvents.on(["*", "*", core.Events.PIN_REQUEST], () => {
@@ -790,8 +793,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
         if(initResult.code) dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
         //pioneer status
-        // let status = await pioneer.getStatus()
-        // if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
+        let status = await pioneer.getStatus()
+        if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
 
 
         // pioneer.events.on('message', async (event: any) => {

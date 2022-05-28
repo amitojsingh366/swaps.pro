@@ -127,26 +127,26 @@ export const Pioneer = () => {
         if(status){
             //status
             console.log("** STATUS: ",status)
-            const currentSellAsset = getValues('sellAsset')
-            const currentBuyAsset = getValues('buyAsset')
-            console.log("HOOK: currentSellAsset",currentSellAsset)
-            console.log("HOOK: currentBuyAsset",currentBuyAsset)
-
-            let symbolIn = currentSellAsset?.currency?.symbol
-            let symbolOut = currentBuyAsset?.currency?.symbol
-
-            let pair = symbolIn+"_"+symbolOut
-            console.log("HOOK: pair",pair)
-            //market Info
-            let marketInfo = status?.exchanges?.thorchain?.markets.filter((e:any) => e.pair == pair)
-            marketInfo = marketInfo[0]
-            console.log("marketInfo: ",marketInfo)
-            if(marketInfo && marketInfo.rate){
-                //amountOut = amountIn * rate
-                let amountOut = parseFloat(currentSellAsset.amount) * marketInfo.rate
-                console.log("amountOut:",amountOut)
-                setValue('buyAsset.amount', amountOut)
-            }
+            // const currentSellAsset = getValues('sellAsset')
+            // const currentBuyAsset = getValues('buyAsset')
+            // console.log("HOOK: currentSellAsset",currentSellAsset)
+            // console.log("HOOK: currentBuyAsset",currentBuyAsset)
+            //
+            // let symbolIn = currentSellAsset?.currency?.symbol
+            // let symbolOut = currentBuyAsset?.currency?.symbol
+            //
+            // let pair = symbolIn+"_"+symbolOut
+            // console.log("HOOK: pair",pair)
+            // //market Info
+            // let marketInfo = status?.exchanges?.thorchain?.markets.filter((e:any) => e.pair == pair)
+            // marketInfo = marketInfo[0]
+            // console.log("marketInfo: ",marketInfo)
+            // if(marketInfo && marketInfo.rate){
+            //     //amountOut = amountIn * rate
+            //     let amountOut = parseFloat(currentSellAsset.amount) * marketInfo.rate
+            //     console.log("amountOut:",amountOut)
+            //     setValue('buyAsset.amount', amountOut)
+            // }
         } else {
             console.log(' cant update, no market status ')
         }
