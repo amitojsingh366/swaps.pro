@@ -127,26 +127,51 @@ export const Pioneer = () => {
         if(status){
             //status
             console.log("** STATUS: ",status)
-            // const currentSellAsset = getValues('sellAsset')
-            // const currentBuyAsset = getValues('buyAsset')
-            // console.log("HOOK: currentSellAsset",currentSellAsset)
-            // console.log("HOOK: currentBuyAsset",currentBuyAsset)
-            //
-            // let symbolIn = currentSellAsset?.currency?.symbol
-            // let symbolOut = currentBuyAsset?.currency?.symbol
-            //
-            // let pair = symbolIn+"_"+symbolOut
-            // console.log("HOOK: pair",pair)
-            // //market Info
-            // let marketInfo = status?.exchanges?.thorchain?.markets.filter((e:any) => e.pair == pair)
-            // marketInfo = marketInfo[0]
-            // console.log("marketInfo: ",marketInfo)
-            // if(marketInfo && marketInfo.rate){
-            //     //amountOut = amountIn * rate
-            //     let amountOut = parseFloat(currentSellAsset.amount) * marketInfo.rate
-            //     console.log("amountOut:",amountOut)
-            //     setValue('buyAsset.amount', amountOut)
-            // }
+            const currentSellAsset = getValues('sellAsset')
+            const currentBuyAsset = getValues('buyAsset')
+            console.log("HOOK: currentSellAsset",currentSellAsset)
+            console.log("HOOK: currentBuyAsset",currentBuyAsset)
+
+            let symbolIn = currentSellAsset?.currency?.symbol
+            let symbolOut = currentBuyAsset?.currency?.symbol
+
+            let blockchainIn = currentSellAsset?.currency?.blockchain
+            let blockchainOut = currentBuyAsset?.currency?.blockchain
+
+            if(symbolIn && symbolOut && blockchainIn && blockchainOut){
+                //build quote
+                let swap:any = {
+                    input:{
+                        blockchain:blockchainIn,
+                        asset:symbolIn,
+                    },
+                    output:{
+                        blockchain:blockchainOut,
+                        asset:symbolOut,
+                    },
+                    amount:currentSellAsset.amount,
+                    noBroadcast:true
+                }
+                console.log("HOOK: swap",swap)
+                //TODO
+                console.log("pioneer: ",pioneer)
+                if(pioneer) {
+                    let quote = await pioneer.swapQuote(swap)
+
+                    //Set outAmount
+                    setValue('buyAsset.amount',quote.mountOut)
+
+                    //set invocationId
+                } else {
+                    console.log("Pioneer not set into state!")
+                }
+            } else {
+                console.log(' cant update, missing params! ',
+                    {symbolIn,symbolOut,blockchainIn,blockchainOut}
+                )
+            }
+
+
         } else {
             console.log(' cant update, no market status ')
         }

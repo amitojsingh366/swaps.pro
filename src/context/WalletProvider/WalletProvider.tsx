@@ -641,6 +641,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
         let pioneerResp = await pioneer.pairWallet('keepkey')
         console.log("pioneerResp: ",pioneerResp)
+        if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneerResp })
 
         let status = await pioneer.getStatus()
         if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
