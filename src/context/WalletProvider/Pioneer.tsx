@@ -124,6 +124,17 @@ export class PioneerService {
         let result = await this.App.init(wallet)
         console.log("result: ",result)
 
+        //
+        this.context = this.App.context
+        this.valueUsdContext = this.App.valueUsdContext
+        this.walletsIds = this.App.wallets
+        this.wallets = this.App.walletDescriptions
+        this.walletDescriptions = this.App.walletDescriptions
+        this.totalValueUsd = this.App.totalValueUsd
+        this.username = this.App.username
+        this.balances = this.App.balances
+        this.pubkeys = this.App.pubkeys
+
         return this.App
       } else {
         console.log("no wallet found! : ")
@@ -264,7 +275,7 @@ export class PioneerService {
       }
       console.log("config: ",config)
       this.App = new SDK(config.spec, config)
-
+      this.Api = this.App.pioneer
       // this.App.on('keepkey',(message) => {
       //   this.events.events.emit('keepkey',message)
       // })
