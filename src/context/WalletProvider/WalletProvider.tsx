@@ -64,6 +64,7 @@ export enum WalletActions {
   SET_WALLET_CONTEXT = 'SET_WALLET_CONTEXT',
   SET_CONTEXT = 'SET_CONTEXT',
   SET_EXCHANGE_CONTEXT = 'SET_EXCHANGE_CONTEXT',
+  SET_INVOCATION_ID = 'SET_INVOCATION_ID',
   SET_INVOCATION_CONTEXT = 'SET_INVOCATION_CONTEXT',
   SET_TRADE_INPUT = 'SET_TRADE_INPUT',
   SET_TRADE_OUTPUT = 'SET_TRADE_OUTPUT',
@@ -103,6 +104,7 @@ export interface InitialState {
   code: any
   username: any
   assetContext: any
+  invocationId: string | null
   invocationContext: string | null
   context: any
   exchangeContext: string | null
@@ -145,6 +147,7 @@ const initialState: InitialState = {
   username: null,
   assetContext: null,
   exchangeContext: null,
+  invocationId: null,
   invocationContext: null,
   context: null,
   totalValueUsd: null,
@@ -202,6 +205,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_BALANCES; payload: any }
   | { type: WalletActions.SET_ACTIVE; payload: boolean }
   | { type: WalletActions.SET_TOTAL_VALUE_USD; payload: string }
+  | { type: WalletActions.SET_INVOCATION_ID; payload: string }
   | { type: WalletActions.SET_INVOCATION_CONTEXT; payload: string }
   | { type: WalletActions.SET_INVOCATION_TXID; payload: string }
   | { type: WalletActions.SET_CONTEXT; payload: string }
@@ -333,29 +337,17 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         if (
             // state?.provider &&
             // state?.account &&
-            state?.pioneer?.App?.isPaired &&
             state?.username &&
-            state?.assetContext &&
             state?.status &&
             state?.balances &&
             state?.tradeOutput &&
-            state?.pioneer &&
-            state?.pioneer.App) {
+            state?.pioneer) {
           console.log("Build TX~!")
-          await pioneer.App.updateContext()
+          // await pioneer.App.updateContext()
+          await pioneer.init()
           if(!pioneer.username){
             throw Error("Pioneer username is required!")
           }
-          if(!pioneer.App.username){
-            throw Error("Pioneer App username is required!")
-          }
-          if(!pioneer.App.isPaired){
-            throw Error("app is not isPaired!")
-          }
-          //     //build swap
-          //     if(!pioneer.isInitialized){
-          //       await pioneer.init()
-          //     }
           let contextInput = currentSellAsset.currency.context
           console.log("contextInput: ",contextInput)
           console.log("currentSellAsset.currency: ",currentSellAsset.currency)
@@ -373,185 +365,54 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
           console.log("context: ",state.context)
           console.log("assetContext: ",state.assetContext)
-          //tradeOutput
-          console.log("tradeOutput: ",state.tradeOutput)
-          let tradePair = state.assetContext+"_"+state.tradeOutput
-          console.log("tradePair: ",tradePair)
-
-          console.log("status.pools: ",state.status)
-          console.log("status.pools: ",state.status.exchanges.pools)
-          console.log("state.assetContext: ",state.assetContext)
 
           //get protocal
           console.log("exchangeContext: ",state.exchangeContext)
+          console.log("invocationContext: ",state.invocationContext)
 
-          let unsignedTx
+          let symbolIn = currentSellAsset?.currency?.symbol
+          let symbolOut = currentBuyAsset?.currency?.symbol
 
-          let options: any = {
-            verbose: true,
-            txidOnResp: false, // txidOnResp is the output format
-          }
+          let blockchainIn = currentSellAsset?.currency?.blockchain
+          let blockchainOut = currentBuyAsset?.currency?.blockchain
 
-          if(state.exchangeContext === 'thorchain'){
-            //if thorchain
-            //get pool address
-            let thorVault = state.status.exchanges.thorchain.pools.filter((e:any) => e.chain === state.assetContext)
-            thorVault = thorVault[0]
-            console.log("thorVault: ",thorVault)
-
-            let vaultAddress = thorVault.address
-            console.log("vaultAddress: ",vaultAddress)
-
-            //from pubkeys gets output address
-            let pubkeyOutput = state.balances.filter((balance:any) => balance.symbol === state.tradeOutput)[0]
-            console.log("pubkeyOutput: ",pubkeyOutput)
-
-            //TODO buildThorChain memo function coolness
-            let memo = '=:'+state.tradeOutput+'.'+state.tradeOutput+":"+pubkeyOutput.master
-            console.log("memo: ",memo)
-
-            let amountBase = currentSellAsset.amount
-            let amountTestNative = baseAmountToNative(state.assetContext,amountBase)
-            console.log("amountTestNative: ",amountTestNative)
-            console.log("amountBase: ",amountBase)
-
-            /*
-
-              swap
-
-             */
-            let swap: any = {
-              inboundAddress: thorVault,
-              addressFrom: currentSellAsset.currency.address,
-              coin: "ETH",
-              asset: "ETH",
-              memo,
-              amount: amountBase
+          let invocationId
+          if(symbolIn && symbolOut && blockchainIn && blockchainOut){
+            //build quote
+            let swap:any = {
+              input:{
+                blockchain:blockchainIn,
+                asset:symbolIn,
+              },
+              output:{
+                blockchain:blockchainOut,
+                asset:symbolOut,
+              },
+              amount:currentSellAsset.amount,
+              noBroadcast:true
             }
 
-            // console.log("swap: ", swap)
-            let responseSwap = await pioneer.App.buildSwapTx(swap, options, swap.asset)
-            responseSwap.context = contextInput
-            responseSwap.swap.context = contextInput
-            console.log("responseSwap: ", responseSwap)
-            dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'built' })
+            //get quote
+            let quote = await pioneer.App.swapQuote(swap)
+            console.log("quote: ",quote)
 
+            //buildSwap
+            let swapBuilt = await pioneer.App.buildSwap(quote.invocationId, swap)
+            console.log("swapBuilt: ",swapBuilt)
 
-            console.log("state.wallet: ",swap)
-            console.log("state.wallet.getSigner: ",swap)
-            console.log("currentSellAsset.currency.address: ",currentSellAsset.currency.address)
-            // console.log("wallet.account: ",state.account)
-            unsignedTx = responseSwap
-          }else if(state.exchangeContext === 'osmosis'){
-            //build batch
-            //TODO if ATOM -> OSMO
-            //deposit atom into IBC
-            //submit swap
+            //executeSwap
+            let executionResp = await pioneer.App.swapExecute(swapBuilt)
+            console.log("executionResp: ",executionResp)
+
           } else {
-            throw Error("protocol not implemented!")
+            console.log(' cant update, missing params! ',
+                {symbolIn,symbolOut,blockchainIn,blockchainOut}
+            )
+            throw Error("failed to build swap!")
           }
 
 
-          //
-          let transaction:any = {
-            type:'keepkey-sdk',
-            fee:{
-              priority:3
-            },
-            unsignedTx,
-            context:contextInput,
-            network:state.assetContext
-          }
-          console.log("unsigned transaction: ",transaction)
-          let responseInvoke = await state.pioneer.App.invokeUnsigned(transaction,options,state.assetContext)
-          if(!responseInvoke.invocationId){
-            console.error('responseInvoke: ',responseInvoke)
-            //display error modal
-            throw Error("Failed to build invocation!")
-          }
-          console.log("responseInvoke: ",responseInvoke)
-          let invocationId = responseInvoke.invocationId
-          transaction.invocationId = invocationId
-          dispatch({ type: WalletActions.SET_INVOCATION_CONTEXT, payload: invocationId })
-          dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'invoked' })
 
-          //metamask payload
-          // let txPayload:any = {
-          //   from:state.account,
-          //   to: responseSwap.HDwalletPayload.to,
-          //   data: responseSwap.HDwalletPayload.data,
-          //   value: responseSwap.HDwalletPayload.value,
-          //   gasLimit: responseSwap.HDwalletPayload.gasLimit,
-          //   gasPrice: responseSwap.HDwalletPayload.gasPrice,
-          //   nonce: responseSwap.HDwalletPayload.nonce,
-          //   chainId: 1
-          // }
-
-          console.log("unsignedTx: ",transaction.unsignedTx)
-          // let signedTx = await state.keepkey.ethSignTx(transaction.unsignedTx.HDwalletPayload)
-          // console.log("signedTx: ",signedTx)
-
-          //TODO get contextType from walletDescripts, filter by context of input
-          // console.log("unsignedTx: ",transaction.unsignedTx)
-          let signedTx = await state.pioneer.App.signTx(transaction.unsignedTx)
-          console.log("signedTx: ",signedTx)
-
-          //TODO fix metamask again
-          // let contextType = 'MetaMask'
-          // if(contextType === 'MetaMask'){
-          //   console.log("Build Transaction with onBoard: MetaMask")
-          //   if(state.onboard && state.wallet) {
-          //     console.log("txPayload: ",txPayload)
-          //     signedTx = await state.provider.getSigner().sendTransaction(txPayload)
-          //     console.log("*** signedTx:",signedTx)
-          //     //mock send for debugging
-          //     //let signedTx:any = {"hash": "0xa4fd92ae21345de0b218f8951b9229d504cd55ef50780a7e5e18a81ecfa22a74", "type": 2, "accessList": null, "blockHash": null, "blockNumber": null, "transactionIndex": null, "confirmations": 0, "from": "0xC3aFFff54122658b89C31183CeC4F15514F34624", "gasPrice": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "maxPriorityFeePerGas": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "maxFeePerGas": {"type": "BigNumber", "hex": "0x1b5320a25b"}, "gasLimit": {"type": "BigNumber", "hex": "0x013880"}, "to": "0xC145990E84155416144C532E31f89B840Ca8c2cE", "value": {"type": "BigNumber", "hex": "0x2386f26fc10000"}, "nonce": 87, "data": "0x1fece7b4000000000000000000000000f56cba49337a624e94042e325ad6bc864436e3700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002386f26fc10000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000403d3a4243482e4243483a626974636f696e636173683a717a78703078633676736a3861706739796d346e346a6c3435707978746b70736875767239736d6a7033", "r": "0x1ccaf7e8e8ee44807686e209cb78972766387a2a59050d6ef7c4467b2bb6d6d0", "s": "0x1a74183927cd0b07ac247156cdfa3b7df9a073b2fa44f684364ac68a04a1afac", "v": 1, "creates": null, "chainId": 0}
-          //   } else {
-          //
-          //   }
-          // }
-
-          dispatch({ type: WalletActions.SET_INVOCATION_TXID, payload: signedTx.hash })
-          dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'pending' })
-          //signedTx.serialized = "fobarfixme"
-          signedTx.network = transaction.network
-          signedTx.type = 'keepkey'
-          signedTx.invocationId = invocationId
-          // signedTx.type = 'MetaMask'
-
-          if(!signedTx.serialized) throw Error("103: failed to build serialized tx")
-          if(!signedTx.txid) throw Error("104: failed to build txid")
-
-          //get invcation from api
-          let invocation = await state.pioneer.App.getInvocation(invocationId)
-          console.log("2invocation: ",invocation)
-
-          //updateTx
-          let updateBody = {
-            network:state.assetContext,
-            invocationId,
-            invocation,
-            context:contextInput,
-            unsignedTx,
-            signedTx
-          }
-
-          //update invocation remote
-          let resultUpdate = await state.pioneer.App.updateInvocation(updateBody)
-          console.log("resultUpdate: ",resultUpdate)
-
-          //broadcast transaction
-          let broadcastResult = await state.pioneer.App.broadcastTransaction(updateBody)
-          console.log("broadcastResult: ",broadcastResult)
-
-          //verify broadcasted
-          let invocationView3 = await state.pioneer.App.getInvocation(invocationId)
-          console.log("invocationView3: (VIEW) ",invocationView3)
-          console.log("state: ",invocationView3.state)
-          // if(invocationView3.state !== 'broadcasted'){
-          //   console.error("failed to init tx lifecycle hook correctly")
-          //   throw Error('Fail fast bro, shits whack')
-          // }
 
           //start loop
           let isConfirmed = false
@@ -595,13 +456,13 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           //state?.provider && state?.account && state?.assetContext && state?.status
           // if(!state?.provider) console.error("Wallet not initialized")
           // if(!state?.account) console.error("state missing account")
-          if(!state?.pioneer?.App?.isPaired) console.error("state missing pioneer App isPaired")
+          if(!state?.invocationId) console.error("state missing invocationId")
+          if(!state?.invocationContext) console.error("state missing invocationContext")
           if(!state?.assetContext) console.error("state missing assetContext")
           if(!state?.status) console.error("state missing status")
           if(!state?.balances) console.error("state missing balances")
           if(!state?.tradeOutput) console.error("state missing tradeOutput")
           if(!state?.pioneer) console.error("state missing pioneer")
-          if(!state?.pioneer?.App) console.error("state missing pioneer App")
           console.error("Failed to buildTx")
         }
       },
@@ -613,9 +474,9 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         state?.assetContext,
         state?.balances,
         state?.tradeOutput,
-        state?.pioneer,
-        state?.pioneer?.App,
-        state?.pioneer?.App?.isPaired
+        state?.invocationId,
+        state?.invocationContext,
+        state?.pioneer
       ]
   )
 

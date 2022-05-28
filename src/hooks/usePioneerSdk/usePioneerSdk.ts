@@ -163,6 +163,7 @@ export const Pioneer = () => {
 
                     //set invocationId
                     setValue('invocationContext',quote.invocationId)
+                    setValue('invocationId',quote.invocationId)
 
                     console.log("quote.amountOut: ",quote.amountOut)
                     console.log("quote.invocationId: ",quote.invocationId)
