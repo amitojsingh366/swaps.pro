@@ -159,9 +159,13 @@ export const Pioneer = () => {
                     let quote = await pioneer.swapQuote(swap)
 
                     //Set outAmount
-                    setValue('buyAsset.amount',quote.mountOut)
+                    setValue('buyAsset.amount',quote.amountOut)
 
                     //set invocationId
+                    setValue('invocationContext',quote.invocationId)
+
+                    console.log("quote.amountOut: ",quote.amountOut)
+                    console.log("quote.invocationId: ",quote.invocationId)
                 } else {
                     console.log("Pioneer not set into state!")
                 }
