@@ -46,12 +46,7 @@ export const Select = ({ }: any) => {
 
     const fetchTokens = useCallback(async () => {
         try {
-            //if input get available balance
-            console.log("FINAL BALANCES: ",balances)
-            console.log("exchangeContext: ",exchangeContext)
-            selectOptions = balances.filter((balance:any) => balance.protocols.indexOf(exchangeContext) >= 0)
-            setSortedAssets(selectOptions)
-            console.log("selectOptions: ",selectOptions)
+            selectOptions = balances
         } catch (e) {
             console.warn(e)
         }
@@ -72,8 +67,6 @@ export const Select = ({ }: any) => {
     <>
         <ModalHeader textAlign='center'>
             <h2>Select an  {selectType} currency</h2>
-            <small>exchange: {exchangeContext}</small>
-            {/*<small>status: {JSON.stringify(status)}</small>*/}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody alignItems='center' justifyContent='center'>
@@ -81,7 +74,7 @@ export const Select = ({ }: any) => {
                 <Input placeholder="Search name or paste contract" />
             </Card>
             <Box flex={1}>
-                {sortedAssets?.map((key:any)=>(
+                {balances?.map((key:any)=>(
                     <div>
                         <button onClick={() => onSelectAsset(key.symbol)}>
                             <AssetIcon src={key?.image} boxSize='24px' mr={4} />

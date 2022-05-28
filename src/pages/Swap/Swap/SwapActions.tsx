@@ -18,27 +18,9 @@ export const SwapActions = () => {
   return (
     <Card maxW="460px" mx="auto" flex={1} justifyContent='center' alignItems='center'>
       <Tabs isFitted variant='soft-rounded' defaultIndex={0}>
-        <TabList>
-          <Tab onClick={() => selectExchange('thorchain')} >
-            <Text translation='assets.exchanges.thorchain' />
-          </Tab>
-          <Tab onClick={() => selectExchange('osmosis')}>
-            <Text translation='assets.exchanges.osmosis' />
-          </Tab>
-          <Tab onClick={() => selectExchange('0x')}>
-            <Text translation='assets.exchanges.0x' />
-          </Tab>
-        </TabList>
-
         <TabPanels>
           <TabPanel>
             <Trade exchange='thorchain'/>
-          </TabPanel>
-          <TabPanel>
-            <Trade exchange='osmosis'/>
-          </TabPanel>
-          <TabPanel>
-            <Trade exchange='0x'/>
           </TabPanel>
         </TabPanels>
       </Tabs>

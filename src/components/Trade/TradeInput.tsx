@@ -84,10 +84,8 @@ export const TradeInput = ({ history }: RouterProps) => {
     <SlideTransition>
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
         <div>
-          protocal: {exchangeContext}
         </div>
         <br/>
-        <small>status: ...</small>
         <FormControl isInvalid={!!errors.fiatAmount}>
           <Controller
             render={({ field: { value } }) => (
