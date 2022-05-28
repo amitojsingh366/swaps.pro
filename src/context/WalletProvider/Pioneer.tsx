@@ -64,6 +64,7 @@ export class PioneerService {
     this.invocations = []
     this.balances = []
     this.pubkeys = []
+    this.events = {}
     let queryKey: string | null = localStorage.getItem('queryKey')
     let username: string | null = localStorage.getItem('username')
     if (!queryKey) {
@@ -118,48 +119,16 @@ export class PioneerService {
       const keyring = new core.Keyring();
       const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(keyring);
       let wallet = await keepkeyAdapter.pairDevice(undefined /*tryDebugLink=*/ );
+
       if(wallet){
-        let result = await app.init(wallet)
+        let result = await this.App.init(wallet)
         console.log("result: ",result)
+
+        return this.App
       } else {
-        console.log("to wallet found! : ")
+        console.log("no wallet found! : ")
       }
 
-      if(this.App && this.App.pairWallet){
-        if(!this.isInitialized){
-          console.log("App not initialized!")
-          await this.init()
-        }
-
-
-        // console.log("checkpoint App: ",this.App)
-        // console.log("isInitialized: ",this.isInitialized)
-        // console.log("pioneer: pairWallet: Checkpoint")
-        // console.log("pioneer: pairWallet:",wallet)
-        // let resultRegister = await this.App.pairWallet(wallet)
-        // console.log("resultRegister: ",resultRegister)
-        //
-        // let userInfo = await this.App.updateContext()
-        // console.log("userInfo: ",userInfo)
-        // if(resultRegister?.username){
-        //   this.username = resultRegister.username
-        // }
-        // if(resultRegister?.balances){
-        //   this.balances = resultRegister.balances
-        // }
-        // if(resultRegister?.pubkeys){
-        //   this.pubkeys = resultRegister.pubkeys
-        // }
-        // if(resultRegister?.context){
-        //   this.context = resultRegister.context
-        // }
-        // return resultRegister
-      } else {
-        console.log("checkpoint App: ",this.App)
-        console.log("checkpoint this: ",this)
-        console.log("isInitialized: ",this.isInitialized)
-        throw Error("App not initialized!")
-      }
     }catch(e){
       console.error(e)
     }
@@ -296,7 +265,38 @@ export class PioneerService {
       console.log("config: ",config)
       this.App = new SDK(config.spec, config)
 
+      // this.App.on('keepkey',(message) => {
+      //   this.events.events.emit('keepkey',message)
+      // })
+
       //init with HDwallet
+      if(this.App && this.App.context){
+        this.context = this.App.context
+        this.valueUsdContext = this.App.valueUsdContext
+        this.walletsIds = this.App.wallets
+        this.wallets = this.App.walletDescriptions
+        this.walletDescriptions = this.App.walletDescriptions
+        this.totalValueUsd = this.App.totalValueUsd
+        this.username = this.App.username
+        this.balances = this.App.balances
+        this.pubkeys = this.App.pubkeys
+      }
+      return {
+        status: 'Online',
+        code: this.pairingCode,
+        paired: true,
+        assetContext: this.assetContext,
+        assetBalanceNativeContext: this.assetBalanceNativeContext,
+        assetBalanceUsdValueContext: this.assetBalanceUsdValueContext,
+        username: this.username,
+        context: this.context,
+        wallets: this.wallets,
+        balances: this.balances,
+        pubkeys: this.pubkeys,
+        walletsIds: this.walletsIds,
+        valueUsdContext: this.valueUsdContext,
+        totalValueUsd: this.totalValueUsd
+      }
 
       // if(status && status.username){
       //   console.log("bridge ONLINE!!!!: ")
@@ -406,7 +406,7 @@ export class PioneerService {
       //   throw Error('102: invalid response! createPairingCode')
       // }
       // this.pairingCode = response.code
-
+      return this.App
     }else{
       console.log("Already initialized!")
       return {

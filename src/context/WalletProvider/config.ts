@@ -8,6 +8,7 @@ import { RouteProps } from 'react-router-dom'
 
 import { Onboard } from './Onboard/Onboard'
 import { Pair } from './KeepKey/Pair'
+import { PinModal } from './KeepKey/PinModal'
 
 export interface SupportedWalletInfo {
   adapter?: any
@@ -28,7 +29,9 @@ export const SUPPORTED_WALLETS: { [key: string]: SupportedWalletInfo } = {
     name: 'KeepKey',
     type: 'hardware',
     setup: () => {},
-    routes: [{ path: '/keepkey/pair', component: Pair }]
+    routes: [
+        { path: '/keepkey/pin', component: PinModal },
+      { path: '/keepkey/pair', component: Pair }]
   },
   onboard: {
     icon: ONBOARD_ICON,
