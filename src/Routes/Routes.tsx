@@ -3,6 +3,7 @@ import { Earn } from 'components/Icons/Earn'
 import { Layout } from 'components/Layout/Layout'
 import { NotFound } from 'pages/NotFound/NotFound'
 import { Swap } from 'pages/Swap/Swap'
+import { Invocation } from 'pages/Invocation/Invocation'
 import { RepeatIcon } from '@chakra-ui/icons'
 import { Redirect, Route, Switch } from 'react-router-dom'
 //RepeatIcon
@@ -20,6 +21,19 @@ export const routes: Array<NestedRoute> = [
         path: '/:network/:address?',
         label: 'Asset Details',
         main: <Swap />
+      }
+    ]
+  },
+  {
+    path: '/invocation/:invocationId',
+    label: 'navBar.assets',
+    main: <Invocation />,
+    icon: <RepeatIcon color='inherit' />,
+    routes: [
+      {
+        path: '/:network/:address?',
+        label: 'Asset Details',
+        main: <Invocation />
       }
     ]
   }
