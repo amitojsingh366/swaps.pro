@@ -29,15 +29,7 @@ export const User = () => {
             <div>
                 <Card variant='unstyled'>
                     <Card.Header px={0} pt={0}>
-                        <SimpleGrid gridTemplateColumns='25px 1fr 25px' alignItems='center' mx={-2}>
-                            <IconButton
-                                icon={<ArrowBackIcon />}
-                                aria-label='Back'
-                                variant='ghost'
-                                fontSize='xl'
-                                isRound
-                                onClick={() => history.push('/trade/input')}
-                            />
+                        <SimpleGrid alignItems='center' mx={-2}>
                             <Card.Heading textAlign='center'>Username: {state.pioneer.username}<small></small></Card.Heading>
                         </SimpleGrid>
                     </Card.Header>

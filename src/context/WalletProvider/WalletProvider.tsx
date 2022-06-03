@@ -507,7 +507,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         // if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneerResp })
 
         // let status = await pioneer.getStatus()
-        if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
+        // if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
 
         //on event Prompt Pin
         //listen to events
@@ -676,6 +676,13 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         console.log("user: ",user)
 
         dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
+
+        console.log("user: ",user)
+        // if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
+
+        if(pioneer && pioneer.markets){
+          dispatch({ type: WalletActions.SET_STATUS, payload: pioneer.markets })
+        }
 
         if(pioneer && pioneer.isPaired){
           console.log("app is paired! loading user")
