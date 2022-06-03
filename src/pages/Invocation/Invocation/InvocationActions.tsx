@@ -10,7 +10,6 @@ export const InvocationActions = (invocationId) => {
   const { state, dispatch } = useWallet()
   const {  } = state
 
-
   let selectExchange = (exchange:string) => {
     console.log("selectExchange: ",exchange)
     dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:exchange})

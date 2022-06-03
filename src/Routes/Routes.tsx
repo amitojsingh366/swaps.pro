@@ -3,6 +3,7 @@ import { Earn } from 'components/Icons/Earn'
 import { Layout } from 'components/Layout/Layout'
 import { NotFound } from 'pages/NotFound/NotFound'
 import { Swap } from 'pages/Swap/Swap'
+import { User } from 'pages/User/User'
 import { Invocation } from 'pages/Invocation/Invocation'
 import { RepeatIcon } from '@chakra-ui/icons'
 import { Redirect, Route, Switch } from 'react-router-dom'
@@ -11,6 +12,19 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 import { generateAppRoutes, Route as NestedRoute } from './helpers'
 
 export const routes: Array<NestedRoute> = [
+  {
+    path: '/user',
+    label: 'navBar.assets',
+    main: <User />,
+    icon: <AssetsIcon color='inherit' />,
+    routes: [
+      {
+        path: '/:network/:address?',
+        label: 'User Details',
+        main: <User />
+      }
+    ]
+  },
   {
     path: '/swap',
     label: 'navBar.assets',
@@ -24,19 +38,19 @@ export const routes: Array<NestedRoute> = [
       }
     ]
   },
-  {
-    path: '/invocation/:invocationId',
-    label: 'navBar.assets',
-    main: <Invocation />,
-    icon: <RepeatIcon color='inherit' />,
-    routes: [
-      {
-        path: '/:network/:address?',
-        label: 'Asset Details',
-        main: <Invocation />
-      }
-    ]
-  }
+  // {
+  //   path: '/invocation/:invocationId',
+  //   label: 'navBar.assets',
+  //   main: <Invocation />,
+  //   icon: <RepeatIcon color='inherit' />,
+  //   routes: [
+  //     {
+  //       path: '/:network/:address?',
+  //       label: 'Asset Details',
+  //       main: <Invocation />
+  //     }
+  //   ]
+  // }
 ]
 
 const appRoutes = generateAppRoutes(routes)
@@ -53,7 +67,7 @@ export const Routes = () => {
           </Route>
         )
       })}
-      <Redirect from='/' to='/swap' />
+      <Redirect from='/' to='/user' />
       <Route component={NotFound} />
     </Switch>
   )
