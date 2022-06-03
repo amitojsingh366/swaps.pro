@@ -27,7 +27,7 @@ export const routes: Array<NestedRoute> = [
   },
   {
     path: '/swap',
-    label: 'navBar.assets',
+    label: 'navBar.swap',
     main: <Swap />,
     icon: <RepeatIcon color='inherit' />,
     routes: [

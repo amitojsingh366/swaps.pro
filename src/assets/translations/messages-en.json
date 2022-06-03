@@ -22,6 +22,7 @@
   "navBar": {
     "dashboard": "Dashboard",
     "assets": "Assets",
+    "swap": "Swap",
     "earn": "Earn",
     "tradeHistory": "Trade History",
     "foxToken": "FOX Token"

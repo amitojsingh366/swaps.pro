@@ -20,7 +20,7 @@ export const Invocation = (invocationId:any) => {
                             variant='ghost'
                             fontSize='xl'
                             isRound
-                            onClick={() => history.push('/trade/input')}
+                            // onClick={() => history.push('/trade/input')}
                         />
                         <Card.Heading textAlign='center'>Trade Status: id: {invocationId.invocationId.invocationId}<small></small></Card.Heading>
 
