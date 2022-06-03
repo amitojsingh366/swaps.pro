@@ -74,6 +74,20 @@ export const User = () => {
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
                             <br/>
+                            <small>pubkeys: {state.pioneer.availableInputs.toString()}</small>
+                            <br/>
+                        </Stack>
+                    </Card.Body>
+                    <Card.Body pb={0} px={0}>
+                        <Stack spacing={4}>
+                            <br/>
+                            <small>pubkeys: {state.pioneer.availableOutputs.toString()}</small>
+                            <br/>
+                        </Stack>
+                    </Card.Body>
+                    <Card.Body pb={0} px={0}>
+                        <Stack spacing={4}>
+                            <br/>
                             <small>wallets: {state.pioneer.wallets.toString()}</small>
                             <br/>
                         </Stack>

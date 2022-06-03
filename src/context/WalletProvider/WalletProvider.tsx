@@ -30,8 +30,10 @@ import { useState } from 'react'
 import { SUPPORTED_WALLETS } from './config'
 import { WalletViewsRouter } from './WalletViewsRouter'
 import * as keepkeyWebUSB from "@shapeshiftoss/hdwallet-keepkey-webusb";
+import {v4 as uuidv4} from "uuid";
 const Datastore = require('nedb-promises')
-let SDK = require("@keepkey/keepkey-sdk")
+import { SDK } from '@pioneer-sdk/sdk'
+
 let {
   baseAmountToNative,
 } = require("@pioneer-platform/pioneer-coins")
@@ -634,23 +636,61 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
     async function startPioneer(){
       try{
         console.log("onStartPioneer")
-        //pioneer
-        // let initResult = await pioneer.init()
         //
-        // if(pioneer.App.context){
-        //   //sit init
-        //   dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
-        //   //set context
-        //   dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
-        //   dispatch({ type: WalletActions.SET_EXCHANGE_CONTEXT, payload:'thorchain' })
-        //   if(initResult.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:initResult.balances })
-        //   if(initResult.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:initResult.context })
-        //   if(initResult.username) dispatch({ type: WalletActions.SET_USERNAME, payload:initResult.username })
-        //   if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
-        //   dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
-        // } else {
-        //   console.log("app is not paired! can not start. please connect a wallet")
-        // }
+        let queryKey: string | null = localStorage.getItem('queryKey')
+        let username: string | null = localStorage.getItem('username')
+        if (!queryKey) {
+          console.log("Creating new queryKey~!")
+          queryKey = 'key:' + uuidv4()
+          localStorage.setItem('queryKey', queryKey)
+        }
+        if (!username) {
+          console.log("Creating new username~!")
+          username = 'user:' + uuidv4()
+          username = username.substring(0, 13);
+          console.log("Creating new username~! username: ",username)
+          localStorage.setItem('username', username)
+        }
+
+        //TODO dont get blockchains here
+        let blockchains = [
+          'bitcoin','ethereum','thorchain','bitcoincash','litecoin','binance','cosmos','dogecoin','osmosis'
+        ]
+
+        const config: any = {
+          blockchains,
+          username,
+          queryKey,
+          service: process.env.REACT_APP_PIONEER_SERVICE || 'swaps.pro',
+          url: process.env.REACT_APP_APP_URL,
+          wss: process.env.REACT_APP_URL_PIONEER_SOCKET,
+          spec: process.env.REACT_APP_URL_PIONEER_SPEC
+        }
+        console.log("config: ",config)
+
+        //Pioneer SDK
+        let pioneer = new SDK(config.spec, config)
+
+
+        let user = await pioneer.init()
+        console.log("user: ",user)
+
+        dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
+
+        if(pioneer && pioneer.isPaired){
+          console.log("app is paired! loading user")
+          //sit init
+          dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+          //set context
+          dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+          if(pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:pioneer.balances })
+          if(pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:pioneer.context })
+          if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
+          dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+        } else {
+          console.log("app is not paired! can not start. please connect a wallet")
+        }
+
         // console.log("initResult: ",initResult)
         //
         // if(initResult.code) dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
@@ -733,6 +773,29 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // we explicitly only want this to happen once
+
+  //fuck useEffect
+  // useEffect(() => {
+  //   if(state.pioneer && state.pioneer.isPaired){
+  //     console.log("app is paired! loading user")
+  //     //sit init
+  //     dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+  //     //set context
+  //     dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+  //     if(state.pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:state.pioneer.balances })
+  //     if(state.pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:state.pioneer.context })
+  //     if(state.pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:state.pioneer.username })
+  //     dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'pioneer', icon:'Pioneer'} })
+  //   } else {
+  //     console.log("app is not paired! can not start. please connect a wallet")
+  //   }
+  // }, [state.pioneer,state.pioneer?.isPaired])
+  //
+  // useEffect(() => {
+  //   if(state.pioneer){
+  //     state.pioneer.init()
+  //   }
+  // }, [state.pioneer])
 
   useEffect(() => {
     const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
