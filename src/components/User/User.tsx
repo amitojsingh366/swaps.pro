@@ -1,6 +1,6 @@
 
 import {FormProvider, useForm, useFormContext} from 'react-hook-form'
-import { useWallet } from "../../context/WalletProvider/WalletProvider";
+import {useWallet, WalletActions} from "../../context/WalletProvider/WalletProvider";
 import {Card} from "../Card";
 import {
     Box,
@@ -13,15 +13,26 @@ import {
     Stack,
     TabPanel,
     TabPanels,
-    Tabs
+    Tabs, Text
 } from "@chakra-ui/react";
 import {ArrowBackIcon} from "@chakra-ui/icons";
 import {AssetToAsset} from "../Trade/TradeStatus/AssetToAsset";
 import {Page} from "../Layout/Page";
+import {HelperToolTip} from "../HelperTooltip";
+import {Row} from "../Row";
 
 export const User = () => {
     const { username, state } = useWallet()
     console.log("pioneer.username: ",username)
+
+    const deleteInvocation = (invocation) => {
+        console.log("deleting invocation: ",invocation)
+    }
+
+    const setInvocationContext = (invocation) => {
+        console.log("setting invocation context: ",invocation)
+    }
+
     if(state.pioneer){
         console.log("pioneer.username: ",state.pioneer)
         console.log("pioneer.username: ",state.pioneer.username)
@@ -49,13 +60,45 @@ export const User = () => {
                             <br/>
                         </Stack>
                     </Card.Body>
-                    {/*<Card.Body pb={0} px={0}>*/}
-                    {/*    <Stack spacing={4}>*/}
-                    {/*        <br/>*/}
-                    {/*        <small>pubkeys: {state.pioneer.invocations}</small>*/}
-                    {/*        <br/>*/}
-                    {/*    </Stack>*/}
-                    {/*</Card.Body>*/}
+                    <Card.Body pb={0} px={0}>
+                        <Stack spacing={4}>
+                            <br/>
+                            <small>invocations: {state.pioneer.invocations.length}</small>
+                            <br/>
+                        </Stack>
+                        {state.pioneer.invocations.map((invocation, i) => {
+                            return <>
+                                <Stack spacing={1}>
+                                    <br/>
+                                    <small>invocation: {invocation.invocationId}</small>
+                                    <small>state: {invocation.state}</small>
+                                    <small>type: {invocation.type}</small>
+                                    <small>network: {invocation.network}</small>
+                                    <br/>
+                                    <Button
+                                        colorScheme='blue'
+                                        size='sm'
+                                        mt={1}
+                                        width='100px'
+                                        onClick={() => setInvocationContext(invocation.invocationId)}
+                                    >
+                                    <small>load invocation</small>
+                                    </Button>
+                                    <Button
+                                        colorScheme='red'
+                                        size='sm'
+                                        mt={1}
+                                        width='100px'
+                                        onClick={() => deleteInvocation(invocation.invocationId)}
+                                    >
+                                        <small>delete invocation</small>
+                                    </Button>
+                                </Stack>
+                            </>
+                        })}
+
+
+                    </Card.Body>
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
                             <br/>
@@ -95,7 +138,6 @@ export const User = () => {
                         <Button
                             colorScheme='blue'
                             size='lg'
-                            width='full'
                             mt={6}
                             // onClick={() => history.push('/trade/input')}
                         >
