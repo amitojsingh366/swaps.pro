@@ -49,6 +49,13 @@ export const User = () => {
                             <br/>
                         </Stack>
                     </Card.Body>
+                    {/*<Card.Body pb={0} px={0}>*/}
+                    {/*    <Stack spacing={4}>*/}
+                    {/*        <br/>*/}
+                    {/*        <small>pubkeys: {state.pioneer.invocations}</small>*/}
+                    {/*        <br/>*/}
+                    {/*    </Stack>*/}
+                    {/*</Card.Body>*/}
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
                             <br/>

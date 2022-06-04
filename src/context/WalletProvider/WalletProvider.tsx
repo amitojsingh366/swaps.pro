@@ -786,6 +786,9 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
           //set context
           dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+
+          console.log("pioneer: ",pioneer)
+          console.log("username: ",pioneer.username)
           if(pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload:pioneer.balances })
           if(pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload:pioneer.context })
           if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
