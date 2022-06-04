@@ -1,7 +1,7 @@
 import { debounce } from 'lodash'
 import { useCallback, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
-import {useWallet} from "context/WalletProvider/WalletProvider";
+import {useWallet, WalletActions} from "context/WalletProvider/WalletProvider";
 // import { TradeAsset, TradeState } from 'components/Trade/Trade'
 
 const debounceTime = 1000
@@ -13,7 +13,7 @@ export enum TradeActions {
 
 
 export const Pioneer = () => {
-    const { state, dispatch, setRoutePath } = useWallet()
+    const { state, dispatch, WalletActions, setRoutePath } = useWallet()
     const { assetContext, balances, tradeOutput, status, pioneer } = state
     const {
         setValue,
@@ -124,6 +124,11 @@ export const Pioneer = () => {
           console.log(' cant update, no balances ')
         }
 
+        //if input wallet connected
+        if(state.walletInput && !state.walletInput.isConnected){
+            setValue('isDirty',true)
+        }
+
         if(status){
             //status
             console.log("** STATUS: ",status)
@@ -162,8 +167,13 @@ export const Pioneer = () => {
                     setValue('buyAsset.amount',quote.amountOut)
 
                     //set invocationId
+                    //SET_INVOCATION_ID
+                    dispatch({ type: 'SET_INVOCATION_ID', payload:quote.invocationId })
                     setValue('invocationContext',quote.invocationId)
                     setValue('invocationId',quote.invocationId)
+
+                    let invocation = await state.pioneer.getInvocation(quote.invocationId)
+                    dispatch({ type: 'SET_INVOCATION', payload: invocation })
 
                     console.log("quote.amountOut: ",quote.amountOut)
                     console.log("quote.invocationId: ",quote.invocationId)

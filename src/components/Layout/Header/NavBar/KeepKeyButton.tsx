@@ -4,6 +4,7 @@ import { Flex, Text, Image, HStack, FlexProps } from '@chakra-ui/react'
 import { shortenAddress } from 'utils/helpers'
 import { InitialState, useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 import {SUPPORTED_WALLETS} from "../../../../context/WalletProvider/config";
+import KEEPKEY_ICON from 'assets/png/keepkey.png'
 
 export const KeepKeyButton: FC<FlexProps> = props => {
     const { state, dispatch, setRoutePath } = useWallet()
@@ -11,7 +12,6 @@ export const KeepKeyButton: FC<FlexProps> = props => {
 
     const connectKeepkey = () => {
         dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
-        setRoutePath(SUPPORTED_WALLETS['keepkey']?.routes[0]?.path ?? undefined)
     }
 
     return (
@@ -25,13 +25,9 @@ export const KeepKeyButton: FC<FlexProps> = props => {
             _hover={{ cursor: 'pointer', bg: 'whiteAlpha.500' }}
             {...props}
         >
-            {false ? (
+            {state.keepkeyConnected ? (
                 <HStack>
-                    <Image
-                        maxW='28px'
-                        maxH='28px'
-                        ml={2}
-                    />
+                    <Image maxH={10} maxW={20} src={KEEPKEY_ICON} />
                     <Text fontSize='sm'>{context && shortenAddress(context, 4)}</Text>
                     <ChevronDownIcon h={8} w={8} />
                 </HStack>

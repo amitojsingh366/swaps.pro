@@ -16,6 +16,7 @@ import { Keyring } from '@shapeshiftoss/hdwallet-core'
 import { Web3Provider } from '@ethersproject/providers'
 import { API as OnboardAPI, Wallet } from 'bnc-onboard/dist/src/interfaces'
 import { getLibrary, initOnboard } from 'lib/onboard'
+import KEEPKEY_ICON from 'assets/png/keepkey.png'
 // import { PioneerService } from './Pioneer'
 import React, {
   createContext,
@@ -33,6 +34,7 @@ import * as keepkeyWebUSB from "@shapeshiftoss/hdwallet-keepkey-webusb";
 import {v4 as uuidv4} from "uuid";
 const Datastore = require('nedb-promises')
 import { SDK } from '@pioneer-sdk/sdk'
+import * as core from "@shapeshiftoss/hdwallet-core";
 
 let {
   baseAmountToNative,
@@ -53,6 +55,9 @@ export enum WalletActions {
   SET_ADAPTERS = 'SET_ADAPTERS',
   SET_PIONEER = 'SET_PIONEER',
   SET_KEEPKEY = 'SET_KEEPKEY',
+  SET_KEEPKEY_CONNECTED = 'SET_KEEPKEY_CONNECTED',
+  SET_ONBOARD_CONNECTED = 'SET_ONBOARD_CONNECTED',
+  SET_KEPLR_CONNECTED = 'SET_KEPLR_CONNECTED',
   SET_BALANCES = 'SET_BALANCES',
   SET_PAIRING_CODE = 'SET_PAIRING_CODE',
   SET_USERNAME = 'SET_USERNAME',
@@ -60,12 +65,15 @@ export enum WalletActions {
   SET_INITIALIZED = 'SET_INITIALIZED',
   SET_IS_CONNECTED = 'SET_IS_CONNECTED',
   SET_WALLET_MODAL = 'SET_WALLET_MODAL',
+  SET_INPUT_WALLET = 'SET_INPUT_WALLET',
+  SET_OUTPUT_WALLET = 'SET_OUTPUT_WALLET',
   SET_SELECT_MODAL_TYPE = 'SET_SELECT_MODAL_TYPE',
   SET_SELECT_MODAL = 'SET_SELECT_MODAL',
   SET_ASSET_CONTEXT = 'SET_ASSET_CONTEXT',
   SET_WALLET_CONTEXT = 'SET_WALLET_CONTEXT',
   SET_CONTEXT = 'SET_CONTEXT',
   SET_EXCHANGE_CONTEXT = 'SET_EXCHANGE_CONTEXT',
+  SET_INVOCATION = 'SET_INVOCATION',
   SET_INVOCATION_ID = 'SET_INVOCATION_ID',
   SET_INVOCATION_CONTEXT = 'SET_INVOCATION_CONTEXT',
   SET_TRADE_INPUT = 'SET_TRADE_INPUT',
@@ -103,10 +111,16 @@ export interface InitialState {
   modalSelect: boolean
   pioneer: any
   keepkey: any
+  keepkeyConnected: boolean
+  onboardConnected: boolean
+  keplrConnected: boolean
+  walletInput:{ name: string; icon: string; isConnected:boolean } | null
+  walletOutput:{ name: string; icon: string; isConnected:boolean } | null
   code: any
   username: any
   assetContext: any
   invocationId: string | null
+  invocation: any
   invocationContext: string | null
   context: any
   exchangeContext: string | null
@@ -145,6 +159,11 @@ const initialState: InitialState = {
   selectType: null,
   pioneer: null,
   keepkey: null,
+  keepkeyConnected: false,
+  onboardConnected: false,
+  keplrConnected: false,
+  walletInput:{ name: 'not connected', icon: '', isConnected:false },
+  walletOutput:{ name: 'not connected', icon: '', isConnected:false },
   code: null,
   username: null,
   assetContext: null,
@@ -152,6 +171,7 @@ const initialState: InitialState = {
   invocationId: null,
   invocationContext: null,
   context: null,
+  invocation: null,
   totalValueUsd: null,
   tradeOutput: null,
   tradeStatus: null,
@@ -168,6 +188,7 @@ const initialState: InitialState = {
 export interface IWalletContext {
   setRoutePath: any
   buildTransaction: any
+  updateInvocation: any
   state: InitialState
   username: string | null
   dispatch: React.Dispatch<ActionTypes>
@@ -190,6 +211,9 @@ export type ActionTypes =
   | { type: WalletActions.SET_TRADE_FULLFILLMENT_TXID; payload: string }
   | { type: WalletActions.SET_KEEPKEY_STATUS; payload: string }
   | { type: WalletActions.SET_KEEPKEY_STATE; payload: number }
+  | { type: WalletActions.SET_KEEPKEY_CONNECTED; payload: boolean }
+  | { type: WalletActions.SET_ONBOARD_CONNECTED; payload: boolean }
+  | { type: WalletActions.SET_KEPLR_CONNECTED; payload: boolean }
   | { type: WalletActions.SET_ASSET_CONTEXT; payload: String | null }
   | { type: WalletActions.SET_WALLET_CONTEXT; context: String | null }
   | { type: WalletActions.SET_WALLET_INFO; payload: { name: string; icon: string } }
@@ -197,6 +221,8 @@ export type ActionTypes =
   | { type: WalletActions.SET_INITIALIZED; payload: boolean }
   | { type: WalletActions.SET_IS_CONNECTED; payload: boolean }
   | { type: WalletActions.SET_WALLET_MODAL; payload: boolean }
+  | { type: WalletActions.SET_INPUT_WALLET; payload: any }
+  | { type: WalletActions.SET_OUTPUT_WALLET; payload: any }
   | { type: WalletActions.SET_SELECT_MODAL_TYPE; payload: string }
   | { type: WalletActions.SET_SELECT_MODAL; payload: boolean }
   | { type: WalletActions.SET_ONBOARD; payload: OnboardAPI }
@@ -208,6 +234,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_ACTIVE; payload: boolean }
   | { type: WalletActions.SET_TOTAL_VALUE_USD; payload: string }
   | { type: WalletActions.SET_INVOCATION_ID; payload: string }
+  | { type: WalletActions.SET_INVOCATION; payload: string }
   | { type: WalletActions.SET_INVOCATION_CONTEXT; payload: string }
   | { type: WalletActions.SET_INVOCATION_TXID; payload: string }
   | { type: WalletActions.SET_CONTEXT; payload: string }
@@ -283,8 +310,22 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, keepkeyStatus: action.payload }
     case WalletActions.SET_KEEPKEY_STATE:
       return { ...state, keepkeyState: action.payload }
+    case WalletActions.SET_KEEPKEY_CONNECTED:
+      return { ...state, keepkeyConnected: action.payload }
+    case WalletActions.SET_ONBOARD_CONNECTED:
+      return { ...state, onboardConnected: action.payload }
+    case WalletActions.SET_OUTPUT_WALLET:
+      return { ...state, walletOutput: action.payload}
+    case WalletActions.SET_INPUT_WALLET:
+      return { ...state, walletInput: action.payload }
+    case WalletActions.SET_KEPLR_CONNECTED:
+      return { ...state, keplrConnected: action.payload }
     case WalletActions.SET_TRADE_FULLFILLMENT_TXID:
       return { ...state, fullfillmentTxid: action.payload }
+    case WalletActions.SET_INVOCATION:
+      return { ...state, invocation: action.payload }
+    case WalletActions.SET_INVOCATION_ID:
+      return { ...state, invocationId: action.payload }
     case WalletActions.SET_INVOCATION_TXID:
       return { ...state, invocationTxid: action.payload }
     case WalletActions.SET_SELECT_MODAL:
@@ -297,6 +338,13 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         isConnected: false,
         username: null,
         setAssetContext: null,
+        keepkeyConnected: null,
+        keplrConnected: null,
+        onboardConnected: null,
+        invocationId: null,
+        invocation: null,
+        walletInput: null,
+        walletOutput: null,
         pioneer: null,
         keplr: null,
         onboard: null,
@@ -343,8 +391,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             state?.status &&
             state?.balances &&
             state?.tradeOutput &&
+            state?.invocationContext &&
             state?.pioneer) {
           console.log("Build TX~!")
+          await updateInvocation()
           // await pioneer.App.updateContext()
           // await pioneer.init()
           // if(!pioneer.username){
@@ -369,7 +419,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           console.log("assetContext: ",state.assetContext)
 
           //get protocal
-          console.log("exchangeContext: ",state.exchangeContext)
           console.log("invocationContext: ",state.invocationContext)
 
           let symbolIn = currentSellAsset?.currency?.symbol
@@ -417,41 +466,41 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
 
           //start loop
-          let isConfirmed = false
-          let isFullfilled = false
-          let fullfillmentTxid = false
-          let interval:any
-          let checkStatus = async function(){
-            try{
-              let invocationStatus = await state.pioneer.getInvocationStatus(invocationId)
-              console.log("invocationStatus: ",invocationStatus.state)
-
-              if(invocationStatus && invocationStatus.isConfirmed){
-                isConfirmed = true
-                dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'confirmed' })
-                console.log('WINNING! TX CONFIRMED!')
-                //TODO push to state?
-              } else {
-                console.log('not confirmed!')
-              }
-
-              if(invocationStatus && invocationStatus.isFullfilled && invocationStatus.fullfillmentTxid){
-                console.log('WINNING2! TX FULLFILLED YOU GOT PAID BRO!')
-                dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'fullfilled' })
-                dispatch({ type: WalletActions.SET_TRADE_FULLFILLMENT_TXID, payload:invocationStatus.fullfillmentTxid })
-                fullfillmentTxid = invocationStatus.fullfillmentTxid
-                isFullfilled = true
-                //TODO push to state?
-                console.log("destroyed interval: ",interval)
-                interval.destroy()
-              } else {
-                console.log('not fullfilled!')
-              }
-            }catch(e){
-              console.error(e)
-            }
-          }
-          interval = setInterval(checkStatus,6000)
+          // let isConfirmed = false
+          // let isFullfilled = false
+          // let fullfillmentTxid = false
+          // let interval:any
+          // let checkStatus = async function(){
+          //   try{
+          //     let invocationStatus = await state.pioneer.getInvocation(invocationId)
+          //     console.log("invocationStatus: ",invocationStatus.state)
+          //
+          //     if(invocationStatus && invocationStatus.isConfirmed){
+          //       isConfirmed = true
+          //       dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'confirmed' })
+          //       console.log('WINNING! TX CONFIRMED!')
+          //       //TODO push to state?
+          //     } else {
+          //       console.log('not confirmed!')
+          //     }
+          //
+          //     if(invocationStatus && invocationStatus.isFullfilled && invocationStatus.fullfillmentTxid){
+          //       console.log('WINNING2! TX FULLFILLED YOU GOT PAID BRO!')
+          //       dispatch({ type: WalletActions.SET_TRADE_STATUS, payload:'fullfilled' })
+          //       dispatch({ type: WalletActions.SET_TRADE_FULLFILLMENT_TXID, payload:invocationStatus.fullfillmentTxid })
+          //       fullfillmentTxid = invocationStatus.fullfillmentTxid
+          //       isFullfilled = true
+          //       //TODO push to state?
+          //       console.log("destroyed interval: ",interval)
+          //       interval.destroy()
+          //     } else {
+          //       console.log('not fullfilled!')
+          //     }
+          //   }catch(e){
+          //     console.error(e)
+          //   }
+          // }
+          // interval = setInterval(checkStatus,6000)
 
 
         } else {
@@ -482,6 +531,25 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       ]
   )
 
+
+  const updateInvocation = useCallback(
+      async () => {
+        if (state?.pioneer, state?.invocationId) {
+          console.log("update invocation~!")
+          let invocation = await state.pioneer.getInvocation(state.invocationId)
+          dispatch({ type: WalletActions.SET_INVOCATION, payload: invocation })
+        } else {
+          if(!state?.pioneer) console.error("state missing pioneer")
+          if(!state?.invocationId) console.error("state missing invocationId")
+          console.error("Failed to get invocationId")
+        }
+      },
+      [
+        state?.pioneer,
+        state?.invocationId
+      ]
+  )
+
   /**
    * temp logging data here for dev use
    */
@@ -502,9 +570,37 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
       case 'keepkey':
         // setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
 
-        // let pioneerResp = await pioneer.pairWallet('keepkey')
-        // console.log("pioneerResp: ",pioneerResp)
-        // if(pioneer) dispatch({ type: WalletActions.SET_PIONEER, payload: pioneerResp })
+        const keyring = new core.Keyring();
+        const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(keyring);
+        try{
+          let wallet = await keepkeyAdapter.pairDevice(undefined /*tryDebugLink=*/ );
+          console.log("wallet: ",wallet)
+
+          if(wallet){
+            let pioneerResp = await state.pioneer.pairWallet(wallet)
+            console.log("pioneerResp: ",pioneerResp)
+
+            //@TODO get this from pioneer?
+            let walletInfo = {
+              name:'keepkey',
+              icon:KEEPKEY_ICON,
+              blockchains:32,
+              walletId:"keepkey-01",
+              isConnected:true
+            }
+
+            //@TODO support multiple wallet paired!
+            dispatch({ type: WalletActions.SET_INPUT_WALLET, payload: walletInfo })
+            dispatch({ type: WalletActions.SET_OUTPUT_WALLET, payload: walletInfo })
+
+            dispatch({ type: WalletActions.SET_KEEPKEY_CONNECTED, payload: true })
+            dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+          }
+        }catch(e){
+          alert(e)
+        }
+
+
 
         // let status = await pioneer.getStatus()
         // if(status) dispatch({ type: WalletActions.SET_STATUS, payload: status })
@@ -520,13 +616,13 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         // if(pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload:pioneer.username })
 
         //close
-        dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-
-        dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'keepkey', icon:'KeepKey'} })
-
-        dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
-        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
-        dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+        // dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+        //
+        // dispatch({ type: WalletActions.SET_WALLET_INFO, payload:{name:'keepkey', icon:'KeepKey'} })
+        //
+        // dispatch({ type: WalletActions.SET_ACTIVE, payload: true })
+        // dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:'ETH' })
+        // dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
 
         break
       case 'onboard':
@@ -698,6 +794,22 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           console.log("app is not paired! can not start. please connect a wallet")
         }
 
+        //@TODO get wallets
+        //@TODO get this from pioneer?
+        let walletInfo:any = {
+          name:'keepkey',
+          icon:KEEPKEY_ICON,
+          blockchains:32,
+          walletId:"keepkey-01",
+          isConnected:false
+        }
+
+        //@TODO support multiple wallet paired!
+        dispatch({ type: WalletActions.SET_INPUT_WALLET, payload: walletInfo })
+        dispatch({ type: WalletActions.SET_OUTPUT_WALLET, payload: walletInfo })
+
+        //try to connect
+
         // console.log("initResult: ",initResult)
         //
         // if(initResult.code) dispatch({ type: WalletActions.SET_PAIRING_CODE, payload: initResult.code })
@@ -843,8 +955,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   //end
   const value: IWalletContext = useMemo(
-    () => ({ state, buildTransaction, setRoutePath, username, dispatch, connect, disconnect }),
-    [state, buildTransaction, setRoutePath, username, connect, disconnect]
+    () => ({ state, buildTransaction, setRoutePath, username, dispatch, connect, disconnect, updateInvocation }),
+    [state, buildTransaction, setRoutePath, username, connect, disconnect, updateInvocation]
   )
 
   return (

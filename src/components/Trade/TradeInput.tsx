@@ -4,7 +4,7 @@ import {
   Button,
   FormControl,
   FormErrorMessage,
-  IconButton,
+  IconButton, Image,
   Input,
   InputProps, MenuGroup, MenuItem,
   Text
@@ -20,6 +20,7 @@ import NumberFormat from 'react-number-format'
 import { RouterProps } from 'react-router-dom'
 import {useWallet, WalletActions} from "context/WalletProvider/WalletProvider";
 import {useEffect} from "react";
+import KEEPKEY_ICON from "../../assets/png/keepkey.png";
 
 const FiatInput = (props: InputProps) => (
   <Input
@@ -35,7 +36,7 @@ const FiatInput = (props: InputProps) => (
 
 export const TradeInput = ({ history }: RouterProps) => {
   const { state, dispatch, setRoutePath } = useWallet()
-  const { assetContext, balances, tradeOutput, exchangeContext } = state
+  const { assetContext, balances, tradeOutput, exchangeContext, pioneer } = state
   const { getCryptoQuote, getFiatQuote, reset, switchAssets, update, setMaxInput } = Pioneer()
   let {
     control,
@@ -82,10 +83,14 @@ export const TradeInput = ({ history }: RouterProps) => {
 
   return (
     <SlideTransition>
+      <div>
+        <small>walletIn: {state.walletInput.name} connected: {state.walletInput.isConnected}</small>
+      </div>
+      <div>
+        <small>walletOut: {state.walletOutput.name} connected: {state.walletOutput.isConnected}</small>
+      </div>
+
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
-        <div>
-        </div>
-        <br/>
         <FormControl isInvalid={!!errors.fiatAmount}>
           <Controller
             render={({ field: { value } }) => (
@@ -109,6 +114,7 @@ export const TradeInput = ({ history }: RouterProps) => {
               }
             }}
           />
+          <Image maxH={10} maxW={20} src={state.walletInput.icon} />
           <FormErrorMessage>{errors.fiatAmount && errors.fiatAmount.message}</FormErrorMessage>
         </FormControl>
         <FormControl>
@@ -165,13 +171,14 @@ export const TradeInput = ({ history }: RouterProps) => {
               />
             }
           />
+          <Image maxH={10} maxW={20} src={state.walletOutput.icon} />
         </FormControl>
         <Button
           type='submit'
           size='lg'
           width='full'
           colorScheme='green'
-          // isDisabled={!isDirty || !isValid}
+          // isDisabled={isDirty || !isValid}
         >
           Preview Trade
         </Button>
