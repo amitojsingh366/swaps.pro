@@ -13,7 +13,7 @@ import { useWallet, WalletActions } from "context/WalletProvider/WalletProvider"
 export const TradeConfirm = ({ history }: RouterProps) => {
   const { getValues } = useFormContext()
   const { sellAsset, buyAsset } = getValues()
-  const { buildTransaction, state } = useWallet()
+  const { buildTransaction, state, dispatch } = useWallet()
   console.log("state.invocation: ",state.invocation)
   let onSubmit = async function(){
     try{

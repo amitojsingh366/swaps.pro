@@ -161,22 +161,36 @@ export const Pioneer = () => {
                 //TODO
                 console.log("pioneer: ",pioneer)
                 if(pioneer) {
-                    let quote = await pioneer.swapQuote(swap)
+                    //Set context
+                    if(!state.invocationId){
+                        let quote = await pioneer.swapQuote(swap)
 
-                    //Set outAmount
-                    setValue('buyAsset.amount',quote.amountOut)
+                        //Set outAmount
+                        setValue('buyAsset.amount',quote.amountOut)
 
-                    //set invocationId
-                    //SET_INVOCATION_ID
-                    dispatch({ type: 'SET_INVOCATION_ID', payload:quote.invocationId })
-                    setValue('invocationContext',quote.invocationId)
-                    setValue('invocationId',quote.invocationId)
+                        //set invocationId
+                        //SET_INVOCATION_ID
+                        dispatch({ type: 'SET_INVOCATION_ID', payload:quote.invocationId })
+                        setValue('invocationContext',quote.invocationId)
+                        setValue('invocationId',quote.invocationId)
 
-                    let invocation = await state.pioneer.getInvocation(quote.invocationId)
-                    dispatch({ type: 'SET_INVOCATION', payload: invocation })
+                        let invocation = await state.pioneer.getInvocation(quote.invocationId)
+                        dispatch({ type: 'SET_INVOCATION', payload: invocation })
 
-                    console.log("quote.amountOut: ",quote.amountOut)
-                    console.log("quote.invocationId: ",quote.invocationId)
+                        console.log("quote.amountOut: ",quote.amountOut)
+                        console.log("quote.invocationId: ",quote.invocationId)
+                    } else {
+                        //TODO if edited values then create new?
+                        setValue('invocationId',state.invocationId)
+
+                        let invocation = await state.pioneer.getInvocation(state.invocationId)
+                        dispatch({ type: 'SET_INVOCATION', payload: invocation })
+                        console.log("invocation: ",invocation)
+
+                        let amountOut = invocation?.invocation?.route?.result?.outputAmount
+                        console.log("amountOut: ",amountOut)
+                        setValue('buyAsset.amount',amountOut)
+                    }
                 } else {
                     console.log("Pioneer not set into state!")
                 }

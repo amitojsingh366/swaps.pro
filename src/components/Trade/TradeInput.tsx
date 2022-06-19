@@ -84,6 +84,12 @@ export const TradeInput = ({ history }: RouterProps) => {
   return (
     <SlideTransition>
       <div>
+        <small>invocation: {state.invocationId}</small>
+      </div>
+      <div>
+        <small>status: {state?.invocation?.state}</small>
+      </div>
+      <div>
         <small>walletIn: {state.walletInput.name} connected: {state.walletInput.isConnected}</small>
       </div>
       <div>

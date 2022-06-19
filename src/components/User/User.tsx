@@ -22,15 +22,19 @@ import {HelperToolTip} from "../HelperTooltip";
 import {Row} from "../Row";
 
 export const User = () => {
-    const { username, state } = useWallet()
+    const { username, state, dispatch, updateInvocation } = useWallet()
     console.log("pioneer.username: ",username)
 
     const deleteInvocation = (invocation) => {
         console.log("deleting invocation: ",invocation)
     }
 
-    const setInvocationContext = (invocation) => {
-        console.log("setting invocation context: ",invocation)
+    const setInvocationContext = async function (invocationId) {
+        console.log("setting invocation context: ",invocationId)
+        dispatch({ type: 'SET_INVOCATION_ID', payload:invocationId })
+        let invocation = await state.pioneer.getInvocation(invocationId)
+        console.log("setting invocation: ",invocation)
+        dispatch({ type: 'SET_INVOCATION', payload: invocation })
     }
 
     if(state.pioneer){
