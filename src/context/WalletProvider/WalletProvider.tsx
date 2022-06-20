@@ -390,8 +390,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             state?.username &&
             state?.status &&
             state?.balances &&
-            state?.tradeOutput &&
             state?.invocationContext &&
+            state?.invocationId &&
             state?.pioneer) {
           console.log("Build TX~!")
           await updateInvocation()
@@ -430,30 +430,24 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           let invocationId
           if(symbolIn && symbolOut && blockchainIn && blockchainOut){
             //build quote
-            let swap:any = {
-              input:{
-                blockchain:blockchainIn,
-                asset:symbolIn,
-              },
-              output:{
-                blockchain:blockchainOut,
-                asset:symbolOut,
-              },
-              amount:currentSellAsset.amount,
-              noBroadcast:true
-            }
+            let invocation = await state.pioneer.getInvocation(state.invocationId)
+            console.log("invocation: ",invocation)
 
-            // //get quote
-            // let quote = await pioneer.App.swapQuote(swap)
-            // console.log("quote: ",quote)
-            //
-            // //buildSwap
-            // let swapBuilt = await pioneer.App.buildSwap(quote.invocationId, swap)
-            // console.log("swapBuilt: ",swapBuilt)
-            //
-            // //executeSwap
-            // let executionResp = await pioneer.App.swapExecute(swapBuilt)
-            // console.log("executionResp: ",executionResp)
+            try{
+              //buildSwap
+              let swapBuilt = await state.pioneer.buildSwap(state.invocationId)
+              console.log("swapBuilt: ",swapBuilt)
+
+              //executeSwap
+              let executionResp = await state.pioneer.swapExecute(swapBuilt)
+              console.log("executionResp: ",executionResp)
+
+            }catch(e){
+              //TODO delete invocation?
+
+              alert(e)
+              throw Error("failed to build swap!")
+            }
 
           } else {
             console.log(' cant update, missing params! ',
@@ -512,7 +506,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           if(!state?.assetContext) console.error("state missing assetContext")
           if(!state?.status) console.error("state missing status")
           if(!state?.balances) console.error("state missing balances")
-          if(!state?.tradeOutput) console.error("state missing tradeOutput")
           if(!state?.pioneer) console.error("state missing pioneer")
           console.error("Failed to buildTx")
         }
@@ -524,7 +517,6 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         state?.status,
         state?.assetContext,
         state?.balances,
-        state?.tradeOutput,
         state?.invocationId,
         state?.invocationContext,
         state?.pioneer

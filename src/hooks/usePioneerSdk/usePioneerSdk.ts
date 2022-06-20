@@ -81,6 +81,7 @@ export const Pioneer = () => {
     const updateAmountInNative = async (value:any) => {
         console.log("HOOK: updateAmountInNative value: ",value)
         setValue('sellAsset.amount',value)
+        update()
         //update amount Out fiat
     }
 
@@ -101,25 +102,43 @@ export const Pioneer = () => {
 
     const update = async (
     ) => {
+
         console.log("HOOK: update")
         console.log("HOOK: assetContext: ",assetContext)
+
+        // status
+        const currentSellAsset = getValues('sellAsset')
+        const currentBuyAsset = getValues('buyAsset')
+        console.log("HOOK: currentSellAsset",currentSellAsset)
+        console.log("HOOK: currentBuyAsset",currentBuyAsset)
+
+        let symbolIn = currentSellAsset?.currency?.symbol
+        let symbolOut = currentBuyAsset?.currency?.symbol
+
+        let blockchainIn = currentSellAsset?.currency?.blockchain
+        let blockchainOut = currentBuyAsset?.currency?.blockchain
+
         if(balances){
-          console.log("balances: ",balances)
-          let balance = balances.filter((balance:any) => balance.symbol === assetContext)[0]
-          console.log("balance: ",balance)
-          setValue('sellAsset.currency',balance)
-          setValue('sellAsset.amount',balance?.balance)
-          setValue('fiatAmount',1)
-          console.log("amountUsd: ",balance?.valueUsd)
+          if(!currentSellAsset.amount){
+              console.log("balances: ",balances)
+              let balance = balances.filter((balance:any) => balance.symbol === assetContext)[0]
+              console.log("balance: ",balance)
+              setValue('sellAsset.currency',balance)
+              setValue('sellAsset.amount',balance?.balance)
+              setValue('sellAsset.currency.image',balance?.image)
+              setValue('fiatAmount',1)
+              console.log("amountUsd: ",balance?.valueUsd)
+          }
+
 
           //output
-          let balanceOutput = balances.filter((balance:any) => balance.symbol === tradeOutput)[0]
-          console.log("balanceOutput: ",balanceOutput)
-          setValue('buyAsset.currency',balanceOutput)
-          setValue('buyAsset.currency.image',balanceOutput?.image)
-          setValue('buyAsset.currency.symbol',balanceOutput?.symbol)
-          //setValue('fiatAmount',balanceOutput.valueUsd)
-          console.log("amountUsd: output (buy) ",balanceOutput?.valueUsd)
+          // let balanceOutput = balances.filter((balance:any) => balance.symbol === tradeOutput)[0]
+          // console.log("balanceOutput: ",balanceOutput)
+          // setValue('buyAsset.currency',balanceOutput)
+          // setValue('buyAsset.currency.image',balanceOutput?.image)
+          // setValue('buyAsset.currency.symbol',balanceOutput?.symbol)
+          // //setValue('fiatAmount',balanceOutput.valueUsd)
+          // console.log("amountUsd: output (buy) ",balanceOutput?.valueUsd)
         } else {
           console.log(' cant update, no balances ')
         }
@@ -130,39 +149,27 @@ export const Pioneer = () => {
         }
 
         if(status){
-            //status
             console.log("** STATUS: ",status)
-            const currentSellAsset = getValues('sellAsset')
-            const currentBuyAsset = getValues('buyAsset')
-            console.log("HOOK: currentSellAsset",currentSellAsset)
-            console.log("HOOK: currentBuyAsset",currentBuyAsset)
+            if(!state.invocationId){
 
-            let symbolIn = currentSellAsset?.currency?.symbol
-            let symbolOut = currentBuyAsset?.currency?.symbol
-
-            let blockchainIn = currentSellAsset?.currency?.blockchain
-            let blockchainOut = currentBuyAsset?.currency?.blockchain
-
-            if(symbolIn && symbolOut && blockchainIn && blockchainOut){
-                //build quote
-                let swap:any = {
-                    input:{
-                        blockchain:blockchainIn,
-                        asset:symbolIn,
-                    },
-                    output:{
-                        blockchain:blockchainOut,
-                        asset:symbolOut,
-                    },
-                    amount:currentSellAsset.amount,
-                    noBroadcast:true
-                }
-                console.log("HOOK: swap",swap)
-                //TODO
-                console.log("pioneer: ",pioneer)
-                if(pioneer) {
-                    //Set context
-                    if(!state.invocationId){
+                if(symbolIn && symbolOut && blockchainIn && blockchainOut){
+                    //build quote
+                    let swap:any = {
+                        input:{
+                            blockchain:blockchainIn,
+                            asset:symbolIn,
+                        },
+                        output:{
+                            blockchain:blockchainOut,
+                            asset:symbolOut,
+                        },
+                        amount:currentSellAsset.amount,
+                        noBroadcast:true
+                    }
+                    console.log("HOOK: swap",swap)
+                    //TODO
+                    console.log("pioneer: ",pioneer)
+                    if(pioneer) {
                         let quote = await pioneer.swapQuote(swap)
 
                         //Set outAmount
@@ -179,28 +186,47 @@ export const Pioneer = () => {
 
                         console.log("quote.amountOut: ",quote.amountOut)
                         console.log("quote.invocationId: ",quote.invocationId)
+
                     } else {
-                        //TODO if edited values then create new?
-                        setValue('invocationId',state.invocationId)
-
-                        let invocation = await state.pioneer.getInvocation(state.invocationId)
-                        dispatch({ type: 'SET_INVOCATION', payload: invocation })
-                        console.log("invocation: ",invocation)
-
-                        let amountOut = invocation?.invocation?.route?.result?.outputAmount
-                        console.log("amountOut: ",amountOut)
-                        setValue('buyAsset.amount',amountOut)
+                        console.log("Pioneer not set into state!")
                     }
                 } else {
-                    console.log("Pioneer not set into state!")
+                    console.log(' cant update, missing params! ',
+                        {symbolIn,symbolOut,blockchainIn,blockchainOut}
+                    )
                 }
             } else {
-                console.log(' cant update, missing params! ',
-                    {symbolIn,symbolOut,blockchainIn,blockchainOut}
-                )
+                //TODO if edited values then create new?
+                setValue('invocationId',state.invocationId)
+
+                let invocation = await state.pioneer.getInvocation(state.invocationId)
+                dispatch({ type: 'SET_INVOCATION', payload: invocation })
+                console.log("invocation: ",invocation)
+
+                let amountOut = invocation?.invocation?.route?.result?.outputAmount
+                console.log("amountOut: ",amountOut)
+                setValue('buyAsset.amount',amountOut)
+
+                //swap
+                let swapRead = invocation?.invocation?.swap
+                console.log("swapRead: ",swapRead)
+
+                //let currencyOut
+                let currencyOut = swapRead.output.asset
+
+                //@TODO get from status block (can receive asset with no balance)
+                // let currencyInfo = status.tokens.filter((balance:any) => balance.symbol === currencyOut)[0]
+                // console.log("currencyInfo: ",currencyInfo)
+
+                //output
+                let balanceOutput = balances.filter((balance:any) => balance.symbol === currencyOut)[0]
+                console.log("balanceOutput: ",balanceOutput)
+
+                //balanceOutput
+                setValue('buyAsset.currency',balanceOutput)
+                setValue('buyAsset.currency.image',balanceOutput?.image)
+                setValue('buyAsset.currency.symbol',balanceOutput?.symbol)
             }
-
-
         } else {
             console.log(' cant update, no market status ')
         }
