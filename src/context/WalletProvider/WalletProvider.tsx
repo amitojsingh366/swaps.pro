@@ -439,7 +439,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
               console.log("swapBuilt: ",swapBuilt)
 
               //executeSwap
-              let executionResp = await state.pioneer.swapExecute(swapBuilt)
+              let executionResp = await state.pioneer.swapExecute(state.invocationId)
               console.log("executionResp: ",executionResp)
 
             }catch(e){
