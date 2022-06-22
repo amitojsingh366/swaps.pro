@@ -73,7 +73,7 @@ export const TradeConfirm = ({ history }: RouterProps) => {
             </Row>
             <Row>
               <HelperToolTip label='Hops are how many transactions are needed to complete the swap'>
-              <Row.Label>hops:{state.invocation.invocation.route.result.swaps.length}</Row.Label>
+              <Row.Label>hops: {state.invocation.invocation.route.result.swaps.length}</Row.Label>
               </HelperToolTip>
             </Row>
             <Row>

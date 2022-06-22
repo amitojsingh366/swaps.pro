@@ -77,9 +77,21 @@ export const TradeInput = ({ history }: RouterProps) => {
     dispatch({ type: WalletActions.SET_SELECT_MODAL_TYPE, payload: 'output' })
   }
 
+  const onClear = () => {
+    //Open Select modal.
+    reset()
+    //RESET_STATE
+    dispatch({ type: WalletActions.RESET_STATE, payload: true })
+  }
+
+  const onUpdate = () => {
+    //Open Select modal.
+    update()
+  }
+
   useEffect(() => {
     update()
-  }, [balances, assetContext, tradeOutput]) // we explicitly only want this to happen once
+  }, [balances, assetContext, tradeOutput])
 
   return (
     <SlideTransition>
@@ -95,7 +107,28 @@ export const TradeInput = ({ history }: RouterProps) => {
       <div>
         <small>walletOut: {state.walletOutput.name} connected: {state.walletOutput.isConnected}</small>
       </div>
-
+      <div>
+        <small>sellAsset: {getValues('sellAsset.currency.symbol')} amount: {getValues('sellAsset.amount')}</small>
+      </div>
+      <div>
+        <small>buyAsset: {getValues('buyAsset.currency.symbol')} amount: {getValues('buyAsset.amount')}</small>
+      </div>
+      <Button
+          size='lg'
+          width='full'
+          colorScheme='green'
+          onClick={() => onClear()}
+      >
+        Clear
+      </Button>
+      <Button
+          size='lg'
+          width='full'
+          colorScheme='green'
+          onClick={() => onUpdate()}
+      >
+        update
+      </Button>
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
         <FormControl isInvalid={!!errors.fiatAmount}>
           <Controller

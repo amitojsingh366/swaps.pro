@@ -22,6 +22,8 @@ export const Select = ({ }: any) => {
     const { balances, exchangeContext, exchangeInfo, status, selectType, assetContext } = state
     const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
     const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])
+
+
     const { register, watch } = useForm<{ search: string }>({
         mode: 'onChange',
         defaultValues: {
@@ -38,8 +40,11 @@ export const Select = ({ }: any) => {
         console.log("onSelectAsset: ",asset)
         if(selectType === 'input'){
             dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload:asset })
+            dispatch({ type: WalletActions.SET_TRADE_INPUT, payload:asset })
+            // update()
         }else{
             dispatch({ type: WalletActions.SET_TRADE_OUTPUT, payload:asset })
+            // update()
         }
         dispatch({ type: WalletActions.SET_WALLET_MODAL, payload:false })
     }
@@ -56,6 +61,7 @@ export const Select = ({ }: any) => {
         fetchTokens()
     }, []) // run only once
 
+    //@TODO add search
     // useEffect(() => {
     //     setFilteredAssets(
     //         searching ? filterAssetsBySearchTerm(searchString, sortedAssets) : sortedAssets
