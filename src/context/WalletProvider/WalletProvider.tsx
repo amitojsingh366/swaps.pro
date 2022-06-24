@@ -395,6 +395,14 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             state?.pioneer) {
           console.log("Build TX~!")
           await updateInvocation()
+
+
+          console.log("current status: ",state.invocation.status)
+          //if invocation already signed!
+          if(state.invocation.status === ''){
+
+          }
+
           // await pioneer.App.updateContext()
           // await pioneer.init()
           // if(!pioneer.username){
@@ -893,7 +901,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
   //fuck useEffect
   // useEffect(() => {
   //   if(state.pioneer && state.pioneer.isPaired){
-  //     console.log("app is paired! loading user")
+  //     console.log("app is paired!
+  //     loading user")
   //     //sit init
   //     dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
   //     //set context

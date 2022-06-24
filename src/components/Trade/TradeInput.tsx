@@ -35,7 +35,7 @@ const FiatInput = (props: InputProps) => (
 )
 
 export const TradeInput = ({ history }: RouterProps) => {
-  const { state, dispatch, setRoutePath } = useWallet()
+  const { state, dispatch, setRoutePath, updateInvocation } = useWallet()
   const { assetContext, balances, tradeOutput, exchangeContext, pioneer } = state
   const { getCryptoQuote, getFiatQuote, reset, switchAssets, update, setMaxInput } = Pioneer()
   let {
@@ -86,6 +86,7 @@ export const TradeInput = ({ history }: RouterProps) => {
 
   const onUpdate = () => {
     //Open Select modal.
+    updateInvocation()
     update()
   }
 

@@ -25,16 +25,21 @@ export const User = () => {
     const { username, state, dispatch, updateInvocation } = useWallet()
     console.log("pioneer.username: ",username)
 
-    const deleteInvocation = (invocation) => {
-        console.log("deleting invocation: ",invocation)
+    const deleteInvocation =  async function (invocationId:any) {
+        console.log("deleting invocation: ",invocationId)
+        let result = await state.pioneer.deleteInvocation(invocationId)
+        console.log("deleting result: ",result)
     }
 
-    const setInvocationContext = async function (invocationId) {
+    const setInvocationContext = async function (invocationId:any) {
         console.log("setting invocation context: ",invocationId)
         dispatch({ type: 'SET_INVOCATION_ID', payload:invocationId })
         let invocation = await state.pioneer.getInvocation(invocationId)
         console.log("setting invocation: ",invocation)
         dispatch({ type: 'SET_INVOCATION', payload: invocation })
+
+        //navigate to invocation
+
     }
 
     if(state.pioneer){
@@ -70,7 +75,7 @@ export const User = () => {
                             <small>invocations: {state.pioneer.invocations.length}</small>
                             <br/>
                         </Stack>
-                        {state.pioneer.invocations.map((invocation, i) => {
+                        {state.pioneer.invocations.map((invocation:any, i:any) => {
                             return <>
                                 <Stack spacing={1}>
                                     <br/>

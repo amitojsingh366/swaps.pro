@@ -12,8 +12,14 @@ import {useWallet} from "../../../context/WalletProvider/WalletProvider";
 export const TradeStatus = ({ history }: RouterProps) => {
     const { getValues } = useFormContext()
     const { sellAsset, buyAsset } = getValues()
-    const { state } = useWallet()
+    const { state, updateInvocation } = useWallet()
     const { invocationContext, fullfillmentTxid, invocationTxid, tradeStatus } = state
+    console.log("invocation: ",state.invocation)
+
+    const onUpdate = () => {
+        //Open Select modal.
+        updateInvocation()
+    }
 
     return (
         <SlideTransition>
@@ -46,9 +52,50 @@ export const TradeStatus = ({ history }: RouterProps) => {
                     />
                 </Card.Header>
                 <Divider />
+                <Button
+                    size='lg'
+                    width='full'
+                    colorScheme='green'
+                    onClick={() => onUpdate()}
+                >
+                    update
+                </Button>
                 <Card.Body pb={0} px={0}>
                     <Stack spacing={4}>
                     <br/>
+                    <small>invocation: {state.invocationId}</small>
+                    <br/>
+                    <small>invocation: {state.invocation.state}</small>
+                    <br/>
+                    <Row>
+                        <Row.Label>type:{state.invocation.invocation.type}</Row.Label>
+                    </Row>
+                    <Row>
+                        <Row.Label>network:{state.invocation.invocation.network}</Row.Label>
+                    </Row>
+                        {state.invocation.invocation.route.result.swaps.map((value, i) => {
+                            return <>
+                                <HelperToolTip label='protocol used to complete the swap'>
+                                    <Row.Label>swap:{i}</Row.Label>
+                                </HelperToolTip>
+                                <HelperToolTip label='protocol used to complete the swap'>
+                                    <Row.Label>swapperId:</Row.Label>
+                                    <Box textAlign='right'>
+                                        <Text></Text>
+                                        <Text color='gray.500'>{value.swapperId}</Text>
+                                    </Box>
+                                </HelperToolTip>
+                                <HelperToolTip label='protocol used to complete the swap'>
+                                    <Row.Label>time avg:{value.timeStat.avg}</Row.Label>
+                                </HelperToolTip>
+                                <HelperToolTip label='protocol used to complete the swap'>
+                                    <Row.Label>time min:{value.timeStat.min}</Row.Label>
+                                </HelperToolTip>
+                                <HelperToolTip label='protocol used to complete the swap'>
+                                    <Row.Label>time max:{value.timeStat.max}</Row.Label>
+                                </HelperToolTip>
+                            </>
+                        })}
                     <small>deposit txid: {invocationTxid}</small>
                     <br/>
                         {fullfillmentTxid &&
