@@ -180,23 +180,25 @@ export const Pioneer = () => {
                     //TODO
                     console.log("pioneer: ",pioneer)
                     if(pioneer) {
-                        let quote = await pioneer.swapQuote(swap)
+                        let tx = {
+                            type:'swap',
+                            payload:swap
+                        }
+                        let invocationId = await pioneer.build(tx)
 
-                        //Set outAmount
-                        setValue('buyAsset.amount',quote.amountOut)
-
-                        //set invocationId
                         //SET_INVOCATION_ID
-                        dispatch({ type: 'SET_INVOCATION_ID', payload:quote.invocationId })
-                        setValue('invocationContext',quote.invocationId)
-                        setValue('invocationId',quote.invocationId)
+                        dispatch({ type: 'SET_INVOCATION_ID', payload:invocationId })
+                        //TODO context is wallet?
+                        setValue('invocationContext',invocationId)
+                        setValue('invocationId',invocationId)
 
-                        let invocation = await state.pioneer.getInvocation(quote.invocationId)
+                        let invocation = await state.pioneer.getInvocation(invocationId)
                         dispatch({ type: 'SET_INVOCATION', payload: invocation })
-
-                        console.log("quote.amountOut: ",quote.amountOut)
-                        console.log("quote.invocationId: ",quote.invocationId)
-                        setValue('buyAsset.amount',quote.amountOut)
+                        console.log("invocation: ",invocation)
+                        //Set outAmount
+                        setValue('buyAsset.amount',invocation.invocation.tx.amountOut)
+                        console.log("quote.amountOut: ",invocation.invocation.tx.amountOut)
+                        setValue('buyAsset.amount',invocation.invocation.tx.amountOut)
                     } else {
                         console.log("Pioneer not set into state!")
                     }
@@ -213,29 +215,29 @@ export const Pioneer = () => {
                 dispatch({ type: 'SET_INVOCATION', payload: invocation })
                 console.log("invocation: ",invocation)
 
-                let amountOut = invocation?.invocation?.route?.result?.outputAmount
-                console.log("amountOut: ",amountOut)
-                setValue('buyAsset.amount',amountOut)
-
-                //swap
-                let swapRead = invocation?.invocation?.swap
-                console.log("swapRead: ",swapRead)
-
-                //let currencyOut
-                let currencyOut = swapRead.output.asset
-
-                //@TODO get from status block (can receive asset with no balance)
-                // let currencyInfo = status.tokens.filter((balance:any) => balance.symbol === currencyOut)[0]
-                // console.log("currencyInfo: ",currencyInfo)
-
-                //output
-                let balanceOutput = balances.filter((balance:any) => balance.symbol === currencyOut)[0]
-                console.log("balanceOutput: ",balanceOutput)
-
-                //balanceOutput
-                setValue('buyAsset.currency',balanceOutput)
-                setValue('buyAsset.currency.image',balanceOutput?.image)
-                setValue('buyAsset.currency.symbol',balanceOutput?.symbol)
+                // let amountOut = invocation?.invocation?.route?.result?.outputAmount
+                // console.log("amountOut: ",amountOut)
+                // setValue('buyAsset.amount',amountOut)
+                //
+                // //swap
+                // let swapRead = invocation?.invocation?.swap
+                // console.log("swapRead: ",swapRead)
+                //
+                // //let currencyOut
+                // let currencyOut = swapRead.output.asset
+                //
+                // //@TODO get from status block (can receive asset with no balance)
+                // // let currencyInfo = status.tokens.filter((balance:any) => balance.symbol === currencyOut)[0]
+                // // console.log("currencyInfo: ",currencyInfo)
+                //
+                // //output
+                // let balanceOutput = balances.filter((balance:any) => balance.symbol === currencyOut)[0]
+                // console.log("balanceOutput: ",balanceOutput)
+                //
+                // //balanceOutput
+                // setValue('buyAsset.currency',balanceOutput)
+                // setValue('buyAsset.currency.image',balanceOutput?.image)
+                // setValue('buyAsset.currency.symbol',balanceOutput?.symbol)
             }
         } else {
             console.log(' cant update, no market status ')

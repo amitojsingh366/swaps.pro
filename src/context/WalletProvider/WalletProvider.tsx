@@ -443,12 +443,20 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
             try{
               //buildSwap
-              let swapBuilt = await state.pioneer.buildSwap(state.invocationId)
+              let swapBuilt = await state.pioneer.sign(state.invocationId)
               console.log("swapBuilt: ",swapBuilt)
-
+              //get txid
+              let payload = {
+                noBroadcast:false,
+                sync:false,
+                invocationId:state.invocationId
+              }
               //executeSwap
-              let executionResp = await state.pioneer.swapExecute(state.invocationId)
+              let executionResp = await state.pioneer.broadcast(payload)
               console.log("executionResp: ",executionResp)
+
+              //TODO update state
+              //TODO update txid of send
 
             }catch(e){
               //TODO delete invocation?

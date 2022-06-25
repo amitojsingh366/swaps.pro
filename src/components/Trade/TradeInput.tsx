@@ -91,6 +91,9 @@ export const TradeInput = ({ history }: RouterProps) => {
     if(state?.invocation?.state === 'created'){
       history.push('/trade/confirm')
     }
+    if(state?.invocation?.state === 'broadcasted'){
+      history.push('/trade/status')
+    }
   }
 
   useEffect(() => {
@@ -118,18 +121,18 @@ export const TradeInput = ({ history }: RouterProps) => {
       <div>
         <small>buyAsset: {getValues('buyAsset.currency.symbol')} amount: {getValues('buyAsset.amount')}</small>
       </div>
+      {/*<Button*/}
+      {/*    size='lg'*/}
+      {/*    width='full'*/}
+      {/*    colorScheme='green'*/}
+      {/*    onClick={() => onClear()}*/}
+      {/*>*/}
+      {/*  Clear*/}
+      {/*</Button>*/}
       <Button
-          size='lg'
-          width='full'
-          colorScheme='green'
-          onClick={() => onClear()}
-      >
-        Clear
-      </Button>
-      <Button
-          size='lg'
-          width='full'
-          colorScheme='green'
+          // size='lg'
+          // width='full'
+          colorScheme='yellow'
           onClick={() => onUpdate()}
       >
         update

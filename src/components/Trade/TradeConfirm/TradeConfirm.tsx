@@ -23,9 +23,23 @@ export const TradeConfirm = ({ history }: RouterProps) => {
       console.log("currentSellAsset: ",currentSellAsset)
       console.log("onSubmit: ",currentBuyAsset)
 
+      //TODO show *Look down at keepkey icon!
+
       //submit transaction
-      let result = await buildTransaction(currentSellAsset,currentBuyAsset)
-      console.log("result:  ",result)
+      let swapBuilt = await state.pioneer.sign(state.invocation.invocationId)
+      console.log("swapBuilt: ",swapBuilt)
+      //get txid
+      let payload = {
+        noBroadcast:false,
+        sync:false,
+        invocationId:state.invocation.invocationId
+      }
+      //executeSwap
+      let executionResp = await state.pioneer.broadcast(payload)
+      console.log("executionResp: ",executionResp)
+
+      //TODO update txid
+
       history.push('/trade/status')
     }catch(e){
       console.error(e)
@@ -82,15 +96,12 @@ export const TradeConfirm = ({ history }: RouterProps) => {
             </Row>
             <Row>
               <HelperToolTip label='Hops are how many transactions are needed to complete the swap'>
-              <Row.Label>hops: {state.invocation.invocation.route.result.swaps.length}</Row.Label>
+              <Row.Label>hops: {state.invocation.invocation.tx.swaps.length}</Row.Label>
               </HelperToolTip>
             </Row>
             <Row>
-            {state.invocation.invocation.route.result.swaps.map((value, i) => {
+            {state.invocation.invocation.tx.swaps.map((value:any, i:any) => {
               return <>
-                <HelperToolTip label='protocol used to complete the swap'>
-                  <Row.Label>swap:{i}</Row.Label>
-                </HelperToolTip>
                 <HelperToolTip label='protocol used to complete the swap'>
                   <Row.Label>swapperId:</Row.Label>
                   <Box textAlign='right'>
