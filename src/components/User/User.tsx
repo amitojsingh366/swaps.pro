@@ -15,6 +15,7 @@ import {
     TabPanels,
     Tabs, Text
 } from "@chakra-ui/react";
+import {Link} from "react-router-dom";
 import {ArrowBackIcon} from "@chakra-ui/icons";
 import {AssetToAsset} from "../Trade/TradeStatus/AssetToAsset";
 import {Page} from "../Layout/Page";
@@ -22,7 +23,7 @@ import {HelperToolTip} from "../HelperTooltip";
 import {Row} from "../Row";
 
 export const User = () => {
-    const { username, state, dispatch, updateInvocation } = useWallet()
+    const { username, state, dispatch, updateInvocation, setRoutePath } = useWallet()
     console.log("pioneer.username: ",username)
 
     const deleteInvocation =  async function (invocationId:any) {
@@ -37,9 +38,8 @@ export const User = () => {
         let invocation = await state.pioneer.getInvocation(invocationId)
         console.log("setting invocation: ",invocation)
         dispatch({ type: 'SET_INVOCATION', payload: invocation })
-
+        setRoutePath('/swap')
         //navigate to invocation
-
     }
 
     if(state.pioneer){
@@ -89,6 +89,7 @@ export const User = () => {
                                         size='sm'
                                         mt={1}
                                         width='100px'
+                                        Link to="/swap"
                                         onClick={() => setInvocationContext(invocation.invocationId)}
                                     >
                                     <small>load invocation</small>

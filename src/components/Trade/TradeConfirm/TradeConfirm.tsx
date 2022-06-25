@@ -35,6 +35,9 @@ export const TradeConfirm = ({ history }: RouterProps) => {
   return (
     <SlideTransition>
       <Card variant='unstyled'>
+        <div>
+          <h3>Review Transaction:</h3>
+        </div>
         <Card.Header px={0} pt={0}>
           <SimpleGrid gridTemplateColumns='25px 1fr 25px' alignItems='center' mx={-2}>
             <IconButton
@@ -45,8 +48,11 @@ export const TradeConfirm = ({ history }: RouterProps) => {
               isRound
               onClick={() => history.push('/trade/input')}
             />
+
             {/*<Card.Heading textAlign='center'>Confirm Trade</Card.Heading>*/}
-            <Card.Heading textAlign='center'>invocation: {state.invocation.invocationId}</Card.Heading>
+            <small>
+              <Card.Heading textAlign='center'>invocation: {state.invocation.invocationId}</Card.Heading>
+            </small>
           </SimpleGrid>
           <AssetToAsset
             buyAsset={{
@@ -66,6 +72,9 @@ export const TradeConfirm = ({ history }: RouterProps) => {
         <Card.Body pb={0} px={0}>
           <Stack spacing={4}>
             <Row>
+              <Row.Label>status:{state.invocation.state}</Row.Label>
+            </Row>
+            <Row>
               <Row.Label>type:{state.invocation.invocation.type}</Row.Label>
             </Row>
             <Row>
@@ -77,10 +86,6 @@ export const TradeConfirm = ({ history }: RouterProps) => {
               </HelperToolTip>
             </Row>
             <Row>
-              <HelperToolTip label='Hops are how many transactions are needed to complete the swap'>
-                <Row.Label>swapperId:{state.invocation.invocation.route.result.swaps[0].swapperId}</Row.Label>
-              </HelperToolTip>
-            </Row>
             {state.invocation.invocation.route.result.swaps.map((value, i) => {
               return <>
                 <HelperToolTip label='protocol used to complete the swap'>
@@ -93,17 +98,22 @@ export const TradeConfirm = ({ history }: RouterProps) => {
                     <Text color='gray.500'>{value.swapperId}</Text>
                   </Box>
                 </HelperToolTip>
-                <HelperToolTip label='protocol used to complete the swap'>
-                  <Row.Label>time avg:{value.timeStat.avg}</Row.Label>
-                </HelperToolTip>
-                <HelperToolTip label='protocol used to complete the swap'>
-                  <Row.Label>time min:{value.timeStat.min}</Row.Label>
-                </HelperToolTip>
-                <HelperToolTip label='protocol used to complete the swap'>
-                  <Row.Label>time min:{value.timeStat.max}</Row.Label>
-                </HelperToolTip>
+                {/*<HelperToolTip label='protocol used to complete the swap'>*/}
+                {/*  <Row.Label>time avg:{value.timeStat.avg}</Row.Label>*/}
+                {/*</HelperToolTip>*/}
+                {/*<HelperToolTip label='protocol used to complete the swap'>*/}
+                {/*  <Row.Label>time min:{value.timeStat.min}</Row.Label>*/}
+                {/*</HelperToolTip>*/}
+                {/*<HelperToolTip label='protocol used to complete the swap'>*/}
+                {/*  <Row.Label>time min:{value.timeStat.max}</Row.Label>*/}
+                {/*</HelperToolTip>*/}
               </>
             })}
+            </Row>
+
+            <Row>
+
+            </Row>
 
             {/*{state.invocation.invocation.route.result.swaps.map((swap:any, i:any){*/}
             {/*    <>*/}
@@ -115,27 +125,31 @@ export const TradeConfirm = ({ history }: RouterProps) => {
             {/*      </HelperToolTip>*/}
             {/*    </>*/}
             {/*})}*/}
-            <Row>
-              <HelperToolTip label='This is the rate'>
-                <Row.Label>Rate:</Row.Label>
-              </HelperToolTip>
-              <Box textAlign='right'>
-                <Text>1 ETH = 3,557.29 USDC</Text>
-                <Text color='gray.500'>@0x</Text>
-              </Box>
-            </Row>
-            <Row>
-              <HelperToolTip label='This is the Miner Fee'>
-                <Row.Label>Miner Fee</Row.Label>
-              </HelperToolTip>
-              <Row.Value>$67.77</Row.Value>
-            </Row>
-            <Row>
-              <HelperToolTip label='This is the Miner Fee'>
-                <Row.Label>Swap Fee</Row.Label>
-              </HelperToolTip>
-              <Row.Value>$0.00</Row.Value>
-            </Row>
+
+            {/*<Row>*/}
+            {/*  <HelperToolTip label='This is the rate'>*/}
+            {/*    <Row.Label>Rate:</Row.Label>*/}
+            {/*  </HelperToolTip>*/}
+            {/*  <Box textAlign='right'>*/}
+            {/*    <Text>1 ETH = 3,557.29 USDC</Text>*/}
+            {/*    <Text color='gray.500'>@0x</Text>*/}
+            {/*  </Box>*/}
+            {/*</Row>*/}
+
+            {/*<Row>*/}
+            {/*  <HelperToolTip label='This is the Miner Fee'>*/}
+            {/*    <Row.Label>Miner Fee</Row.Label>*/}
+            {/*  </HelperToolTip>*/}
+            {/*  <Row.Value>$67.77</Row.Value>*/}
+            {/*</Row>*/}
+
+            {/*<Row>*/}
+            {/*  <HelperToolTip label='This is the Miner Fee'>*/}
+            {/*    <Row.Label>Swap Fee</Row.Label>*/}
+            {/*  </HelperToolTip>*/}
+            {/*  <Row.Value>$0.00</Row.Value>*/}
+            {/*</Row>*/}
+
           </Stack>
         </Card.Body>
         <Card.Footer px={0} py={0}>
@@ -146,7 +160,7 @@ export const TradeConfirm = ({ history }: RouterProps) => {
             mt={6}
             onClick={onSubmit}
           >
-            Confirm and Trade
+            Confirm and Sign Transaction
           </Button>
         </Card.Footer>
       </Card>

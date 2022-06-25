@@ -88,9 +88,13 @@ export const TradeInput = ({ history }: RouterProps) => {
     //Open Select modal.
     updateInvocation()
     update()
+    if(state?.invocation?.state === 'created'){
+      history.push('/trade/confirm')
+    }
   }
 
   useEffect(() => {
+    onUpdate()
     update()
   }, [balances, assetContext, tradeOutput])
 
