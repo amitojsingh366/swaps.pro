@@ -12,7 +12,7 @@ COPY package.json /usr/src/app/
 
 COPY . /usr/src/app
 
-RUN npm install --force
+RUN npm install
 RUN npm run build
 
 ENV NODE_ENV docker
