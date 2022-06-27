@@ -36,7 +36,6 @@
     "@shapeshiftoss/hdwallet-core": "^1.22.0",
     "@shapeshiftoss/hdwallet-keepkey-webusb": "^1.22.0",
     "@shapeshiftoss/hdwallet-native": "^1.22.0",
-    "@shapeshiftoss/market-service": "^4.2.2",
     "@types/uuid": "^8.3.4",
     "allsettled-polyfill": "^1.0.4",
     "axios": "^0.21.1",
