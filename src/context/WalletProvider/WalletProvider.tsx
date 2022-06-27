@@ -32,7 +32,6 @@ import { SUPPORTED_WALLETS } from './config'
 import { WalletViewsRouter } from './WalletViewsRouter'
 import * as keepkeyWebUSB from "@shapeshiftoss/hdwallet-keepkey-webusb";
 import {v4 as uuidv4} from "uuid";
-const Datastore = require('nedb-promises')
 import { SDK } from '@pioneer-sdk/sdk'
 import * as core from "@shapeshiftoss/hdwallet-core";
 
@@ -359,9 +358,6 @@ const WalletContext = createContext<IWalletContext | null>(null)
 let isPioneerStarted: boolean = false
 // const pioneer = new PioneerService()
 let onboard: OnboardAPI
-
-let db = Datastore.create('/path/to/db.db')
-db.ensureIndex({fieldName:"test"})
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, initialState)
