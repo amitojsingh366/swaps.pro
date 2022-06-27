@@ -1,6 +1,6 @@
 
 import {FormProvider, useForm, useFormContext} from 'react-hook-form'
-import { MemoryRouter, Route, Switch } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
 import { entries, TradeRoutes } from './TradeRoutes'
 import { useWallet } from "../../context/WalletProvider/WalletProvider";
@@ -37,9 +37,9 @@ export const Trade = (exchange:any) => {
   return (
     <FormProvider {...methods}>
       <MemoryRouter initialEntries={entries}>
-        <Switch>
+        <Routes>
           <Route path='/' component={TradeRoutes}/>
-        </Switch>
+        </Routes>
       </MemoryRouter>
     </FormProvider>
   )

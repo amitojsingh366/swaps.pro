@@ -2,7 +2,7 @@ import {ModalBody, ModalHeader, Stack, Button, Image, useClipboard, ModalContent
 import { RawText } from 'components/Text'
 import {useWallet, WalletProvider} from 'context/WalletProvider/WalletProvider'
 import React, {useEffect} from 'react'
-import {MemoryRouter, Route, Switch} from "react-router-dom";
+import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {Form} from "./Form";
 
 export const entries = ['/send/details', '/send/confirm']
@@ -20,11 +20,11 @@ export const Send = ({ }: any) => {
             <ModalHeader>Send Monies</ModalHeader>
             <ModalBody>
                 <MemoryRouter initialEntries={entries}>
-                    <Switch>
+                    <Routes>
                         <WalletProvider>
                             <Route path='/' component={Form} />
                         </WalletProvider>
-                    </Switch>
+                    </Routes>
                 </MemoryRouter>
             </ModalBody>
         </>

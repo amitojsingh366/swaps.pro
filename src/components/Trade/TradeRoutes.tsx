@@ -1,7 +1,7 @@
 import { SwapCurrency } from '@shapeshiftoss/market-service'
 import { AnimatePresence } from 'framer-motion'
 import { useFormContext } from 'react-hook-form'
-import { Redirect, Route, RouteProps, Switch, useHistory, useLocation } from 'react-router-dom'
+import { Navigate, Route, RouteProps, Routes, useNavigate, useLocation } from 'react-router-dom'
 
 import { TradeStatus } from './TradeStatus/TradeStatus'
 import { TradeConfirm } from './TradeConfirm/TradeConfirm'
@@ -12,7 +12,7 @@ export const entries = ['/send/details', '/send/confirm']
 
 export const TradeRoutes = () => {
   const location = useLocation()
-  const history = useHistory()
+  const history = useNavigate()
   const { setValue } = useFormContext()
   const handleSellClick = (asset: SwapCurrency) => {
     console.log("handleSellClick: ")
@@ -26,7 +26,7 @@ export const TradeRoutes = () => {
   }
   return (
     <AnimatePresence exitBeforeEnter initial={false}>
-      <Switch location={location} key={location.key}>
+      <Routes location={location} key={location.key}>
         <Route
           path='/trade/select/sell'
           component={(props: RouteProps) => <SelectAsset onClick={handleSellClick} {...props} />}
@@ -38,8 +38,8 @@ export const TradeRoutes = () => {
         <Route path='/trade/input' component={TradeInput} />
         <Route path='/trade/confirm' component={TradeConfirm} />
         <Route path='/trade/status' component={TradeStatus} />
-        <Redirect from='/' to='/trade/input' />
-      </Switch>
+        <Navigate from='/' to='/trade/input' />
+      </Routes>
     </AnimatePresence>
   )
 }

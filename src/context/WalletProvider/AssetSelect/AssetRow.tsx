@@ -1,13 +1,13 @@
 import { Box, Button, Text, useColorModeValue } from '@chakra-ui/react'
 // import { SwapCurrency } from '@shapeshiftoss/market-service'
 import { AssetIcon } from 'components/AssetIcon'
-import { useRouteMatch } from 'react-router-dom'
+import { useMatch } from 'react-router-dom'
 import { ListChildComponentProps } from 'react-window'
 
 export const AssetRow: React.FC<ListChildComponentProps> = ({ data, index, style }) => {
   const token: any = data.items[index]
   const { handleClick } = data
-  const match = useRouteMatch<{ address: string }>()
+  const match = useMatch<{ address: string }>()
   const active = match?.params?.address === token?.address || false
 
   return (

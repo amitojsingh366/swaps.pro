@@ -10,7 +10,7 @@ import {
 import { SlideTransition } from 'components/SlideTransition'
 import { AnimatePresence } from 'framer-motion'
 import React, { useEffect } from 'react'
-import { Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-router-dom'
+import { Route, Routes, useNavigate, useLocation, useMatch } from 'react-router-dom'
 
 import { SUPPORTED_WALLETS } from './config'
 import { WalletSelectModal } from './WalletSelectModal'
@@ -23,9 +23,9 @@ import { Send } from './Send/Send'
 import { Receive } from './Receive/Receive'
 
 export const WalletViewsSwitch = (props: WalletViewProps) => {
-  const history = useHistory()
+  const history = useNavigate()
   const location = useLocation()
-  const match = useRouteMatch('/')
+  const match = useMatch('/')
   const { dispatch, setRoutePath } = useWallet()
 
   const onClose = () => {
@@ -65,7 +65,7 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
           </Flex>
           <AnimatePresence exitBeforeEnter initial={false}>
             <SlideTransition key={location.key}>
-              <Switch key={location.pathname} location={location}>
+              <Routes key={location.pathname} location={location}>
                 {props?.type &&
                   SUPPORTED_WALLETS[props.type].routes.map((route, index) => {
                     const Component = route.component
@@ -101,7 +101,7 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
                       {...props}
                   />
                 <Route {...props} children={() => <WalletSelectModal connect={props?.connect} />} />
-              </Switch>
+              </Routes>
             </SlideTransition>
           </AnimatePresence>
         </ModalContent>

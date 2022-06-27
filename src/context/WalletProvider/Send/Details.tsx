@@ -21,7 +21,7 @@ import { TokenRow } from 'components/TokenRow/TokenRow'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useTranslate } from 'react-polyglot'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { TxFeeRadioGroup } from './TxFeeRadioGroup'
 import {useWallet} from "context/WalletProvider/WalletProvider";
@@ -30,7 +30,7 @@ export const Details = () => {
   const { state } = useWallet()
   const [fiatInput, setFiatInput] = useState<boolean>(true)
   const translate = useTranslate()
-  const history = useHistory()
+  const history = useNavigate()
   const {
     control,
     getValues,

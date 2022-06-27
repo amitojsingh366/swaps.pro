@@ -13,12 +13,12 @@ import { Row } from 'components/Row'
 import { SlideTransition } from 'components/SlideTransition'
 import { RawText, Text } from 'components/Text'
 import { useFormContext } from 'react-hook-form'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {useWallet} from "context/WalletProvider/WalletProvider";
 import {useEffect} from "react";
 
 export const Confirm = () => {
-  const history = useHistory()
+  const history = useNavigate()
   const { getValues } = useFormContext()
 
   let values = getValues()

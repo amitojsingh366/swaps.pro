@@ -1,12 +1,11 @@
 import { AssetsIcon } from 'components/Icons/Assets'
-import { Earn } from 'components/Icons/Earn'
 import { Layout } from 'components/Layout/Layout'
 import { NotFound } from 'pages/NotFound/NotFound'
 import { Swap } from 'pages/Swap/Swap'
 import { User } from 'pages/User/User'
-import { Invocation } from 'pages/Invocation/Invocation'
+// import { Invocation } from 'pages/Invocation/Invocation'
 import { RepeatIcon } from '@chakra-ui/icons'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Navigate, Route } from 'react-router-dom'
 //RepeatIcon
 
 import { generateAppRoutes, Route as NestedRoute } from './helpers'
@@ -58,8 +57,10 @@ const appRoutes = generateAppRoutes(routes)
 export const Routes = () => {
 
   //TODO loading?
+  // @ts-ignore
   return (
-    <Switch>
+      // @ts-ignore
+    <Routes>
       {appRoutes.map((route, index) => {
         return (
           <Route key={index} path={route.path}>
@@ -67,8 +68,8 @@ export const Routes = () => {
           </Route>
         )
       })}
-      <Redirect from='/' to='/user' />
-      <Route component={NotFound} />
-    </Switch>
+      <Navigate to='/user' />
+      <Route/>
+    </Routes>
   )
 }

@@ -3,11 +3,11 @@
 import { AnimatePresence } from 'framer-motion'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
-  Redirect,
+  Navigate,
   Route,
   RouteComponentProps,
-  Switch,
-  useHistory,
+  Routes,
+  useNavigate,
   useLocation
 } from 'react-router-dom'
 
@@ -32,7 +32,7 @@ type SendInput = {
 
 export const Form = () => {
   const location = useLocation()
-  const history = useHistory()
+  const history = useNavigate()
   // const toast = useToast()
   // const modal = useModal()
 
@@ -79,7 +79,7 @@ export const Form = () => {
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(handleSubmit)}>
         <AnimatePresence exitBeforeEnter initial={false}>
-          <Switch location={location} key={location.key}>
+          <Routes location={location} key={location.key}>
             <Route
               path='/send/select'
               component={(props: RouteComponentProps) => (
@@ -88,8 +88,8 @@ export const Form = () => {
             />
             <Route path='/send/details' component={Details} />
             <Route path='/send/confirm' component={Confirm} />
-            <Redirect exact from='/' to='/send/select' />
-          </Switch>
+            <Navigate exact from='/' to='/send/select' />
+          </Routes>
         </AnimatePresence>
       </form>
     </FormProvider>

@@ -13,7 +13,7 @@ export enum TradeActions {
 
 
 export const Pioneer = () => {
-    const { state, dispatch, WalletActions, setRoutePath } = useWallet()
+    const { state, dispatch } = useWallet()
     const { assetContext, balances, tradeOutput, status, pioneer } = state
     const {
         setValue,
@@ -187,13 +187,13 @@ export const Pioneer = () => {
                         let invocationId = await pioneer.build(tx)
 
                         //SET_INVOCATION_ID
-                        dispatch({ type: 'SET_INVOCATION_ID', payload:invocationId })
+                        dispatch({context: undefined, type: 'SET_INVOCATION_ID', payload:invocationId })
                         //TODO context is wallet?
                         setValue('invocationContext',invocationId)
                         setValue('invocationId',invocationId)
 
                         let invocation = await state.pioneer.getInvocation(invocationId)
-                        dispatch({ type: 'SET_INVOCATION', payload: invocation })
+                        dispatch({context: undefined, type: 'SET_INVOCATION', payload: invocation })
                         console.log("invocation: ",invocation)
                         //Set outAmount
                         setValue('buyAsset.amount',invocation.invocation.tx.amountOut)
