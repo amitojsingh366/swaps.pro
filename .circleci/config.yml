@@ -62,11 +62,9 @@ workflows:
   build-master:
     jobs:
       - build:
-          <<: *only_master
           name: push image
           env: prod
       - deploy:
-          <<: *only_master
           name: deploy image
           env: prod
           requires:
