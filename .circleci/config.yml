@@ -16,6 +16,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
+          version: 19.03.13
           docker_layer_caching: true
       - run:
           command: "curl -sL https://github.com/digitalocean/doctl/releases/download/v1.56.0/doctl-1.56.0-linux-amd64.tar.gz | tar -xzv"
