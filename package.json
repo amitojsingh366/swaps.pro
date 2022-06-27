@@ -30,7 +30,7 @@
     "@keplr-wallet/unit": "^0.9.0-alpha.14",
     "@pioneer-platform/pioneer-coins": "^8.1.37",
     "@pioneer-platform/pioneer-types": "^8.1.32",
-    "@pioneer-sdk/sdk": "1.0.12",
+    "@pioneer-sdk/sdk": "^1.0.12",
     "@pioneer-sdk/tx-builder": "^0.0.11",
     "@reduxjs/toolkit": "^1.6.1",
     "@shapeshiftoss/hdwallet-core": "^1.22.0",

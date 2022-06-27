@@ -12,8 +12,8 @@ COPY package.json /usr/src/app/
 
 COPY . /usr/src/app
 
-RUN npm install --force
-#RUN npm run build
+RUN npm install --force --max-old-space-size=4096
+RUN npm run build --max-old-space-size=4096
 
 ENV NODE_ENV docker
 

@@ -3341,7 +3341,7 @@
     ts-node "^8.10.2"
     typescript "^3.9.5"
 
-"@pioneer-sdk/sdk@1.0.12":
+"@pioneer-sdk/sdk@^1.0.12":
   version "1.0.12"
   resolved "https://registry.yarnpkg.com/@pioneer-sdk/sdk/-/sdk-1.0.12.tgz#cbabfe76e90a4a447e2a1db596a0efdab1a72709"
   integrity sha512-Z06Oce9fnxEYqt/nFobGiCaTPFaHEqFlKGdahI6M5DFFYsvrkNv7pS3WiSWbECjCgl3+WCH6dXlsP+JjgXzdYA==
