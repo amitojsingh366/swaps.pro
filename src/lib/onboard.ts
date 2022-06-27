@@ -1,5 +1,5 @@
-import Onboard from 'bnc-onboard'
-import { Subscriptions } from 'bnc-onboard/dist/src/interfaces'
+// import Onboard from 'bnc-onboard'
+// import { Subscriptions } from 'bnc-onboard/dist/src/interfaces'
 import { Web3Provider } from '@ethersproject/providers'
 
 const POLLING_INTERVAL = 15000
@@ -98,19 +98,20 @@ const walletCheck = [
   { checkName: 'network' }
 ]
 
-export function initOnboard(subscriptions: Subscriptions, networkId: number) {
-  return Onboard({
-    networkId,
-    darkMode:true,
-    hideBranding: true,
-    blockPollingInterval: POLLING_INTERVAL,
-    walletSelect: {
-      wallets: wallets,
-      agreement: {
-        version: '1.0'
-      }
-    },
-    walletCheck,
-    subscriptions
-  })
+export function initOnboard(subscriptions: any, networkId: number) {
+  return true
+  // return Onboard({
+  //   networkId,
+  //   darkMode:true,
+  //   hideBranding: true,
+  //   blockPollingInterval: POLLING_INTERVAL,
+  //   walletSelect: {
+  //     wallets: wallets,
+  //     agreement: {
+  //       version: '1.0'
+  //     }
+  //   },
+  //   walletCheck,
+  //   subscriptions
+  // })
 }

@@ -40,7 +40,6 @@
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.1",
     "bip39": "^3.0.4",
-    "bnc-onboard": "1.38.3",
     "crypto-js": "^4.1.1",
     "cypress-dark": "^1.8.0",
     "dayjs": "^1.10.6",

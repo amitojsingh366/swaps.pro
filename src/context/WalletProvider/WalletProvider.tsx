@@ -14,7 +14,7 @@
  */
 import { Keyring } from '@shapeshiftoss/hdwallet-core'
 import { Web3Provider } from '@ethersproject/providers'
-import { API as OnboardAPI, Wallet } from 'bnc-onboard/dist/src/interfaces'
+// import { API as OnboardAPI, Wallet } from 'bnc-onboard/dist/src/interfaces'
 import { getLibrary, initOnboard } from 'lib/onboard'
 import KEEPKEY_ICON from 'assets/png/keepkey.png'
 // import { PioneerService } from './Pioneer'
@@ -95,11 +95,11 @@ export interface InitialState {
   status: any
   isInitPioneer: boolean | null
   isInitOnboard: boolean | null
-  onboard: OnboardAPI | null
+  onboard: any | null
   account: string | null
   provider: Web3Provider | null
   blockNumber: number | null
-  wallet: Wallet | null
+  wallet: any | null
   balances: any | null
   active: boolean
   adapters: Record<string, unknown> | null
@@ -224,11 +224,11 @@ export type ActionTypes =
   | { type: WalletActions.SET_OUTPUT_WALLET; payload: any }
   | { type: WalletActions.SET_SELECT_MODAL_TYPE; payload: string }
   | { type: WalletActions.SET_SELECT_MODAL; payload: boolean }
-  | { type: WalletActions.SET_ONBOARD; payload: OnboardAPI }
+  | { type: WalletActions.SET_ONBOARD; payload: any }
   | { type: WalletActions.SET_BLOCK_NUMBER; payload: number | null }
   | { type: WalletActions.SET_ACCOUNT; payload: string }
   | { type: WalletActions.SET_PROVIDER; payload: Web3Provider }
-  | { type: WalletActions.SET_WALLET; payload: Wallet }
+  | { type: WalletActions.SET_WALLET; payload: any }
   | { type: WalletActions.SET_BALANCES; payload: any }
   | { type: WalletActions.SET_ACTIVE; payload: boolean }
   | { type: WalletActions.SET_TOTAL_VALUE_USD; payload: string }
@@ -357,7 +357,7 @@ const reducer = (state: InitialState, action: ActionTypes) => {
 const WalletContext = createContext<IWalletContext | null>(null)
 let isPioneerStarted: boolean = false
 // const pioneer = new PioneerService()
-let onboard: OnboardAPI
+let onboard: any
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, initialState)
