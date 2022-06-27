@@ -3341,10 +3341,10 @@
     ts-node "^8.10.2"
     typescript "^3.9.5"
 
-"@pioneer-sdk/sdk@1.0.10":
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/@pioneer-sdk/sdk/-/sdk-1.0.10.tgz#a78b3384a295cd9448eebc5651de407e827ace7b"
-  integrity sha512-5ZT1wjxY5uN5xJYsGydRKzhfHqrkbDSd7OYRwR5J7ARkN70xLV8hN6H0dMe8ZNOb7VDCgFEK/5+6Fa2NyCbYAA==
+"@pioneer-sdk/sdk@1.0.12":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@pioneer-sdk/sdk/-/sdk-1.0.12.tgz#cbabfe76e90a4a447e2a1db596a0efdab1a72709"
+  integrity sha512-Z06Oce9fnxEYqt/nFobGiCaTPFaHEqFlKGdahI6M5DFFYsvrkNv7pS3WiSWbECjCgl3+WCH6dXlsP+JjgXzdYA==
   dependencies:
     "@pioneer-platform/pioneer-client" "^8.1.24"
     "@pioneer-platform/pioneer-coins" "^8.1.44"

@@ -178,27 +178,34 @@ export const Pioneer = () => {
                     }
                     console.log("HOOK: swap",swap)
                     //TODO
-                    console.log("pioneer: ",pioneer)
-                    if(pioneer) {
+                    console.log("pioneer: ",state.pioneer)
+                    if(state.pioneer) {
                         let tx = {
                             type:'swap',
                             payload:swap
                         }
-                        let invocationId = await pioneer.build(tx)
+                        let invocationId = await state.pioneer.build(tx)
+                        if(invocationId){
+                            //SET_INVOCATION_ID
+                            dispatch({ type: 'SET_INVOCATION_ID', payload:invocationId })
+                            //TODO context is wallet?
+                            setValue('invocationContext',invocationId)
+                            setValue('invocationId',invocationId)
 
-                        //SET_INVOCATION_ID
-                        dispatch({ type: 'SET_INVOCATION_ID', payload:invocationId })
-                        //TODO context is wallet?
-                        setValue('invocationContext',invocationId)
-                        setValue('invocationId',invocationId)
+                            let invocation = await state.pioneer.getInvocation(invocationId)
+                            if(invocation){
+                                dispatch({ type: 'SET_INVOCATION', payload: invocation })
+                                console.log("invocation: ",invocation)
+                                //Set outAmount
+                                setValue('buyAsset.amount',invocation.invocation.tx.amountOut)
+                                console.log("quote.amountOut: ",invocation.invocation.tx.amountOut)
+                                setValue('buyAsset.amount',invocation.invocation.tx.amountOut)
+                            } else {
+                                console.error("Failed to get invocation!")
+                            }
 
-                        let invocation = await state.pioneer.getInvocation(invocationId)
-                        dispatch({ type: 'SET_INVOCATION', payload: invocation })
-                        console.log("invocation: ",invocation)
-                        //Set outAmount
-                        setValue('buyAsset.amount',invocation.invocation.tx.amountOut)
-                        console.log("quote.amountOut: ",invocation.invocation.tx.amountOut)
-                        setValue('buyAsset.amount',invocation.invocation.tx.amountOut)
+                        }
+
                     } else {
                         console.log("Pioneer not set into state!")
                     }
@@ -212,8 +219,11 @@ export const Pioneer = () => {
                 setValue('invocationId',state.invocationId)
 
                 let invocation = await state.pioneer.getInvocation(state.invocationId)
-                dispatch({ type: 'SET_INVOCATION', payload: invocation })
-                console.log("invocation: ",invocation)
+                if(invocation){
+                    dispatch({ type: 'SET_INVOCATION', payload: invocation })
+                    console.log("invocation: ",invocation)
+                }
+
 
                 // let amountOut = invocation?.invocation?.route?.result?.outputAmount
                 // console.log("amountOut: ",amountOut)
