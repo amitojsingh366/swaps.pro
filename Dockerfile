@@ -3,7 +3,7 @@ FROM node:16
 ARG NPM_TOKEN
 ARG NODE_ENV
 
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils libusb-1.0-0-dev libudev-dev
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
