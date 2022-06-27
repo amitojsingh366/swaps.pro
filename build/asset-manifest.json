@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.js": "/static/js/main.be55e595.chunk.js",
+    "main.js.map": "/static/js/main.be55e595.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.4662f581.js",
+    "runtime-main.js.map": "/static/js/runtime-main.4662f581.js.map",
+    "static/js/2.4d5e6ce4.chunk.js": "/static/js/2.4d5e6ce4.chunk.js",
+    "static/js/2.4d5e6ce4.chunk.js.map": "/static/js/2.4d5e6ce4.chunk.js.map",
+    "static/js/3.cb33eea7.chunk.js": "/static/js/3.cb33eea7.chunk.js",
+    "static/js/3.cb33eea7.chunk.js.map": "/static/js/3.cb33eea7.chunk.js.map",
+    "index.html": "/index.html",
+    "static/js/2.4d5e6ce4.chunk.js.LICENSE.txt": "/static/js/2.4d5e6ce4.chunk.js.LICENSE.txt",
+    "static/media/keepkey.d065e4a0.png": "/static/media/keepkey.d065e4a0.png",
+    "static/media/keplr.7984c701.png": "/static/media/keplr.7984c701.png",
+    "static/media/thorfox.fcdafd23.webp": "/static/media/thorfox.fcdafd23.webp"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.4662f581.js",
+    "static/js/2.4d5e6ce4.chunk.js",
+    "static/js/main.be55e595.chunk.js"
+  ]
+}
