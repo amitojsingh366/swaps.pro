@@ -170,8 +170,8 @@ export const Pioneer = () => {
                             asset:symbolIn,
                         },
                         output:{
-                            blockchain:blockchainOut,
-                            asset:symbolOut,
+                            blockchain:"bitcoin",
+                            asset:"BTC",
                         },
                         amount:currentSellAsset.amount,
                         noBroadcast:true
