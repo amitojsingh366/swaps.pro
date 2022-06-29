@@ -764,7 +764,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           service: process.env.REACT_APP_PIONEER_SERVICE || 'swaps.pro',
           url: process.env.REACT_APP_APP_URL,
           wss: process.env.REACT_APP_URL_PIONEER_SOCKET,
-          spec: process.env.REACT_APP_URL_PIONEER_SPEC
+          spec: process.env.REACT_APP_URL_PIONEER_SPEC,
+          paths:[]
         }
         console.log("config: ",config)
 

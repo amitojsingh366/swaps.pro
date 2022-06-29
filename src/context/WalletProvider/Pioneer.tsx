@@ -269,7 +269,8 @@ export class PioneerService {
         url: process.env.REACT_APP_APP_URL,
         queryKey: this.queryKey,
         wss: process.env.REACT_APP_URL_PIONEER_SOCKET,
-        spec: process.env.REACT_APP_URL_PIONEER_SPEC
+        spec: process.env.REACT_APP_URL_PIONEER_SPEC,
+        paths:[] //TODO allow import custom paths
       }
       console.log("config: ",config)
       this.App = new SDK(config.spec, config)
