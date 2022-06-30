@@ -43,12 +43,12 @@ export const HeaderContent = ({ route }: { route: Route }) => {
             </div>
           ))}
           <Image
-              boxSize='24px'
-              loading='lazy'
-              // showBorder={false}
-              objectFit='contain'
-              bg='transparent'
-              src={SWAPS_ICON}
+            boxSize='24px'
+            loading='lazy'
+            // showBorder={false}
+            objectFit='contain'
+            bg='transparent'
+            src={SWAPS_ICON}
           /><h3>swaps.pro</h3>
         </Box>
         <FoxIcon

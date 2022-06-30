@@ -1,7 +1,7 @@
 
-import {FormProvider, useForm, useFormContext} from 'react-hook-form'
-import {useWallet, WalletActions} from "../../context/WalletProvider/WalletProvider";
-import {Card} from "../Card";
+import { FormProvider, useForm, useFormContext } from 'react-hook-form'
+import { useWallet, WalletActions } from "../../context/WalletProvider/WalletProvider";
+import { Card } from "../Card";
 import {
     Box,
     Button,
@@ -15,36 +15,30 @@ import {
     TabPanels,
     Tabs, Text
 } from "@chakra-ui/react";
-import {Link} from "react-router-dom";
-import {ArrowBackIcon} from "@chakra-ui/icons";
-import {AssetToAsset} from "../Trade/TradeStatus/AssetToAsset";
-import {Page} from "../Layout/Page";
-import {HelperToolTip} from "../HelperTooltip";
-import {Row} from "../Row";
+import { Link, useHistory } from "react-router-dom";
+import { ArrowBackIcon } from "@chakra-ui/icons";
+import { AssetToAsset } from "../Trade/TradeStatus/AssetToAsset";
+import { Page } from "../Layout/Page";
+import { HelperToolTip } from "../HelperTooltip";
+import { Row } from "../Row";
 
 export const User = () => {
     const { username, state, dispatch, updateInvocation, setRoutePath } = useWallet()
-    console.log("pioneer.username: ",username)
-
-    const deleteInvocation =  async function (invocationId:any) {
-        console.log("deleting invocation: ",invocationId)
+    console.log("pioneer.username: ", username)
+    const history = useHistory()
+    const deleteInvocation = async function (invocationId: any) {
+        console.log("deleting invocation: ", invocationId)
         let result = await state.pioneer.deleteInvocation(invocationId)
-        console.log("deleting result: ",result)
+        console.log("deleting result: ", result)
     }
 
-    const setInvocationContext = async function (invocationId:any) {
-        console.log("setting invocation context: ",invocationId)
-        dispatch({ type: 'SET_INVOCATION_ID', payload:invocationId })
-        let invocation = await state.pioneer.getInvocation(invocationId)
-        console.log("setting invocation: ",invocation)
-        dispatch({ type: 'SET_INVOCATION', payload: invocation })
-        setRoutePath('/swap')
-        //navigate to invocation
+    const setInvocationContext = async function (invocationId: any) {
+        history.push(`/status/${invocationId}`)
     }
 
-    if(state.pioneer){
-        console.log("pioneer.username: ",state.pioneer)
-        console.log("pioneer.username: ",state.pioneer.username)
+    if (state.pioneer) {
+        console.log("pioneer.username: ", state.pioneer)
+        console.log("pioneer.username: ", state.pioneer.username)
         return (
             <div>
                 <Card variant='unstyled'>
@@ -56,43 +50,42 @@ export const User = () => {
                     <Divider />
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
-                            <br/>
+                            <br />
                             <small>queryKey: {state.pioneer.queryKey}</small>
                             <small>context: {state.pioneer.context}</small>
-                            <br/>
+                            <br />
                         </Stack>
                     </Card.Body>
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
-                            <br/>
+                            <br />
                             <small>blockchains: {state.pioneer.blockchains.toString()}</small>
-                            <br/>
+                            <br />
                         </Stack>
                     </Card.Body>
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
-                            <br/>
+                            <br />
                             <small>invocations: {state.pioneer.invocations.length}</small>
-                            <br/>
+                            <br />
                         </Stack>
-                        {state.pioneer.invocations.map((invocation:any, i:any) => {
+                        {state.pioneer.invocations.map((invocation: any, i: any) => {
                             return <>
                                 <Stack spacing={1}>
-                                    <br/>
+                                    <br />
                                     <small>invocation: {invocation.invocationId}</small>
                                     <small>state: {invocation.state}</small>
                                     <small>type: {invocation.type}</small>
                                     <small>network: {invocation.network}</small>
-                                    <br/>
+                                    <br />
                                     <Button
                                         colorScheme='blue'
                                         size='sm'
                                         mt={1}
                                         width='100px'
-                                        Link to="/swap"
                                         onClick={() => setInvocationContext(invocation.invocationId)}
                                     >
-                                    <small>load invocation</small>
+                                        <small>load invocation</small>
                                     </Button>
                                     <Button
                                         colorScheme='red'
@@ -111,37 +104,31 @@ export const User = () => {
                     </Card.Body>
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
-                            <br/>
+                            <br />
                             <small>pubkeys: {state.pioneer.pubkeys.toString()}</small>
-                            <br/>
+                            <br />
                         </Stack>
                     </Card.Body>
+
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
-                            <br/>
-                            <small>balances: {state.pioneer.balances.toString()}</small>
-                            <br/>
-                        </Stack>
-                    </Card.Body>
-                    <Card.Body pb={0} px={0}>
-                        <Stack spacing={4}>
-                            <br/>
+                            <br />
                             <small>pubkeys: {state.pioneer.availableInputs.toString()}</small>
-                            <br/>
+                            <br />
                         </Stack>
                     </Card.Body>
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
-                            <br/>
+                            <br />
                             <small>pubkeys: {state.pioneer.availableOutputs.toString()}</small>
-                            <br/>
+                            <br />
                         </Stack>
                     </Card.Body>
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
-                            <br/>
+                            <br />
                             <small>wallets: {state.pioneer.wallets.toString()}</small>
-                            <br/>
+                            <br />
                         </Stack>
                     </Card.Body>
                     <Card.Footer px={0} py={0}>
@@ -149,7 +136,7 @@ export const User = () => {
                             colorScheme='blue'
                             size='lg'
                             mt={6}
-                            // onClick={() => history.push('/trade/input')}
+                        // onClick={() => history.push('/trade/input')}
                         >
 
                         </Button>
@@ -157,7 +144,7 @@ export const User = () => {
                 </Card>
             </div>
         )
-    }else {
+    } else {
         return (
             <Box d='flex' width='full' justifyContent='center' alignItems='center'>
                 <div>
