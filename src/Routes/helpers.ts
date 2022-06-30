@@ -21,6 +21,7 @@ export type Route = {
   parent?: Route | null
   routes?: Omit<Route, 'routes'>[]
   icon?: JSX.Element
+  hidden?: boolean
 }
 
 const combinePaths = (parent: string, child: string): string =>

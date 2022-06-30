@@ -8,7 +8,7 @@ export const NavBar = (props: StackProps) => {
   const translate = useTranslate()
   return (
     <HStack spacing={12} ml='auto' mr='auto' alignSelf='center' {...props}>
-      {routes.map(item => (
+      {routes.filter((r) => r.hidden !== true).map(item => (
         <MainNavLink
           key={item.label}
           icon={item.icon}

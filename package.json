@@ -54,7 +54,7 @@
     "react-device-detect": "^1.17.0",
     "react-dom": "^16.0.2",
     "react-hook-form": "^7.12.2",
-    "react-icons": "^4.2.0",
+    "react-icons": "^4.4.0",
     "react-number-format": "^4.7.3",
     "react-polyglot": "^0.7.2",
     "react-redux": "^7.2.4",

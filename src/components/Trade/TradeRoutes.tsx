@@ -37,7 +37,6 @@ export const TradeRoutes = () => {
         />
         <Route path='/trade/input' component={TradeInput} />
         <Route path='/trade/confirm' component={TradeConfirm} />
-        <Route path='/trade/status' component={TradeStatus} />
         <Redirect from='/' to='/trade/input' />
       </Switch>
     </AnimatePresence>

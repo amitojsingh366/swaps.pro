@@ -7,50 +7,45 @@ import { User } from 'pages/User/User'
 import { Invocation } from 'pages/Invocation/Invocation'
 import { RepeatIcon } from '@chakra-ui/icons'
 import { Redirect, Route, Switch } from 'react-router-dom'
+import { FaWallet, FaCog } from 'react-icons/fa'
 //RepeatIcon
 
 import { generateAppRoutes, Route as NestedRoute } from './helpers'
+import { TradeStatus } from 'components/Trade/TradeStatus/TradeStatus'
+import { Wallet } from 'pages/Wallet/Wallet'
+import { Custom } from 'pages/Custom/Custom'
 
 export const routes: Array<NestedRoute> = [
   {
-    path: '/user',
+    path: '/dashboard',
     label: 'navBar.assets',
     main: <User />,
-    icon: <AssetsIcon color='inherit' />,
-    routes: [
-      {
-        path: '/:network/:address?',
-        label: 'User Details',
-        main: <User />
-      }
-    ]
+    icon: <AssetsIcon color='inherit' />
+  },
+  {
+    path: '/wallet',
+    label: 'navBar.wallet',
+    main: <Wallet />,
+    icon: <FaWallet color='inherit' />
   },
   {
     path: '/swap',
     label: 'navBar.swap',
     main: <Swap />,
-    icon: <RepeatIcon color='inherit' />,
-    routes: [
-      {
-        path: '/:network/:address?',
-        label: 'Asset Details',
-        main: <Swap />
-      }
-    ]
+    icon: <RepeatIcon color='inherit' />
   },
-  // {
-  //   path: '/invocation/:invocationId',
-  //   label: 'navBar.assets',
-  //   main: <Invocation />,
-  //   icon: <RepeatIcon color='inherit' />,
-  //   routes: [
-  //     {
-  //       path: '/:network/:address?',
-  //       label: 'Asset Details',
-  //       main: <Invocation />
-  //     }
-  //   ]
-  // }
+  {
+    path: '/custom',
+    label: 'navBar.swap',
+    main: <Custom />,
+    icon: <FaCog color='inherit' />
+  },
+  {
+    path: '/status/:invocationId',
+    label: 'navBar.status',
+    main: <TradeStatus />,
+    hidden: true
+  }
 ]
 
 const appRoutes = generateAppRoutes(routes)
@@ -67,7 +62,7 @@ export const Routes = () => {
           </Route>
         )
       })}
-      <Redirect from='/' to='/user' />
+      <Redirect from='/' to='/dashboard' />
       <Route component={NotFound} />
     </Switch>
   )

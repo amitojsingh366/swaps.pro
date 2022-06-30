@@ -25,7 +25,9 @@
     "swap": "Swap",
     "earn": "Earn",
     "tradeHistory": "Trade History",
-    "foxToken": "FOX Token"
+    "foxToken": "FOX Token",
+    "staus": "Status",
+    "wallet": "Wallet"
   },
   "transactionRow": {
     "sent": "Sent",
