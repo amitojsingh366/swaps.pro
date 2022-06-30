@@ -1,7 +1,7 @@
 import { ListProps } from '@chakra-ui/react'
 import { Text } from 'components/Text'
-import { useRouteMatch } from 'react-router-dom'
-import AutoSizer from 'react-virtualized-auto-sizer'
+// import { useRouteMatch } from 'react-router-dom'
+// import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 
 import { AssetRow } from './AssetRow'
@@ -12,10 +12,10 @@ type AssetListProps = {
 } & ListProps
 
 export const AssetList = ({ assets, handleClick }: AssetListProps) => {
-  const match = useRouteMatch<{ address: string }>()
+  // const match = useRouteMatch<{ address: string }>()
   console.log("assets: ",assets)
   return (
-    <AutoSizer disableWidth className='auto-sizered'>
+    <div>
       {({ height }) =>
         assets?.length === 0 ? (
           <Text translation='common.noResultsFound' />
@@ -36,6 +36,6 @@ export const AssetList = ({ assets, handleClick }: AssetListProps) => {
           </FixedSizeList>
         )
       }
-    </AutoSizer>
+    </div>
   )
 }
