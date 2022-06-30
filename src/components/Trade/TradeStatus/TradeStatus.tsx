@@ -53,9 +53,25 @@ export const TradeStatus = () => {
     const { invocationContext, fullfillmentTxid, invocationTxid, tradeStatus } = state
     console.log("invocation: ", state.invocation)
 
-    const onUpdate = () => {
+    const onUpdate = async function() {
         //Open Select modal.
         updateInvocation()
+
+        //get txid
+        let payload = {
+            noBroadcast:false,
+            sync:true,
+            invocationId:state.invocationId
+        }
+        try{
+            let resultBroadcast = await state.pioneer.broadcast(payload)
+            console.log("resultBroadcast: ",resultBroadcast)
+        }catch(e){
+            console.error("status page can not broadcast: e: ",e)
+        }
+
+
+
     }
 
     return (
@@ -138,9 +154,9 @@ export const TradeStatus = () => {
                                         {/*        </>*/}
                                         {/*    })}*/}
                                         <small>deposit txid: {state.invocation.signedTx?.txid}</small>
+
                                         {/*<small>is confirmed: {state.invocation.isConfirmed}</small>*/}
                                         {/*<small>is fullfilled: {state.invocation.isFullfilled}</small>*/}
-                                        <small>fullfillmentTxid: {state.invocation.fullfillmentTxid}</small>
                                         <br />
                                         {fullfillmentTxid &&
                                             <small>fullfillment txid: {fullfillmentTxid}</small>
