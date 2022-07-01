@@ -45,67 +45,65 @@ export const WalletViewsSwitch = (props: WalletViewProps) => {
   }, [history, props.routePath, dispatch])
 
   return (
-    <>
-      <Modal isOpen={props.modalOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent justifyContent='center' px={3} pt={3} pb={6}>
-          <Flex justifyContent='space-between' alignItems='center' position='relative'>
-            {!match?.isExact && (
-              <IconButton
-                icon={<ArrowBackIcon />}
-                aria-label='Back'
-                variant='ghost'
-                fontSize='xl'
-                size='sm'
-                isRound
-                onClick={handleBack}
+    <Modal isOpen={props.modalOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent justifyContent='center' px={3} pt={3} pb={6} overflow='scroll' height='75%'>
+        <Flex justifyContent='space-between' alignItems='center' position='relative' >
+          {!match?.isExact && (
+            <IconButton
+              icon={<ArrowBackIcon />}
+              aria-label='Back'
+              variant='ghost'
+              fontSize='xl'
+              size='sm'
+              isRound
+              onClick={handleBack}
+            />
+          )}
+          <ModalCloseButton ml='auto' borderRadius='full' position='static' />
+        </Flex>
+        <AnimatePresence exitBeforeEnter initial={false}>
+          <SlideTransition key={location.key}>
+            <Switch key={location.pathname} location={location}>
+              {props?.type &&
+                SUPPORTED_WALLETS[props.type].routes.map((route, index) => {
+                  const Component = route.component
+                  return !Component ? null : (
+                    <Route
+                      exact
+                      key={index}
+                      path={route.path}
+                      render={routeProps => <Component {...props} {...routeProps} />}
+                      {...props}
+                    />
+                  )
+                })}
+              <Route
+                exact
+                key='selectAsset'
+                path='/AssetSelect/Select'
+                render={routeProps => <Select {...props} {...routeProps} />}
+                {...props}
               />
-            )}
-            <ModalCloseButton ml='auto' borderRadius='full' position='static' />
-          </Flex>
-          <AnimatePresence exitBeforeEnter initial={false}>
-            <SlideTransition key={location.key}>
-              <Switch key={location.pathname} location={location}>
-                {props?.type &&
-                  SUPPORTED_WALLETS[props.type].routes.map((route, index) => {
-                    const Component = route.component
-                    return !Component ? null : (
-                      <Route
-                        exact
-                        key={index}
-                        path={route.path}
-                        render={routeProps => <Component {...props} {...routeProps} />}
-                        {...props}
-                      />
-                    )
-                  })}
-                  <Route
-                      exact
-                      key='selectAsset'
-                      path='/AssetSelect/Select'
-                      render={routeProps => <Select {...props} {...routeProps} />}
-                      {...props}
-                  />
-                  <Route
-                      exact
-                      key='send'
-                      path='/Send/Send'
-                      render={routeProps => <Send {...props} {...routeProps} />}
-                      {...props}
-                  />
-                  <Route
-                      exact
-                      key='receive'
-                      path='/Receive/Receive'
-                      render={routeProps => <Receive {...props} {...routeProps} />}
-                      {...props}
-                  />
-                <Route {...props} children={() => <WalletSelectModal connect={props?.connect} />} />
-              </Switch>
-            </SlideTransition>
-          </AnimatePresence>
-        </ModalContent>
-      </Modal>
-    </>
+              <Route
+                exact
+                key='send'
+                path='/Send/Send'
+                render={routeProps => <Send {...props} {...routeProps} />}
+                {...props}
+              />
+              <Route
+                exact
+                key='receive'
+                path='/Receive/Receive'
+                render={routeProps => <Receive {...props} {...routeProps} />}
+                {...props}
+              />
+              <Route {...props} children={() => <WalletSelectModal connect={props?.connect} />} />
+            </Switch>
+          </SlideTransition>
+        </AnimatePresence>
+      </ModalContent>
+    </Modal>
   )
 }

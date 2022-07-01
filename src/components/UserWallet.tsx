@@ -20,17 +20,17 @@ import {
     TabPanels,
     Tabs, Text
 } from "@chakra-ui/react";
-import { useWallet } from "context/WalletProvider/WalletProvider";
+import { useWallet, WalletActions } from "context/WalletProvider/WalletProvider";
 import { Page } from "./Layout/Page";
 import { useState } from 'react'
-import {Controller, useFormContext} from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import NumberFormat from "react-number-format";
-import {TokenRow} from "./TokenRow/TokenRow";
-import {TokenButton} from "./TokenRow/TokenButton";
-import {ArrowDownIcon} from "@chakra-ui/icons";
-import {HelperToolTip} from "./HelperTooltip";
-import {useLocaleFormatter} from "../hooks/useLocaleFormatter/useLocaleFormatter";
-import {useHistory} from "react-router-dom";
+import { TokenRow } from "./TokenRow/TokenRow";
+import { TokenButton } from "./TokenRow/TokenButton";
+import { ArrowDownIcon } from "@chakra-ui/icons";
+import { HelperToolTip } from "./HelperTooltip";
+import { useLocaleFormatter } from "../hooks/useLocaleFormatter/useLocaleFormatter";
+import { useHistory } from "react-router-dom";
 
 const FiatInput = (props: InputProps) => (
     <Input
@@ -47,7 +47,7 @@ const FiatInput = (props: InputProps) => (
 export const UserWallet = () => {
     const [amountSend, setAmountSend] = useState(0.011)
     const [valueAddress, setValueAddress] = useState("thor1pf....")
-    const { state } = useWallet()
+    const { state, dispatch, setRoutePath } = useWallet()
     const history = useHistory()
     const format = (val: number) => val
     const parse = (val: string) => val.replace(/^\$/, '')
@@ -61,13 +61,14 @@ export const UserWallet = () => {
         console.log("onTextChangeFiat called! (Fiat input)")
     }
 
-    const onSubmit = async function(){
+    const onSubmit = async function () {
+        if (!state.isConnected) return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
         console.log("submited address")
 
 
-        console.log("amountSend: ",amountSend)
-        console.log("svalueAddress: ",valueAddress)
-        console.log("svalueAddress: ",state.assetContext)
+        console.log("amountSend: ", amountSend)
+        console.log("svalueAddress: ", valueAddress)
+        console.log("svalueAddress: ", state.assetContext)
 
         //validate
 
@@ -80,41 +81,41 @@ export const UserWallet = () => {
         // }
 
         let send = {
-            blockchain:"thorchain",
-            asset:"RUNE",
-            address:valueAddress,
-            amount:amountSend,
-            noBroadcast:false
+            blockchain: "thorchain",
+            asset: "RUNE",
+            address: valueAddress,
+            amount: amountSend,
+            noBroadcast: false
         }
 
         let tx = {
-            type:'sendToAddress',
-            payload:send
+            type: 'sendToAddress',
+            payload: send
         }
 
-        console.log("tx: ",tx)
+        console.log("tx: ", tx)
         let invocationId
-        try{
+        try {
             let invocationId = await state.pioneer.build(tx)
-            console.log("invocationId: ",invocationId)
+            console.log("invocationId: ", invocationId)
 
             let resultSign = await state.pioneer.sign(invocationId)
-            console.log("resultSign: ",resultSign)
+            console.log("resultSign: ", resultSign)
 
-            if(resultSign.signedTx){
+            if (resultSign.signedTx) {
                 history.push(`/status/${invocationId}`)
                 //get txid
                 let payload = {
-                    noBroadcast:false,
-                    sync:true,
+                    noBroadcast: false,
+                    sync: true,
                     invocationId
                 }
                 let resultBroadcast = await state.pioneer.broadcast(payload)
-                console.log("resultBroadcast: ",resultBroadcast)
+                console.log("resultBroadcast: ", resultBroadcast)
             }
 
-        }catch(e){
-            console.error("e:",e)
+        } catch (e) {
+            console.error("e:", e)
         }
     }
 
@@ -160,14 +161,17 @@ export const UserWallet = () => {
                             <Divider />
 
                             <small>context: {state.context}</small>
-                            <br/>
+                            <br />
                             <small>asset Selected: RUNE</small>
-                            <br/>
+                            <br />
+
+                            {/* <Button onClick={ }>Change Asset</Button> */}
 
                             <Card.Body pb={0} px={0}>
                                 <Stack spacing={4}>
                                     <br />
                                     {/*<small>balance: {state.balances.filter((e:any) => e.symbol === state.assetContext)[0].balance}</small>*/}
+
                                     <br />
                                 </Stack>
                             </Card.Body>
@@ -184,7 +188,7 @@ export const UserWallet = () => {
                                 <EditableInput />
                             </Editable>
 
-                            <br/>
+                            <br />
                             <h2>amount:</h2>
                             <NumberInput
                                 onChange={(valueString) => setAmountSend(parse(valueString))}
@@ -203,8 +207,8 @@ export const UserWallet = () => {
                                 size='lg'
                                 width='full'
                                 colorScheme='green'
-                                onClick={ () => onSubmit()}
-                                // isDisabled={isDirty || !isValid}
+                                onClick={() => onSubmit()}
+                            // isDisabled={isDirty || !isValid}
                             >
                                 Send
                             </Button>
