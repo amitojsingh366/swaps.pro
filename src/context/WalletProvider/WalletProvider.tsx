@@ -108,7 +108,7 @@ export interface InitialState {
   initialized: boolean
   modal: boolean
   modalSelect: boolean
-  pioneer: any
+  pioneer: SDK | null
   keepkey: any
   keepkeyConnected: boolean
   onboardConnected: boolean
@@ -200,7 +200,7 @@ export type ActionTypes =
   | { type: WalletActions.INIT_PIONEER; payload: boolean }
   | { type: WalletActions.INIT_ONBOARD; payload: boolean }
   | { type: WalletActions.SET_ADAPTERS; payload: Record<string, unknown> }
-  | { type: WalletActions.SET_PIONEER; payload: any | null }
+  | { type: WalletActions.SET_PIONEER; payload: SDK | null }
   | { type: WalletActions.SET_KEEPKEY; payload: any | null }
   | { type: WalletActions.SET_PAIRING_CODE; payload: String | null }
   | { type: WalletActions.SET_USERNAME; payload: String | null }
