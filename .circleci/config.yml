@@ -65,8 +65,8 @@ workflows:
       - build:
           name: push image
           env: prod
-      - deploy:
-          name: deploy image
-          env: prod
-          requires:
-            - push image
+#      - deploy:
+#          name: deploy image
+#          env: prod
+#          requires:
+#            - push image
