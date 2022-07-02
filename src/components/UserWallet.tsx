@@ -48,6 +48,7 @@ export const UserWallet = () => {
     const [amountSend, setAmountSend] = useState(0.011)
     const [valueAddress, setValueAddress] = useState("thor1pf....")
     const { state, dispatch, setRoutePath } = useWallet()
+    const { keepkey } = state
     const history = useHistory()
     const format = (val: number) => val
     const parse = (val: string) => val.replace(/^\$/, '')
@@ -62,7 +63,12 @@ export const UserWallet = () => {
     }
 
     const onSubmit = async function () {
-        if (!state.isConnected) return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+        if (!keepkey) {
+            console.log("wallet NOT connected!")
+            return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+        } else {
+            console.log("wallet connected!")
+        }
         console.log("submited address")
 
 
