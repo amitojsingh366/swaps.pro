@@ -1,5 +1,6 @@
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { translations } from 'assets/translations'
+import { ModalProvider } from 'context/ModalProvider/ModalProvider'
 import { WalletProvider } from 'context/WalletProvider/WalletProvider'
 import React from 'react'
 import { I18n } from 'react-polyglot'
@@ -15,15 +16,17 @@ type ProvidersProps = {
 
 export function AppProviders({ children }: ProvidersProps) {
   return (
-      <ChakraProvider theme={theme}>
-        <ColorModeScript />
-          <BrowserRouter>
-            <I18n locale={locale} messages={messages}>
-              <WalletProvider>
-                {children}
-              </WalletProvider>
-            </I18n>
-          </BrowserRouter>
-      </ChakraProvider>
+    <ChakraProvider theme={theme}>
+      <ColorModeScript />
+      <BrowserRouter>
+        <I18n locale={locale} messages={messages}>
+          <WalletProvider>
+            <ModalProvider>
+              {children}
+            </ModalProvider>
+          </WalletProvider>
+        </I18n>
+      </BrowserRouter>
+    </ChakraProvider>
   )
 }
