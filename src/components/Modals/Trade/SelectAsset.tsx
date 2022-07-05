@@ -1,6 +1,9 @@
 import { ModalCloseButton } from '@chakra-ui/modal'
 import {
     Box,
+    Center,
+    Grid,
+    GridItem,
     Input,
     Modal,
     ModalBody,
@@ -13,6 +16,7 @@ import {
     TabPanel,
     TabPanels,
     Tabs,
+    Text
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslate } from 'react-polyglot'
@@ -120,14 +124,19 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
                             <TabPanels>
                                 {liveChains?.map((chain) => {
                                     return <TabPanel>
-                                        {balances?.filter((bal: any) => bal.blockchain === chain).map((bal: any) => (
-                                            <div>
-                                                <button onClick={() => onSelectAsset(bal.symbol)}>
-                                                    <AssetIcon src={bal?.image} boxSize='24px' mr={4} />
-                                                    {bal.symbol} balance: {bal.balance}
-                                                </button>
-                                            </div>
-                                        ))}
+                                        <Grid templateColumns='repeat(2, 1fr)' gap={6}>
+                                            {balances?.filter((bal: any) => bal.blockchain === chain).map((bal: any) => (
+                                                <GridItem w='100%'>
+                                                    <Center>
+                                                        <button onClick={() => onSelectAsset(bal.symbol)} >
+                                                            <AssetIcon src={bal?.image} boxSize='40px' />
+                                                            <Text>{bal.symbol}</Text>
+                                                            <Text>balance: {bal.balance}</Text>
+                                                        </button>
+                                                    </Center>
+                                                </GridItem>
+                                            ))}
+                                        </Grid>
                                     </TabPanel>
                                 })}
                             </TabPanels>
