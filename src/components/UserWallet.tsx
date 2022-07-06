@@ -31,6 +31,7 @@ import { ArrowDownIcon } from "@chakra-ui/icons";
 import { HelperToolTip } from "./HelperTooltip";
 import { useLocaleFormatter } from "../hooks/useLocaleFormatter/useLocaleFormatter";
 import { useHistory } from "react-router-dom";
+import { useModal } from "hooks/useModal/useModal";
 
 const FiatInput = (props: InputProps) => (
     <Input
@@ -52,6 +53,8 @@ export const UserWallet = () => {
     const history = useHistory()
     const format = (val: number) => val
     const parse = (val: string) => val.replace(/^\$/, '')
+
+    const { selectAsset } = useModal()
 
     const {
         number: { localeParts }
@@ -168,7 +171,8 @@ export const UserWallet = () => {
 
                             <small>context: {state.context}</small>
                             <br />
-                            <small>asset Selected: RUNE</small>
+                            <small>asset Selected: {state.assetContext}</small>
+                            <Button onClick={() => { selectAsset.open({ walletSend: true }) }} >Select</Button>
                             <br />
 
                             {/* <Button onClick={ }>Change Asset</Button> */}
