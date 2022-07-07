@@ -62,6 +62,7 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
 
     const onSelectAsset = function (asset: string) {
         console.log("onSelectAsset: ", asset)
+        close()
         if (walletSend) return dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: asset })
         if (selectType === 'input') {
             dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: asset })
@@ -72,7 +73,6 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
             // update()
         }
         dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
-        close()
     }
 
     const fetchTokens = useCallback(async () => {
