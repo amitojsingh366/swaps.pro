@@ -18,9 +18,10 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { Pioneer } from 'hooks/usePioneerSdk/usePioneerSdk'
 import NumberFormat from 'react-number-format'
 import { RouterProps } from 'react-router-dom'
-import {useWallet, WalletActions} from "context/WalletProvider/WalletProvider";
-import {useEffect} from "react";
+import { useWallet, WalletActions } from "context/WalletProvider/WalletProvider";
+import { useEffect } from "react";
 import KEEPKEY_ICON from "../../assets/png/keepkey.png";
+import { useModal } from 'hooks/useModal/useModal'
 
 const FiatInput = (props: InputProps) => (
   <Input
@@ -53,11 +54,13 @@ export const TradeInput = ({ history }: RouterProps) => {
     history.push('/trade/confirm')
   }
 
+  const { selectAsset } = useModal()
+
   const onSelectModalInput = () => {
     //Open Select modal.
     console.log("onSelectModal called!")
     //open('select')
-    setRoutePath('/AssetSelect/Select')
+    selectAsset.open({})
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     dispatch({ type: WalletActions.SET_SELECT_MODAL_TYPE, payload: 'input' })
     //set balance input
@@ -72,7 +75,7 @@ export const TradeInput = ({ history }: RouterProps) => {
   const onSelectModalOutput = () => {
     //Open Select modal.
     console.log("onSelectModalOutput called!")
-    setRoutePath('/AssetSelect/Select')
+    selectAsset.open({})
     dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     dispatch({ type: WalletActions.SET_SELECT_MODAL_TYPE, payload: 'output' })
   }
@@ -88,10 +91,10 @@ export const TradeInput = ({ history }: RouterProps) => {
     //Open Select modal.
     updateInvocation()
     update()
-    if(state?.invocation?.state === 'created'){
+    if (state?.invocation?.state === 'created') {
       history.push('/trade/confirm')
     }
-    if(state?.invocation?.state === 'broadcasted'){
+    if (state?.invocation?.state === 'broadcasted') {
       history.push('/trade/status')
     }
   }
@@ -130,10 +133,10 @@ export const TradeInput = ({ history }: RouterProps) => {
       {/*  Clear*/}
       {/*</Button>*/}
       <Button
-          // size='lg'
-          // width='full'
-          colorScheme='yellow'
-          onClick={() => onUpdate()}
+        // size='lg'
+        // width='full'
+        colorScheme='yellow'
+        onClick={() => onUpdate()}
       >
         update
       </Button>
@@ -225,7 +228,7 @@ export const TradeInput = ({ history }: RouterProps) => {
           size='lg'
           width='full'
           colorScheme='green'
-          // isDisabled={isDirty || !isValid}
+        // isDisabled={isDirty || !isValid}
         >
           Preview Trade
         </Button>
