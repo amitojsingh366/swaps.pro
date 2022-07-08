@@ -31,6 +31,7 @@ import { ArrowDownIcon } from "@chakra-ui/icons";
 import { HelperToolTip } from "./HelperTooltip";
 import { useLocaleFormatter } from "../hooks/useLocaleFormatter/useLocaleFormatter";
 import { useHistory } from "react-router-dom";
+import { useModal } from "hooks/useModal/useModal";
 
 const FiatInput = (props: InputProps) => (
     <Input
@@ -48,9 +49,12 @@ export const UserWallet = () => {
     const [amountSend, setAmountSend] = useState(0.011)
     const [valueAddress, setValueAddress] = useState("thor1pf....")
     const { state, dispatch, setRoutePath } = useWallet()
+    const { keepkey } = state
     const history = useHistory()
     const format = (val: number) => val
     const parse = (val: string) => val.replace(/^\$/, '')
+
+    const { selectAsset } = useModal()
 
     const {
         number: { localeParts }
@@ -62,7 +66,12 @@ export const UserWallet = () => {
     }
 
     const onSubmit = async function () {
-        if (!state.isConnected) return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+        if (!keepkey) {
+            console.log("wallet NOT connected!")
+            return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+        } else {
+            console.log("wallet connected!")
+        }
         console.log("submited address")
 
 
@@ -162,7 +171,8 @@ export const UserWallet = () => {
 
                             <small>context: {state.context}</small>
                             <br />
-                            <small>asset Selected: RUNE</small>
+                            <small>asset Selected: {state.assetContext}</small>
+                            <Button onClick={() => { selectAsset.open({ walletSend: true }) }} >Select</Button>
                             <br />
 
                             {/* <Button onClick={ }>Change Asset</Button> */}
