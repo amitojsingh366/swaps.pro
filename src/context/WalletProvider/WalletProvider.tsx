@@ -37,6 +37,7 @@ import * as core from "@shapeshiftoss/hdwallet-core";
 import { PinMatrixRequestType } from './KeepKey/KeepKeyTypes'
 import { useKeepKeyEventHandler } from './KeepKey/hooks/useKeepKeyEventHandler'
 import { useModal } from 'hooks/useModal/useModal'
+import { Balance } from './types'
 
 let {
   baseAmountToNative,
@@ -136,7 +137,7 @@ export interface InitialState {
   provider: Web3Provider | null
   blockNumber: number | null
   wallet: any | null
-  balances: any | null
+  balances: Balance[] | null
   active: boolean
   adapters: Record<string, unknown> | null
   walletInfo: { name: string; icon: string } | null
@@ -875,6 +876,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
           console.log("pioneer: ", pioneer)
           console.log("username: ", pioneer.username)
+          
+          console.log('balances', JSON.stringify(pioneer.balances))
           if (pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload: pioneer.balances })
           if (pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload: pioneer.context })
           //invocationContext
