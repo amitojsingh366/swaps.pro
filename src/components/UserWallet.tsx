@@ -18,20 +18,21 @@ import {
     EditablePreview,
     TabPanel,
     TabPanels,
-    Tabs, Text
+    Tabs, Text, Tooltip
 } from "@chakra-ui/react";
 import { useWallet, WalletActions } from "context/WalletProvider/WalletProvider";
 import { Page } from "./Layout/Page";
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from "react-hook-form";
 import NumberFormat from "react-number-format";
 import { TokenRow } from "./TokenRow/TokenRow";
 import { TokenButton } from "./TokenRow/TokenButton";
-import { ArrowDownIcon } from "@chakra-ui/icons";
+import { ArrowDownIcon, InfoIcon } from "@chakra-ui/icons";
 import { HelperToolTip } from "./HelperTooltip";
 import { useLocaleFormatter } from "../hooks/useLocaleFormatter/useLocaleFormatter";
 import { useHistory } from "react-router-dom";
 import { useModal } from "hooks/useModal/useModal";
+import { Balance } from "context/WalletProvider/types";
 
 const FiatInput = (props: InputProps) => (
     <Input
@@ -47,12 +48,12 @@ const FiatInput = (props: InputProps) => (
 
 export const UserWallet = () => {
     const [amountSend, setAmountSend] = useState(0.011)
-    const [valueAddress, setValueAddress] = useState("thor1pf....")
     const { state, dispatch, setRoutePath } = useWallet()
-    const { keepkey } = state
     const history = useHistory()
     const format = (val: number) => val
     const parse = (val: string) => val.replace(/^\$/, '')
+    const [selectedAsset, setSelectedAsset] = useState<Balance>()
+    const [sendAddress, setSendAddress] = useState<string>()
 
     const { selectAsset } = useModal()
 
@@ -65,8 +66,15 @@ export const UserWallet = () => {
         console.log("onTextChangeFiat called! (Fiat input)")
     }
 
+    useEffect(() => {
+        if (!state.balances || !state.assetContext) return
+        const newAsset = state.balances?.find((bal: any) => bal.symbol == state.assetContext)
+        setSelectedAsset(newAsset)
+        setSendAddress(newAsset?.address)
+    }, [state.balances, state.assetContext])
+
     const onSubmit = async function () {
-        if (!keepkey) {
+        if (!state.keepkeyConnected) {
             console.log("wallet NOT connected!")
             return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
         } else {
@@ -76,7 +84,6 @@ export const UserWallet = () => {
 
 
         console.log("amountSend: ", amountSend)
-        console.log("svalueAddress: ", valueAddress)
         console.log("svalueAddress: ", state.assetContext)
 
         //validate
@@ -90,9 +97,9 @@ export const UserWallet = () => {
         // }
 
         let send = {
-            blockchain: "thorchain",
-            asset: "RUNE",
-            address: valueAddress,
+            blockchain: selectedAsset?.blockchain,
+            asset: selectedAsset?.symbol,
+            address: sendAddress,
             amount: amountSend,
             noBroadcast: false
         }
@@ -172,6 +179,9 @@ export const UserWallet = () => {
                             <small>context: {state.context}</small>
                             <br />
                             <small>asset Selected: {state.assetContext}</small>
+                            <Tooltip label={selectedAsset?.address} fontSize='md'>
+                                <InfoIcon />
+                            </Tooltip> <br />
                             <Button onClick={() => { selectAsset.open({ walletSend: true }) }} >Select</Button>
                             <br />
 
@@ -190,9 +200,9 @@ export const UserWallet = () => {
 
                             <h2>Address:</h2>
                             <Editable
-                                onChange={(valueAddress) => setValueAddress(valueAddress)}
-                                defaultValue='Take some chakra'
-                                value={valueAddress}
+                                onChange={(newAddy) =>  setSendAddress(newAddy) }
+                                defaultValue='Loading...'
+                                value={sendAddress}
                             >
                                 <EditablePreview />
                                 <EditableInput />

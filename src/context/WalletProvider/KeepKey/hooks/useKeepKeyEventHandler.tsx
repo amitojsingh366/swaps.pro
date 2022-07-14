@@ -24,7 +24,7 @@ export const useKeepKeyEventHandler = (
 
     useEffect(() => {
         const handleEvent = (e: [deviceId: string, message: Event]) => {
-            console.log('EVENTTTTTTTTTTT', e)
+            console.log('KEEPKEY EVENT', e)
             const [deviceId, event] = e
             const { message_enum, message, from_wallet } = event
 
@@ -73,10 +73,11 @@ export const useKeepKeyEventHandler = (
 
         // Handle all KeepKey events
         keyring.on(['KeepKey', '*', '*'], handleEvent)
+        keyring.on(['*', '*', Events.CONNECT], () => connectWallet('keepkey'))
 
         return () => {
             keyring.off(['KeepKey', '*', '*'], handleEvent)
-
+            keyring.off(['*', '*', Events.CONNECT], () => connectWallet('keepkey'))
         }
     }, [
         dispatch,
