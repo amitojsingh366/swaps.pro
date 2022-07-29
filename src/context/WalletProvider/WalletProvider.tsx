@@ -656,16 +656,16 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         break
       case 'keepkey':
         // setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
-
         const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(state.keyring);
+
         try {
           let wallet = await keepkeyAdapter.pairDevice(undefined /*tryDebugLink=*/);
           console.log("wallet: ", wallet)
 
           if (wallet) {
+
             let pioneerResp = await state.pioneer.pairWallet(wallet)
             console.log("pioneerResp: ", pioneerResp)
-
             //@TODO get this from pioneer?
             let walletInfo = {
               name: 'keepkey',
@@ -855,7 +855,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         let pioneer = new SDK(config.spec, config)
 
 
-        let user = await pioneer.init()
+        let user = await pioneer.init(state.wallet)
         console.log("user: ", user)
 
         dispatch({ type: WalletActions.SET_PIONEER, payload: pioneer })
@@ -876,7 +876,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
           console.log("pioneer: ", pioneer)
           console.log("username: ", pioneer.username)
-          
+
           console.log('balances', JSON.stringify(pioneer.balances))
           if (pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload: pioneer.balances })
           if (pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload: pioneer.context })

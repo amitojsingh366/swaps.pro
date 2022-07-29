@@ -1,7 +1,7 @@
 import { Box, Flex, Stack, TabPanel, TabPanels, Tabs, } from '@chakra-ui/react'
 import { Card } from 'components/Card';
 import { Page } from 'components/Layout/Page'
-import { UserWallet } from 'components/UserWallet';
+import { UserWallet } from 'components/UserWallet/UserWallet';
 
 export const Custom = () => {
 

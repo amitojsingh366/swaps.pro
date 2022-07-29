@@ -1,6 +1,6 @@
 import { Box, Flex, Spinner, Stack, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { Page } from 'components/Layout/Page'
-import { UserWallet } from 'components/UserWallet';
+import { UserWallet } from 'components/UserWallet/UserWallet';
 import { useWallet } from "context/WalletProvider/WalletProvider";
 import { Card } from "../../components/Card";
 
