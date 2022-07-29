@@ -55,6 +55,7 @@ export const UserWallet = () => {
     const parse = (val: string) => val.replace(/^\$/, '')
     const [selectedAsset, setSelectedAsset] = useState<Balance>()
     const [sendAddress, setSendAddress] = useState<string>()
+    const [portfolioValue, setPortfolioValue] = useState(0)
 
     const { selectAsset } = useModal()
 
@@ -69,10 +70,17 @@ export const UserWallet = () => {
 
     useEffect(() => {
         if (!state.balances || !state.assetContext) return
-        const newAsset = state.balances?.find((bal: any) => bal.symbol == state.assetContext)
+        const newAsset = state.balances?.find((bal: any) => bal.symbol === state.assetContext)
         setSelectedAsset(newAsset)
         setSendAddress(newAsset?.address)
     }, [state.balances, state.assetContext])
+
+    useEffect(() => {
+        if (!state.balances) return;
+        let val = 0;
+        state.balances.map((bal) => val += Number(bal.valueUsd))
+        setPortfolioValue(val)
+    }, [state.balances])
 
     const onSubmit = async function () {
         if (!state.keepkeyConnected) {
@@ -182,6 +190,9 @@ export const UserWallet = () => {
                                 </SimpleGrid>
                             </Card.Header>
                             <Divider />
+                            <Text>
+                                Portfolio Value: ${portfolioValue}
+                            </Text>
                             <BalancesChart />
                             <small>context: {state.context}</small>
                             <br />
