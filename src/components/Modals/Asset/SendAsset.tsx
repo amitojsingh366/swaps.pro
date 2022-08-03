@@ -96,6 +96,8 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
             if (resultSign.signedTx) {
 
                 history.push(`/status/${invocationId}`)
+                close()
+
                 //get txid
                 let payload = {
                     noBroadcast: false,
@@ -103,7 +105,6 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
                     invocationId
                 }
                 let resultBroadcast = await state.pioneer.broadcast(payload)
-                close()
                 console.log("resultBroadcast: ", resultBroadcast)
             }
 
@@ -162,6 +163,7 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
                             type='submit'
                             size='lg'
                             width='full'
+                            colorScheme="blue"
                             onClick={() => onSubmit()}
                         // isDisabled={isDirty || !isValid}
                         >

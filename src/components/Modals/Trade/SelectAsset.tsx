@@ -91,11 +91,11 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
     // }, []) // run only once
 
     useEffect(() => {
-        if (!state.pioneer || !liveOnly) return
+        if (!state.pioneer || !liveOnly || !state.pioneer.initialized) return
         state.pioneer.pioneer.instance.Blockchains().then((chains: any) => {
             setLiveChains(Object.values(chains.data.live))
         })
-    }, [state.pioneer])
+    }, [state.pioneer, liveOnly])
 
 
     return (
