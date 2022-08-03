@@ -88,7 +88,7 @@ export const BalancesChart: FC = () => {
     useEffect(() => {
         if (!state.balances) return
         setBals(state.balances.map((bal) => {
-            return { name: bal.symbol ?? "", value: Number(bal.valueUsd) === 0 ? 100 : Number(bal.valueUsd) }
+            return { name: bal.symbol ?? "", value: Number(bal.valueUsd) }
         }))
         let val = 0;
         state.balances.map((bal) => val += Number(bal.valueUsd))
