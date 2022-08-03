@@ -13,7 +13,7 @@ import {
     Stack,
     TabPanel,
     TabPanels,
-    Tabs, Text
+    Tabs, Text, VStack
 } from "@chakra-ui/react";
 import { Link, useHistory } from "react-router-dom";
 import { ArrowBackIcon } from "@chakra-ui/icons";
@@ -21,19 +21,15 @@ import { AssetToAsset } from "../Trade/TradeStatus/AssetToAsset";
 import { Page } from "../Layout/Page";
 import { HelperToolTip } from "../HelperTooltip";
 import { Row } from "../Row";
+import { Invocation } from './Invocation';
 
 export const User = () => {
     const { username, state, dispatch, updateInvocation, setRoutePath } = useWallet()
     console.log("pioneer.username: ", username)
-    const history = useHistory()
     const deleteInvocation = async function (invocationId: any) {
         console.log("deleting invocation: ", invocationId)
         let result = await state.pioneer.deleteInvocation(invocationId)
         console.log("deleting result: ", result)
-    }
-
-    const setInvocationContext = async function (invocationId: any) {
-        history.push(`/status/${invocationId}`)
     }
 
     if (state.pioneer) {
@@ -69,36 +65,9 @@ export const User = () => {
                             <small>invocations: {state.pioneer.invocations.length}</small>
                             <br />
                         </Stack>
-                        {state.pioneer.invocations.map((invocation: any, i: any) => {
-                            return <>
-                                <Stack spacing={1}>
-                                    <br />
-                                    <small>invocation: {invocation.invocationId}</small>
-                                    <small>state: {invocation.state}</small>
-                                    <small>type: {invocation.type}</small>
-                                    <small>network: {invocation.network}</small>
-                                    <br />
-                                    <Button
-                                        colorScheme='blue'
-                                        size='sm'
-                                        mt={1}
-                                        width='100px'
-                                        onClick={() => setInvocationContext(invocation.invocationId)}
-                                    >
-                                        <small>load invocation</small>
-                                    </Button>
-                                    <Button
-                                        colorScheme='red'
-                                        size='sm'
-                                        mt={1}
-                                        width='100px'
-                                        onClick={() => deleteInvocation(invocation.invocationId)}
-                                    >
-                                        <small>delete invocation</small>
-                                    </Button>
-                                </Stack>
-                            </>
-                        })}
+                        <VStack spacing={2}>
+                            {state.pioneer.invocations.map((invocation: any) => <Invocation invocation={invocation} />)}
+                        </VStack>
 
 
                     </Card.Body>
