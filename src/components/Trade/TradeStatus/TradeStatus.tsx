@@ -153,8 +153,8 @@ export const TradeStatus = () => {
                                         {/*            </HelperToolTip>*/}
                                         {/*        </>*/}
                                         {/*    })}*/}
-                                        <small>deposit txid: {state.invocation.signedTx?.txid}</small>
-
+                                        {/*<small> txid: {state.invocation.signedTx?.txid}</small>*/}
+                                        <small>txid: {state.invocation.broadcast?.txid}</small>
                                         {/*<small>is confirmed: {state.invocation.isConfirmed}</small>*/}
                                         {/*<small>is fullfilled: {state.invocation.isFullfilled}</small>*/}
                                         <br />
