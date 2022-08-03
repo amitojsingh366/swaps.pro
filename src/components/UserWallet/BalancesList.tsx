@@ -20,7 +20,7 @@ export const BalancesList: FC = () => {
                     </Tr>
                 </Thead>
                 <Tbody overflow="scroll">
-                    {state.balances && state.balances.sort((a, b) => b.balance - a.balance).map((bal) => <Tr>
+                    {state.balances && state.balances.sort((a, b) => Number(b.valueUsd) - Number(a.valueUsd)).map((bal) => <Tr>
                         <Td>
                             <HStack>
                                 <Image src={bal.image} maxW="35px" />
