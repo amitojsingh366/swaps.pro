@@ -50,6 +50,7 @@ export const Radio = <T extends RadioTypes>({
 }: RadioProps<T>) => {
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: name ?? 'radio',
+    // @ts-ignore
     defaultValue: defaultValue ?? options[0]?.value,
     onChange
   })
