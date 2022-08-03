@@ -22,7 +22,7 @@ export const Page = ({
   renderError,
   ...rest
 }: PageProps) => (
-  <PageTransition {...rest}>
+  <PageTransition {...rest} style={{ width: "100%" }}>
     {error && !loading ? renderError() : loading ? renderLoading() : children}
   </PageTransition>
 )

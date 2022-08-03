@@ -36,7 +36,7 @@ export const routes: Array<NestedRoute> = [
   },
   {
     path: '/custom',
-    label: 'navBar.swap',
+    label: 'navBar.custom',
     main: <Custom />,
     icon: <FaCog color='inherit' />
   },

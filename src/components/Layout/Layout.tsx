@@ -8,28 +8,27 @@ import { RightSidebar } from './RightSidebar'
 
 export const Layout = ({ route }: { route: Route }) => {
   return (
-    <>
+    <div style={{ width: "100%" }}>
       <Header route={route} />
       <Container
         paddingBottom='0'
         paddingInlineStart='0'
         paddingInlineEnd='0'
+        maxW="100%"
       >
-        <Box display={{ base: 'block', md: 'flex' }} >
-          <Box flex={1}>
-            <Box id='content' >
-              <Flex
-                maxWidth={{ base: 'auto', '2xl': '1464px' }}
-                px={{ base: 0, lg: 4 }}
-              >
-                {route?.leftSidebar && <LeftSidebar>{route.leftSidebar}</LeftSidebar>}
-                {route.main}
-                {route?.rightSidebar && <RightSidebar>{route.rightSidebar}</RightSidebar>}
-              </Flex>
-            </Box>
+        <Box display={{ base: 'block', md: 'flex' }} width="100%">
+          <Box id='content' width="100%" >
+            <Flex
+              px={{ base: 0, lg: 4 }}
+              width="100%"
+            >
+              {route?.leftSidebar && <LeftSidebar>{route.leftSidebar}</LeftSidebar>}
+              {route.main}
+              {route?.rightSidebar && <RightSidebar>{route.rightSidebar}</RightSidebar>}
+            </Flex>
           </Box>
         </Box>
       </Container>
-    </>
+    </div>
   )
 }

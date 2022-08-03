@@ -1,3 +1,5 @@
+import { SendAssetModal } from 'components/Modals/Asset/SendAsset'
+import { KeepKeyPin } from 'components/Modals/KeepKey/Pin'
 import { SelectAssetModal } from 'components/Modals/Trade/SelectAsset'
 import merge from 'lodash/merge'
 import noop from 'lodash/noop'
@@ -9,7 +11,9 @@ import { ModalContext } from './ModalContext'
 // the key is the name returned by the hook and the
 // component is the modal to be rendered
 const MODALS = {
-  selectAsset: SelectAssetModal
+  selectAsset: SelectAssetModal,
+  sendAsset: SendAssetModal,
+  keepkeyPin: KeepKeyPin
 }
 
 // state

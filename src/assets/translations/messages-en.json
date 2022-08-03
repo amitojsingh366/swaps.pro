@@ -114,5 +114,31 @@
       "pools": "Pools"
     }
   },
+
+  "walletProvider": {
+    "errors": {
+      "walletNotFound": "Unable to communicate with your wallet"
+    },
+    "keepKey": {
+      "errors": {
+        "unknown": "An unexpected error occurred communicating with your KeepKey",
+        "pinCancelled": "PIN entry was cancelled",
+        "pinInvalid": "The PIN you entered is not valid",
+        "pinMismatch": "The two PINs you entered do not match"
+      },
+      "connect": {
+        "header": "Pair Your KeepKey",
+        "body": "Connect a KeepKey device and click Pair.",
+        "button": "Pair",
+        "conflictingApp": "Could not find your KeepKey. Another application may be trying to connect with your KeepKey."
+      },
+      "pin": {
+        "header": "Enter Your PIN",
+        "body": "Use PIN layout shown on your device to find the location to press on the PIN pad.",
+        "button": "Unlock"
+      }
+    }
+  },
+
   "loremIpsum": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed lectus efficitur, iaculis sapien eu, luctus tellus. Maecenas eget sapien dignissim, finibus mauris nec, mollis ipsum. Donec sodales sit amet felis sagittis vestibulum. Ut in consectetur lacus. Suspendisse potenti. Aenean at massa consequat lectus semper pretium. Cras sed bibendum enim. Mauris euismod sit amet dolor in placerat."
 }

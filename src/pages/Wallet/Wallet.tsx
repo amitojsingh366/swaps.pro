@@ -1,6 +1,6 @@
 import { Box, Flex, Spinner, Stack, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { Page } from 'components/Layout/Page'
-import { UserWallet } from 'components/UserWallet';
+import { UserWallet } from 'components/UserWallet/UserWallet';
 import { useWallet } from "context/WalletProvider/WalletProvider";
 import { Card } from "../../components/Card";
 
@@ -40,11 +40,7 @@ export const Wallet = () => {
 
     return (
         <Page>
-            <Flex maxWidth={{ base: 'auto', '2xl': '1464px' }} mx='auto' px={16}>
-                <Stack flex={1} spacing={4} justifyContent='center' alignItems='center'>
-                    <UserWallet />
-                </Stack>
-            </Flex>
+            <UserWallet />
         </Page>
     )
 }
