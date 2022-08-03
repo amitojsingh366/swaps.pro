@@ -40,11 +40,7 @@ export const Wallet = () => {
 
     return (
         <Page>
-            <Flex maxWidth={{ base: 'auto', '2xl': '1464px' }} mx='auto' px={16}>
-                <Stack flex={1} spacing={4} justifyContent='center' alignItems='center'>
-                    <UserWallet />
-                </Stack>
-            </Flex>
+            <UserWallet />
         </Page>
     )
 }

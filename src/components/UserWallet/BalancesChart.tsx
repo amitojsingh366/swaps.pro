@@ -1,6 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, FC } from "react";
 import { PieChart, Pie, Sector } from 'recharts';
 import { useWallet } from "context/WalletProvider/WalletProvider";
+import { HStack, Stack, Text, VStack } from "@chakra-ui/react";
 
 const renderActiveShape = (props: any) => {
     const RADIAN = Math.PI / 180;
@@ -75,10 +76,11 @@ const renderActiveShape = (props: any) => {
     );
 };
 
-export default function BalancesChart() {
+export const BalancesChart: FC = () => {
     const { state } = useWallet()
 
     const [activeIndex, setActiveIndex] = useState(0);
+    const [portfolioValue, setPortfolioValue] = useState(0)
     const [bals, setBals] = useState([
         { name: "Coin 1", value: 400 }
     ])
@@ -88,6 +90,9 @@ export default function BalancesChart() {
         setBals(state.balances.map((bal) => {
             return { name: bal.symbol ?? "", value: Number(bal.valueUsd) === 0 ? 100 : Number(bal.valueUsd) }
         }))
+        let val = 0;
+        state.balances.map((bal) => val += Number(bal.valueUsd))
+        setPortfolioValue(val)
     }, [state.balances])
 
     const onPieEnter = useCallback(
@@ -100,20 +105,24 @@ export default function BalancesChart() {
     if (!state.balances) return <p>Loading...</p>
 
     return (
-        <PieChart width={400} height={400}>
-            <Pie
-                activeIndex={activeIndex}
-                activeShape={renderActiveShape}
-                data={bals}
-                cx={200}
-                cy={200}
-                innerRadius={60}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                onMouseEnter={onPieEnter}
-            />
-        </PieChart>
+        <HStack justifyContent='center' alignItems='center'>
+            <VStack>
+                <Text fontSize="3xl" fontWeight="bold">Estimated Balance</Text>
+                <Text fontSize="3xl">≈ ${portfolioValue}</Text>
+            </VStack>
+            <PieChart width={400} height={400}>
+                <Pie
+                    activeIndex={activeIndex}
+                    activeShape={renderActiveShape}
+                    data={bals}
+                    innerRadius={60}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    onMouseEnter={onPieEnter}
+                />
+            </PieChart>
+        </HStack>
     );
 }
 

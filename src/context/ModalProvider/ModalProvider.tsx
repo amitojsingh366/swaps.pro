@@ -1,3 +1,4 @@
+import { SendAssetModal } from 'components/Modals/Asset/SendAsset'
 import { KeepKeyPin } from 'components/Modals/KeepKey/Pin'
 import { SelectAssetModal } from 'components/Modals/Trade/SelectAsset'
 import merge from 'lodash/merge'
@@ -11,6 +12,7 @@ import { ModalContext } from './ModalContext'
 // component is the modal to be rendered
 const MODALS = {
   selectAsset: SelectAssetModal,
+  sendAsset: SendAssetModal,
   keepkeyPin: KeepKeyPin
 }
 
