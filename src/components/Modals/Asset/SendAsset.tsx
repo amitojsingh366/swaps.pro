@@ -87,9 +87,11 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
 
             if (!state.pioneer) return
 
+            // @ts-ignore
             let invocationId = await state.pioneer.build(tx)
             console.log("invocationId: ", invocationId)
 
+            // @ts-ignore
             let resultSign = await state.pioneer.sign(invocationId)
             console.log("resultSign: ", resultSign)
 
@@ -104,6 +106,7 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
                     sync: true,
                     invocationId
                 }
+                // @ts-ignore
                 let resultBroadcast = await state.pioneer.broadcast(payload)
                 console.log("resultBroadcast: ", resultBroadcast)
             }
