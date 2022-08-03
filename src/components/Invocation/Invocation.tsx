@@ -31,7 +31,7 @@ export const Invocation = (invocationId:any) => {
                 <Card.Body pb={0} px={0}>
                     <Stack spacing={4}>
                         <br/>
-                        <small>deposit txid: </small>
+                        <small>txid: </small>
                         <br/>
                     </Stack>
                 </Card.Body>
