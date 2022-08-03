@@ -84,6 +84,7 @@ export const TradeInput = ({ history }: RouterProps) => {
     //Open Select modal.
     reset()
     //RESET_STATE
+    // @ts-ignore
     dispatch({ type: WalletActions.RESET_STATE, payload: true })
   }
 

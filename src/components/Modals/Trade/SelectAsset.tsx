@@ -92,6 +92,8 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
 
     useEffect(() => {
         if (!state.pioneer || !liveOnly) return
+        console.log("state.pioneer.pioneer: ",state.pioneer.pioneer)
+        console.log("state.pioneer: ",state.pioneer)
         state.pioneer.pioneer.instance.Blockchains().then((chains: any) => {
             setLiveChains(Object.values(chains.data.live))
         })
