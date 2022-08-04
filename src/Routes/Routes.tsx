@@ -17,6 +17,12 @@ import { Custom } from 'pages/Custom/Custom'
 
 export const routes: Array<NestedRoute> = [
   {
+    path: '/swap',
+    label: 'navBar.swap',
+    main: <Swap />,
+    icon: <RepeatIcon color='inherit' />
+  },
+  {
     path: '/dashboard',
     label: 'navBar.dashboard',
     main: <User />,
@@ -27,12 +33,6 @@ export const routes: Array<NestedRoute> = [
     label: 'navBar.wallet',
     main: <Wallet />,
     icon: <FaWallet color='inherit' />
-  },
-  {
-    path: '/swap',
-    label: 'navBar.swap',
-    main: <Swap />,
-    icon: <RepeatIcon color='inherit' />
   },
   // {
   //   path: '/custom',
@@ -62,7 +62,7 @@ export const Routes = () => {
           </Route>
         )
       })}
-      <Redirect from='/' to='/dashboard' />
+      <Redirect from='/' to='/swap' />
       <Route component={NotFound} />
     </Switch>
   )
