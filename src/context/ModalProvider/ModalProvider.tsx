@@ -1,3 +1,4 @@
+import { ReceiveAssetModal } from 'components/Modals/Asset/ReceiveAsset'
 import { SendAssetModal } from 'components/Modals/Asset/SendAsset'
 import { KeepKeyPin } from 'components/Modals/KeepKey/Pin'
 import { SelectAssetModal } from 'components/Modals/Trade/SelectAsset'
@@ -13,6 +14,7 @@ import { ModalContext } from './ModalContext'
 const MODALS = {
   selectAsset: SelectAssetModal,
   sendAsset: SendAssetModal,
+  receiveAsset: ReceiveAssetModal,
   keepkeyPin: KeepKeyPin
 }
 

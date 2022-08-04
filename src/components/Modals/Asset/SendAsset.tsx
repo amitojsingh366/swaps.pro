@@ -1,5 +1,7 @@
 import { ModalCloseButton } from '@chakra-ui/modal'
 import {
+    Alert,
+    AlertIcon,
     Button,
     Input,
     Modal,
@@ -31,6 +33,8 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
 
     const [sendAddress, setSendAddress] = useState("")
     const [sendAmount, setSendAmount] = useState(0.002)
+    const [isSigning, setIsSigning] = useState(false)
+    const [sendClicked, setSendClicked] = useState(false)
 
     const { state, dispatch } = useWallet()
 
@@ -86,14 +90,17 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
         try {
 
             if (!state.pioneer) return
+            setSendClicked(true)
 
             // @ts-ignore
             let invocationId = await state.pioneer.build(tx)
             console.log("invocationId: ", invocationId)
 
+            setIsSigning(true)
             // @ts-ignore
             let resultSign = await state.pioneer.sign(invocationId)
             console.log("resultSign: ", resultSign)
+            setIsSigning(false)
 
             if (resultSign.signedTx) {
 
@@ -149,9 +156,14 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
                 <ModalCloseButton />
                 <ModalBody alignItems='center' justifyContent='center'>
                     <VStack spacing={4}>
-                        <Input onChange={(valueString) => setSendAddress(valueString.target.value)} placeholder="Recipient Address" />
+                        {isSigning && <Alert status='info'>
+                            <AlertIcon />
+                            Accept tx on keepkey to continue
+                        </Alert>}
+                        <Input disabled={sendClicked} onChange={(valueString) => setSendAddress(valueString.target.value)} placeholder="Recipient Address" />
                         <NumberInput
                             width="100%"
+                            isDisabled={sendClicked}
                             onChange={(valueString) => setSendAmount(Number(parse(valueString)))}
                             value={format(sendAmount)}
                             max={50}
@@ -166,6 +178,7 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
                             type='submit'
                             size='lg'
                             width='full'
+                            disabled={sendClicked}
                             colorScheme="blue"
                             onClick={() => onSubmit()}
                         // isDisabled={isDirty || !isValid}
