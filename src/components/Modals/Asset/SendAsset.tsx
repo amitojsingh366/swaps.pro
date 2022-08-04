@@ -32,6 +32,7 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
     const parse = (val: string) => val.replace(/^\$/, '')
 
     const [sendAddress, setSendAddress] = useState("")
+    const [sendMemo, setSendMemo] = useState("")
     const [sendAmount, setSendAmount] = useState(0.002)
     const [isSigning, setIsSigning] = useState(false)
     const [sendClicked, setSendClicked] = useState(false)
@@ -72,13 +73,15 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
         //     noBroadcast:false
         // }
 
-        let send = {
+        let send: any = {
             blockchain: balance?.blockchain,
             asset: balance?.symbol,
             address: sendAddress,
             amount: sendAmount.toString(),
             noBroadcast: false
         }
+
+        if (sendMemo !== "") send.memo = sendMemo
 
         let tx = {
             type: 'sendToAddress',
@@ -161,6 +164,7 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
                             Accept tx on keepkey to continue
                         </Alert>}
                         <Input disabled={sendClicked} onChange={(valueString) => setSendAddress(valueString.target.value)} placeholder="Recipient Address" />
+                        {balance.needsMemo && <Input disabled={sendClicked} onChange={(valueString) => setSendMemo(valueString.target.value)} placeholder="Memo" />}
                         <NumberInput
                             width="100%"
                             isDisabled={sendClicked}
