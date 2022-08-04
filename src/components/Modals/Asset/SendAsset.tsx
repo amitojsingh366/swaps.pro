@@ -185,6 +185,7 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
                             disabled={sendClicked}
                             colorScheme="blue"
                             onClick={() => onSubmit()}
+                            isLoading={sendClicked}
                         // isDisabled={isDirty || !isValid}
                         >
                             Send

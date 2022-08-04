@@ -124,7 +124,8 @@ export enum WalletActions {
   SET_KEEPKEY_STATE = 'SET_KEEPKEY_STATE',
   RESET_STATE = 'RESET_STATE',
   OPEN_KEEPKEY_PIN = 'OPEN_KEEPKEY_PIN',
-  SET_DEVICE_STATE = 'SET_DEVICE_STATE'
+  SET_DEVICE_STATE = 'SET_DEVICE_STATE',
+  SET_KEEPKEY_ADAPTER = 'SET_KEEPKEY_ADAPTER'
 }
 
 export interface InitialState {
@@ -175,6 +176,7 @@ export interface InitialState {
   deviceId: string,
   deviceState: DeviceState,
   keepKeyPinRequestType: PinMatrixRequestType | null
+  keepkeyAdapter: any
 }
 
 const initialState: InitialState = {
@@ -224,7 +226,8 @@ const initialState: InitialState = {
   keepkeyState: 0,
   deviceId: '',
   deviceState: initialDeviceState,
-  keepKeyPinRequestType: null
+  keepKeyPinRequestType: null,
+  keepkeyAdapter: null
 }
 
 export interface IWalletContext {
@@ -286,6 +289,7 @@ export type ActionTypes =
   | { type: WalletActions.SET_KEPLR_CONTEXT; payload: string }
   | { type: WalletActions.SET_KEPLR_NETWORK; payload: any }
   | { type: WalletActions.SET_DEVICE_STATE; payload: Partial<DeviceState> }
+  | { type: WalletActions.SET_KEEPKEY_ADAPTER; payload: any }
   | {
     type: WalletActions.OPEN_KEEPKEY_PIN
     payload: {
@@ -382,6 +386,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, invocationTxid: action.payload }
     case WalletActions.SET_SELECT_MODAL:
       return { ...state, modalSelect: action.payload }
+    case WalletActions.SET_KEEPKEY_ADAPTER:
+      return { ...state, keepkeyAdapter: action.payload }
     case WalletActions.SET_DEVICE_STATE:
       const { deviceState } = state
       const {
@@ -656,14 +662,14 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
         break
       case 'keepkey':
         // setRoutePath(SUPPORTED_WALLETS[type]?.routes[0]?.path ?? undefined)
-        const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(state.keyring);
 
         try {
-          let wallet = await keepkeyAdapter.pairDevice(undefined /*tryDebugLink=*/);
+          let wallet = await state.keepkeyAdapter.pairDevice(undefined /*tryDebugLink=*/);
           console.log("wallet: ", wallet)
 
           if (wallet) {
-
+            const deviceId = await wallet.getDeviceID()
+            localStorage.setItem('deviceId', deviceId)
             let pioneerResp = await state.pioneer.pairWallet(wallet)
             console.log("pioneerResp: ", pioneerResp)
             //@TODO get this from pioneer?
@@ -792,6 +798,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   useEffect(() => {
 
+    const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(state.keyring);
+    keepkeyAdapter.initialize().then(() => {
+      dispatch({ type: WalletActions.SET_KEEPKEY_ADAPTER, payload: keepkeyAdapter })
+    })
+
     //Start Onboard.js
     let networkId = 1
     //TODO support more networks
@@ -869,6 +880,30 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
         if (pioneer && pioneer.isPaired) {
           console.log("app is paired! loading user")
+          const deviceId = localStorage.getItem('deviceId')
+          if (deviceId) {
+            const wallet = state.keyring.get(deviceId)
+            console.log('WALLET LOADED FROM MEMORY: ', wallet)
+            if (wallet) {
+              let pioneerResp = await pioneer.pairWallet(wallet)
+              console.log("pioneerResp: ", pioneerResp)
+              //@TODO get this from pioneer?
+              let walletInfo = {
+                name: 'keepkey',
+                icon: KEEPKEY_ICON,
+                blockchains: 32,
+                walletId: "keepkey-01",
+                isConnected: true
+              }
+
+              //@TODO support multiple wallet paired!
+              dispatch({ type: WalletActions.SET_INPUT_WALLET, payload: walletInfo })
+              dispatch({ type: WalletActions.SET_OUTPUT_WALLET, payload: walletInfo })
+
+              dispatch({ type: WalletActions.SET_KEEPKEY_CONNECTED, payload: true })
+              dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+            }
+          }
           //sit init
           dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
           //set context

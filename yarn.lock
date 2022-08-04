@@ -3362,10 +3362,10 @@
     ts-node "^8.10.2"
     typescript "^3.9.5"
 
-"@pioneer-sdk/sdk@^1.0.14":
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/@pioneer-sdk/sdk/-/sdk-1.0.14.tgz#983131d60408f509989a58440b4dab49c952cb04"
-  integrity sha512-5wx5cJYugDXCJwG+NWxX/JjziWuo7V7n8drymABf+Q2cEdm3vE0aR0GPNjZRI9Fa213xLz+uK2hyRGhr7F1QbQ==
+"@pioneer-sdk/sdk@^1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@pioneer-sdk/sdk/-/sdk-1.0.15.tgz#b07d315c06e7af346d2805187ada01f17a0d8d03"
+  integrity sha512-K+2tXmDa4Ufb2I4HsahHgMj6FuLexXCS486mH5MhNRnjkmNrWK3U/olhhQRv+1BiRNWWaQ1ukXD1nzOQZ+V0/Q==
   dependencies:
     "@pioneer-platform/pioneer-client" "^8.1.24"
     "@pioneer-platform/pioneer-coins" "8.1.46"
@@ -3591,6 +3591,16 @@
   version "1.22.0"
   resolved "https://registry.yarnpkg.com/@shapeshiftoss/hdwallet-core/-/hdwallet-core-1.22.0.tgz#f16d3d2842c5e704ec8e829573b1152dd2070001"
   integrity sha512-xCfmWN0FyJH8lVRhAKPQ7UHfWY1aMGbnGyalS+X4saz9P8o4qaHQ/vBpARrKhL+dDsDSKt8Ol2Wo90nv6C/7Ag==
+  dependencies:
+    eventemitter2 "^5.0.1"
+    lodash "^4.17.21"
+    rxjs "^6.4.0"
+    type-assertions "^1.1.0"
+
+"@shapeshiftoss/hdwallet-core@^1.29.0":
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/@shapeshiftoss/hdwallet-core/-/hdwallet-core-1.29.0.tgz#d64cf7e9f5bea6af53038d5af4969cf6979ba95f"
+  integrity sha512-de0rN3+4jvt+ZNvtF4AOWGYfZ3suyWdjLPPnYnxxy/pKittRDjtzjAuJYDaXVQR/vYlroiTeoEWFbEkb5/silA==
   dependencies:
     eventemitter2 "^5.0.1"
     lodash "^4.17.21"
