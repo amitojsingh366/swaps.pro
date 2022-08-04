@@ -21,6 +21,7 @@
   },
   "navBar": {
     "dashboard": "Dashboard",
+    "home": "Assets",
     "assets": "Assets",
     "swap": "Swap",
     "earn": "Earn",
