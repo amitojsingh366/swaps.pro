@@ -2,11 +2,11 @@ import { Button, HStack, Image, Table, TableCaption, TableContainer, Tbody, Td, 
 import { useWallet } from "context/WalletProvider/WalletProvider"
 import { useModal } from "hooks/useModal/useModal"
 import { FC } from "react"
-import { FiSend } from "react-icons/fi"
+import { FiDownload, FiUpload } from "react-icons/fi"
 
 export const BalancesList: FC = () => {
     const { state } = useWallet()
-    const { sendAsset } = useModal()
+    const { sendAsset, receiveAsset } = useModal()
 
     return (
         <TableContainer width="full" px="20px" pb="20px" >
@@ -17,6 +17,7 @@ export const BalancesList: FC = () => {
                         <Th isNumeric>Available Amount</Th>
                         <Th isNumeric>Value (USD)</Th>
                         <Th isNumeric px={8}>Send</Th>
+                        <Th isNumeric px={8}>Receive</Th>
                     </Tr>
                 </Thead>
                 <Tbody overflow="scroll">
@@ -32,7 +33,32 @@ export const BalancesList: FC = () => {
                         </Td>
                         <Td isNumeric>{bal.balance}</Td>
                         <Td isNumeric>{bal.valueUsd}</Td>
-                        <Td isNumeric><Button onClick={() => { sendAsset.open({ balance: bal }) }} leftIcon={<FiSend />}>Send</Button></Td>
+                        <Td isNumeric>
+                            <Button
+                                bgColor='red.200'
+                                color='red.800'
+                                _hover={{
+                                    color: 'red.700',
+                                    bgColor: 'red.100'
+                                }}
+                                onClick={() => { sendAsset.open({ balance: bal }) }}
+                                leftIcon={<FiUpload />}>
+                                Send
+                            </Button>
+                        </Td>
+                        <Td isNumeric>
+                            <Button
+                                color='green.800'
+                                bgColor='green.200'
+                                _hover={{
+                                    color: 'green.700',
+                                    bgColor: 'green.100'
+                                }}
+                                onClick={() => { receiveAsset.open({ balance: bal }) }}
+                                leftIcon={<FiDownload />}>
+                                Receive
+                            </Button>
+                        </Td>
                     </Tr>)}
                 </Tbody>
             </Table>
