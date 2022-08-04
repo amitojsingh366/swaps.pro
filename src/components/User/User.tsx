@@ -44,21 +44,21 @@ export const User = () => {
                         </SimpleGrid>
                     </Card.Header>
                     <Divider />
-                    <Card.Body pb={0} px={0}>
-                        <Stack spacing={4}>
-                            <br />
-                            <small>queryKey: {state.pioneer.queryKey}</small>
-                            <small>context: {state.pioneer.context}</small>
-                            <br />
-                        </Stack>
-                    </Card.Body>
-                    <Card.Body pb={0} px={0}>
-                        <Stack spacing={4}>
-                            <br />
-                            <small>blockchains: {state.pioneer.blockchains.toString()}</small>
-                            <br />
-                        </Stack>
-                    </Card.Body>
+                    {/*<Card.Body pb={0} px={0}>*/}
+                    {/*    <Stack spacing={4}>*/}
+                    {/*        <br />*/}
+                    {/*        <small>queryKey: {state.pioneer.queryKey}</small>*/}
+                    {/*        <small>context: {state.pioneer.context}</small>*/}
+                    {/*        <br />*/}
+                    {/*    </Stack>*/}
+                    {/*</Card.Body>*/}
+                    {/*<Card.Body pb={0} px={0}>*/}
+                    {/*    <Stack spacing={4}>*/}
+                    {/*        <br />*/}
+                    {/*        <small>blockchains: {state.pioneer.blockchains.toString()}</small>*/}
+                    {/*        <br />*/}
+                    {/*    </Stack>*/}
+                    {/*</Card.Body>*/}
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
                             <br />
@@ -71,28 +71,28 @@ export const User = () => {
 
 
                     </Card.Body>
-                    <Card.Body pb={0} px={0}>
-                        <Stack spacing={4}>
-                            <br />
-                            <small>pubkeys: {state.pioneer.pubkeys.toString()}</small>
-                            <br />
-                        </Stack>
-                    </Card.Body>
+                    {/*<Card.Body pb={0} px={0}>*/}
+                    {/*    <Stack spacing={4}>*/}
+                    {/*        <br />*/}
+                    {/*        <small>pubkeys: {state.pioneer.pubkeys.toString()}</small>*/}
+                    {/*        <br />*/}
+                    {/*    </Stack>*/}
+                    {/*</Card.Body>*/}
 
-                    <Card.Body pb={0} px={0}>
-                        <Stack spacing={4}>
-                            <br />
-                            <small>pubkeys: {state.pioneer.availableInputs.toString()}</small>
-                            <br />
-                        </Stack>
-                    </Card.Body>
-                    <Card.Body pb={0} px={0}>
-                        <Stack spacing={4}>
-                            <br />
-                            <small>pubkeys: {state.pioneer.availableOutputs.toString()}</small>
-                            <br />
-                        </Stack>
-                    </Card.Body>
+                    {/*<Card.Body pb={0} px={0}>*/}
+                    {/*    <Stack spacing={4}>*/}
+                    {/*        <br />*/}
+                    {/*        <small>inputs: {state.pioneer.availableInputs.toString()}</small>*/}
+                    {/*        <br />*/}
+                    {/*    </Stack>*/}
+                    {/*</Card.Body>*/}
+                    {/*<Card.Body pb={0} px={0}>*/}
+                    {/*    <Stack spacing={4}>*/}
+                    {/*        <br />*/}
+                    {/*        <small>outputs: {state.pioneer.availableOutputs.toString()}</small>*/}
+                    {/*        <br />*/}
+                    {/*    </Stack>*/}
+                    {/*</Card.Body>*/}
                     <Card.Body pb={0} px={0}>
                         <Stack spacing={4}>
                             <br />

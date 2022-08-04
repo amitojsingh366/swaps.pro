@@ -18,7 +18,7 @@ import { Custom } from 'pages/Custom/Custom'
 export const routes: Array<NestedRoute> = [
   {
     path: '/dashboard',
-    label: 'navBar.assets',
+    label: 'navBar.dashboard',
     main: <User />,
     icon: <AssetsIcon color='inherit' />
   },
@@ -34,12 +34,12 @@ export const routes: Array<NestedRoute> = [
     main: <Swap />,
     icon: <RepeatIcon color='inherit' />
   },
-  {
-    path: '/custom',
-    label: 'navBar.custom',
-    main: <Custom />,
-    icon: <FaCog color='inherit' />
-  },
+  // {
+  //   path: '/custom',
+  //   label: 'navBar.custom',
+  //   main: <Custom />,
+  //   icon: <FaCog color='inherit' />
+  // },
   {
     path: '/status/:invocationId',
     label: 'navBar.status',
