@@ -1,5 +1,6 @@
 import { ModalCloseButton } from '@chakra-ui/modal'
 import {
+    Box,
     Button,
     Input,
     Modal,
@@ -7,12 +8,14 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
+    Text,
     VStack,
 } from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 import { useModal } from 'hooks/useModal/useModal'
 import { Balance } from 'context/WalletProvider/types'
 import { FaCheck, FaClipboard } from 'react-icons/fa'
+import QRCode from "react-qr-code";
 
 export type ReceiveAssetModalProps = { balance: Balance }
 
@@ -71,7 +74,10 @@ export const ReceiveAssetModal = ({ balance }: ReceiveAssetModalProps) => {
                 <ModalCloseButton />
                 <ModalBody alignItems='center' justifyContent='center'>
                     <VStack spacing={4}>
-                        <Input value={balance.address} placeholder={`Unable to load ${balance.symbol} address`} />
+                        {balance.address && <Box bgColor='white' p={5} borderRadius='10%'>
+                            <QRCode value={balance.address} />
+                        </Box>}
+                        <Text fontWeight='bold'>{balance.address}</Text>
                         {balance.address && <Button
                             disabled={copied}
                             leftIcon={copied ? <FaCheck /> : <FaClipboard />}
