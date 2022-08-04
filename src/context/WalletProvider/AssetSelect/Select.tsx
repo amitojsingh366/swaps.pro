@@ -70,6 +70,7 @@ export const Select: FC<{ liveOnly?: boolean, walletSend?: boolean }> = ({ liveO
     useEffect(() => {
         if (!state.pioneer || !liveOnly) return
         state.pioneer.pioneer.instance.Blockchains().then((chains: any) => {
+            console.log("chains.data: ",chains.data)
             setLiveChains(Object.values(chains.data.live))
         })
     }, [state.pioneer])
