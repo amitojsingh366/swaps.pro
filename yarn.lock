@@ -3384,10 +3384,10 @@
     typescript "4.6.4"
     web3-utils "^1.7.3"
 
-"@pioneer-sdk/tx-builder@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@pioneer-sdk/tx-builder/-/tx-builder-1.0.0.tgz#f0983dce16156c4b82a75b7c452d8457d1c49db6"
-  integrity sha512-Z7hy9xFkXQ7RFom7aeSqv3evn7MJV3PHhOV1vhFCVOZKcL44yVIrwa0gGm1Tr/Nzr2UzBs91JwxB+0xgiZht/A==
+"@pioneer-sdk/tx-builder@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@pioneer-sdk/tx-builder/-/tx-builder-1.0.1.tgz#b9c0e03c52ab5c75a13694b3841976419a95ef83"
+  integrity sha512-dS+vtgDsQHE3xsQjZWbYepf9AHV3E+a7Ss78m+S66uyPMmMIHkLLdh+wEjN/Wf3FYlWhbAV5rzfi+vXy1KKzrQ==
   dependencies:
     "@ethersproject/bignumber" "^5.6.2"
     "@pioneer-platform/pioneer-coins" "^8.1.43"
