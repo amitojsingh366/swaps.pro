@@ -59,9 +59,11 @@ export const TradeInput = ({ history }: RouterProps) => {
   const onSelectModalInput = () => {
     //Open Select modal.
     console.log("onSelectModal called!")
-    //open('select')
+    if (!state.keepkeyConnected) {
+      console.log("wallet NOT connected!")
+      return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+    }
     selectAsset.open({})
-    dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     dispatch({ type: WalletActions.SET_SELECT_MODAL_TYPE, payload: 'input' })
     //set balance input
 
@@ -75,8 +77,11 @@ export const TradeInput = ({ history }: RouterProps) => {
   const onSelectModalOutput = () => {
     //Open Select modal.
     console.log("onSelectModalOutput called!")
+    if (!state.keepkeyConnected) {
+      console.log("wallet NOT connected!")
+      return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
+    }
     selectAsset.open({})
-    dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     dispatch({ type: WalletActions.SET_SELECT_MODAL_TYPE, payload: 'output' })
   }
 
