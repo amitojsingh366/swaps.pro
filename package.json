@@ -33,7 +33,7 @@
     "@pioneer-sdk/sdk": "^1.0.15",
     "@pioneer-sdk/tx-builder": "^1.0.1",
     "@reduxjs/toolkit": "^1.6.1",
-    "@shapeshiftoss/hdwallet-core": "^1.22.0",
+    "@shapeshiftoss/hdwallet-core": "^1.29.0",
     "@shapeshiftoss/hdwallet-keepkey-webusb": "^1.22.0",
     "@shapeshiftoss/hdwallet-native": "^1.22.0",
     "allsettled-polyfill": "^1.0.4",
