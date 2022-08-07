@@ -63,7 +63,7 @@ export const TradeInput = ({ history }: RouterProps) => {
       console.log("wallet NOT connected!")
       return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     }
-    selectAsset.open({ selectType: 'trade:input' })
+    selectAsset.open({ selectType: 'input' })
     //set balance input
 
   }
@@ -80,7 +80,7 @@ export const TradeInput = ({ history }: RouterProps) => {
       console.log("wallet NOT connected!")
       return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     }
-    selectAsset.open({ selectType: 'trade:output' })
+    selectAsset.open({ selectType: 'output' })
   }
 
   const onClear = () => {
@@ -111,6 +111,7 @@ export const TradeInput = ({ history }: RouterProps) => {
   useEffect(() => {
     console.log('Trade Input: ', state.tradeInput)
     console.log('Trade Output: ', state.tradeOutput)
+    
   }, [state.tradeInput, state.tradeOutput])
 
   return (
@@ -201,7 +202,7 @@ export const TradeInput = ({ history }: RouterProps) => {
               </Button>
             }
           />
-          <small>balance: {getValues('sellAsset.currency.symbol')}: {Number(getValues('sellAsset.currency.balance'))?.toFixed(6)} {Number(getValues('sellAsset.currency.valueUsd'))?.toFixed(2)}(USD)</small>
+          <small>balance: {state.tradeInput?.symbol}: {Number(state.tradeInput?.balance)?.toFixed(6)} {Number(state.tradeInput?.valueUsd)?.toFixed(2)}(USD)</small>
         </FormControl>
         <FormControl
           rounded=''
@@ -214,7 +215,7 @@ export const TradeInput = ({ history }: RouterProps) => {
         >
           <IconButton onClick={switchAssets} aria-label='Switch' isRound icon={<ArrowDownIcon />} />
           <Box display='flex' alignItems='center' color='gray.500'>
-            <Text fontSize='sm'>{getValues('sellAsset.currency.priceUsd')}</Text>
+            <Text fontSize='sm'>{state.tradeInput?.priceUsd}</Text>
             <HelperToolTip label='The price is ' />
           </Box>
         </FormControl>
