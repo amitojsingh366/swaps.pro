@@ -63,8 +63,7 @@ export const TradeInput = ({ history }: RouterProps) => {
       console.log("wallet NOT connected!")
       return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     }
-    selectAsset.open({})
-    dispatch({ type: WalletActions.SET_SELECT_MODAL_TYPE, payload: 'input' })
+    selectAsset.open({ selectType: 'trade:input' })
     //set balance input
 
   }
@@ -81,8 +80,7 @@ export const TradeInput = ({ history }: RouterProps) => {
       console.log("wallet NOT connected!")
       return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     }
-    selectAsset.open({})
-    dispatch({ type: WalletActions.SET_SELECT_MODAL_TYPE, payload: 'output' })
+    selectAsset.open({ selectType: 'trade:output' })
   }
 
   const onClear = () => {
@@ -109,6 +107,11 @@ export const TradeInput = ({ history }: RouterProps) => {
     onUpdate()
     update()
   }, [balances, assetContext, tradeOutput])
+
+  useEffect(() => {
+    console.log('Trade Input: ', state.tradeInput)
+    console.log('Trade Output: ', state.tradeOutput)
+  }, [state.tradeInput, state.tradeOutput])
 
   return (
     <SlideTransition>
@@ -181,8 +184,8 @@ export const TradeInput = ({ history }: RouterProps) => {
             inputLeftElement={
               <TokenButton
                 onClick={onSelectModalInput}
-                logo={getValues('sellAsset.currency.image')}
-                symbol={getValues('sellAsset.currency.symbol')}
+                logo={state.tradeInput?.image ?? ""}
+                symbol={state.tradeInput?.symbol ?? ""}
               />
             }
             inputRightElement={
@@ -222,8 +225,8 @@ export const TradeInput = ({ history }: RouterProps) => {
             inputLeftElement={
               <TokenButton
                 onClick={onSelectModalOutput}
-                logo={getValues('buyAsset.currency.image')}
-                symbol={getValues('buyAsset.currency.symbol')}
+                logo={state.tradeOutput?.image ?? ""}
+                symbol={state.tradeOutput?.symbol ?? ""}
               />
             }
           />
