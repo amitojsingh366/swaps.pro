@@ -25,10 +25,11 @@ import { AssetIcon } from 'components/AssetIcon'
 import { useForm } from 'react-hook-form'
 import { useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 import { SwapCurrency } from 'lib/assets/getTokenList'
+import { Balance } from 'context/WalletProvider/types'
 
-export type SelectAssetModalProps = { liveOnly?: boolean, walletSend?: boolean }
+export type SelectAssetModalProps = { liveOnly?: boolean, selectType: 'send' | 'trade:input' | 'trade:output' }
 
-export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: SelectAssetModalProps) => {
+export const SelectAssetModal = ({ liveOnly = true, selectType }: SelectAssetModalProps) => {
     const initRef = useRef<HTMLInputElement | null>(null)
     const finalRef = useRef<HTMLDivElement | null>(null)
 
@@ -42,7 +43,7 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
 
 
     const { state, dispatch } = useWallet()
-    const { balances, exchangeContext, exchangeInfo, status, selectType, assetContext } = state
+    const { balances, exchangeContext, exchangeInfo, status, assetContext } = state
     const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
     const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])
     const [liveChains, setLiveChains] = useState<Array<string>>()
@@ -60,12 +61,12 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
     const searchString = watch('search')
     const searching = useMemo(() => searchString.length > 0, [searchString])
 
-    const onSelectAsset = function (asset: string) {
+    const onSelectAsset = function (asset: Balance) {
         console.log("onSelectAsset: ", asset)
         close()
-        if (walletSend) return dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: asset })
-        if (selectType === 'input') {
-            dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: asset })
+        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: asset })
+        if (selectType === 'send') return
+        if (selectType === 'trade:input') {
             dispatch({ type: WalletActions.SET_TRADE_INPUT, payload: asset })
             // update()
         } else {
@@ -92,8 +93,8 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
 
     useEffect(() => {
         if (!state.pioneer || !liveOnly) return
-        console.log("state.pioneer.pioneer: ",state.pioneer.pioneer)
-        console.log("state.pioneer: ",state.pioneer)
+        console.log("state.pioneer.pioneer: ", state.pioneer.pioneer)
+        console.log("state.pioneer: ", state.pioneer)
         state.pioneer.pioneer.instance.Blockchains().then((chains: any) => {
             setLiveChains(Object.values(chains.data.live))
         })
@@ -130,7 +131,7 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
                                             {balances?.filter((bal: any) => bal.blockchain === chain).map((bal: any) => (
                                                 <GridItem w='100%'>
                                                     <Center>
-                                                        <button onClick={() => onSelectAsset(bal.symbol)} >
+                                                        <button onClick={() => onSelectAsset(bal)} >
                                                             <AssetIcon src={bal?.image} boxSize='40px' />
                                                             <Text>{bal.symbol}</Text>
                                                             <Text>balance: {bal.balance}</Text>
