@@ -61,7 +61,6 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
 
 
         console.log("sendAmount: ", sendAmount)
-        console.log("svalueAddress: ", state.assetContext)
 
         //validate
 

@@ -2,80 +2,23 @@
 import { Card } from "../Card";
 import {
     Box,
-    Button,
     Divider,
-    Flex, FormControl, FormErrorMessage, IconButton, Image, Input, InputProps,
-    SimpleGrid,
+    Flex,
     Spinner,
     Stack,
-    Editable,
-    EditableInput,
-    NumberInput,
-    NumberInputField,
-    NumberInputStepper,
-    NumberIncrementStepper,
-    NumberDecrementStepper,
-    EditablePreview,
     TabPanel,
     TabPanels,
-    Tabs, Text, Tooltip, HStack, VStack
+    Tabs, VStack
 } from "@chakra-ui/react";
-import { useWallet, WalletActions } from "context/WalletProvider/WalletProvider";
+import { useWallet } from "context/WalletProvider/WalletProvider";
 import { Page } from "../Layout/Page";
-import { useEffect, useState } from 'react'
-import { Controller, useFormContext } from "react-hook-form";
-import NumberFormat from "react-number-format";
-import { TokenRow } from "../TokenRow/TokenRow";
-import { TokenButton } from "../TokenRow/TokenButton";
-import { ArrowDownIcon, InfoIcon } from "@chakra-ui/icons";
-import { HelperToolTip } from "../HelperTooltip";
-import { useLocaleFormatter } from "../../hooks/useLocaleFormatter/useLocaleFormatter";
-import { useHistory } from "react-router-dom";
-import { useModal } from "hooks/useModal/useModal";
-import { Balance } from "context/WalletProvider/types";
 import { BalancesChart } from "./BalancesChart";
 import { BalancesList } from "./BalancesList";
 
-const FiatInput = (props: InputProps) => (
-    <Input
-        variant='unstyled'
-        size='xl'
-        textAlign='center'
-        fontSize='3xl'
-        mb={4}
-        placeholder='$0.00'
-        {...props}
-    />
-)
+
 
 export const UserWallet = () => {
-    const [amountSend, setAmountSend] = useState(0.011)
-    const { state, dispatch, setRoutePath } = useWallet()
-    const format = (val: number) => val
-    const parse = (val: string) => val.replace(/^\$/, '')
-    const [selectedAsset, setSelectedAsset] = useState<Balance>()
-    const [sendAddress, setSendAddress] = useState<string>()
-
-    const { selectAsset } = useModal()
-
-    const {
-        number: { localeParts }
-    } = useLocaleFormatter({ fiatType: 'USD' })
-
-    const onTextChangeFiat = () => {
-        //Open Select modal.
-        console.log("onTextChangeFiat called! (Fiat input)")
-    }
-
-    useEffect(() => {
-        if (!state.balances || !state.assetContext) return
-        const newAsset = state.balances?.find((bal: any) => bal.symbol === state.assetContext)
-        setSelectedAsset(newAsset)
-        setSendAddress(newAsset?.address)
-    }, [state.balances, state.assetContext])
-
-
-
+    const { state, } = useWallet()
 
     if (!state.pioneer) return (
         <Box d='flex' width='full' justifyContent='center' alignItems='center'>
