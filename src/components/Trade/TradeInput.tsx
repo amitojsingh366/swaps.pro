@@ -112,24 +112,25 @@ export const TradeInput = ({ history }: RouterProps) => {
 
   return (
     <SlideTransition>
-      <div>
-        <small>invocation: {state.invocationId}</small>
-      </div>
-      <div>
-        <small>status: {state?.invocation?.state}</small>
-      </div>
-      <div>
-        <small>walletIn: {state.walletInput.name} connected: {state.walletInput.isConnected}</small>
-      </div>
-      <div>
-        <small>walletOut: {state.walletOutput.name} connected: {state.walletOutput.isConnected}</small>
-      </div>
-      <div>
-        <small>sellAsset: {getValues('sellAsset.currency.symbol')} amount: {getValues('sellAsset.amount')}</small>
-      </div>
-      <div>
-        <small>buyAsset: {getValues('buyAsset.currency.symbol')} amount: {getValues('buyAsset.amount')}</small>
-      </div>
+      {/*<div>*/}
+      {/*  <small>invocation: {state.invocationId}</small>*/}
+      {/*</div>*/}
+      {/*<div>*/}
+      {/*  <small>status: {state?.invocation?.state}</small>*/}
+      {/*</div>*/}
+      {/*<div>*/}
+      {/*  <small>walletIn: {state.walletInput.name} connected: {state.walletInput.isConnected}</small>*/}
+      {/*</div>*/}
+      {/*<div>*/}
+      {/*  <small>walletOut: {state.walletOutput.name} connected: {state.walletOutput.isConnected}</small>*/}
+      {/*</div>*/}
+      {/*<div>*/}
+      {/*  <small>sellAsset: {getValues('sellAsset.currency.symbol')} amount: {getValues('sellAsset.amount')}</small>*/}
+      {/*</div>*/}
+      {/*<div>*/}
+      {/*  <small>buyAsset: {getValues('buyAsset.currency.symbol')} amount: {getValues('buyAsset.amount')}</small>*/}
+      {/*</div>*/}
+
       {/*<Button*/}
       {/*    size='lg'*/}
       {/*    width='full'*/}
@@ -148,29 +149,29 @@ export const TradeInput = ({ history }: RouterProps) => {
       </Button>
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
         <FormControl isInvalid={!!errors.fiatAmount}>
-          <Controller
-            render={({ field: { value } }) => (
-              <NumberFormat
-                inputMode='decimal'
-                thousandSeparator={localeParts.group}
-                decimalSeparator={localeParts.decimal}
-                prefix={localeParts.prefix}
-                suffix={localeParts.postfix}
-                value={value}
-                customInput={FiatInput}
-                onValueChange={onTextChangeFiat}
-              />
-            )}
-            name='fiatAmount'
-            control={control}
-            rules={{
-              validate: {
-                validNumber: value => !isNaN(Number(value)) || 'Amount must be a number',
-                greaterThanZero: value => Number(value) > 0 || 'Amount must be greater than 0'
-              }
-            }}
-          />
-          <Image maxH={10} maxW={20} src={state.walletInput.icon} />
+          {/*<Controller*/}
+          {/*  render={({ field: { value } }) => (*/}
+          {/*    <NumberFormat*/}
+          {/*      inputMode='decimal'*/}
+          {/*      thousandSeparator={localeParts.group}*/}
+          {/*      decimalSeparator={localeParts.decimal}*/}
+          {/*      prefix={localeParts.prefix}*/}
+          {/*      suffix={localeParts.postfix}*/}
+          {/*      value={value}*/}
+          {/*      customInput={FiatInput}*/}
+          {/*      onValueChange={onTextChangeFiat}*/}
+          {/*    />*/}
+          {/*  )}*/}
+          {/*  name='fiatAmount'*/}
+          {/*  control={control}*/}
+          {/*  rules={{*/}
+          {/*    validate: {*/}
+          {/*      validNumber: value => !isNaN(Number(value)) || 'Amount must be a number',*/}
+          {/*      greaterThanZero: value => Number(value) > 0 || 'Amount must be greater than 0'*/}
+          {/*    }*/}
+          {/*  }}*/}
+          {/*/>*/}
+          {/*<Image maxH={10} maxW={20} src={state.walletInput.icon} />*/}
           <FormErrorMessage>{errors.fiatAmount && errors.fiatAmount.message}</FormErrorMessage>
         </FormControl>
         <FormControl>
@@ -227,7 +228,7 @@ export const TradeInput = ({ history }: RouterProps) => {
               />
             }
           />
-          <Image maxH={10} maxW={20} src={state.walletOutput.icon} />
+          {/*<Image maxH={10} maxW={20} src={state.walletOutput.icon} />*/}
         </FormControl>
         <Button
           type='submit'
