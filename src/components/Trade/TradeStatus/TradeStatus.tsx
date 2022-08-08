@@ -1,5 +1,21 @@
-import { ArrowBackIcon } from '@chakra-ui/icons'
-import { Box, Button, Divider, Flex, IconButton, SimpleGrid, Spinner, Stack, Text } from '@chakra-ui/react'
+import {ArrowBackIcon} from '@chakra-ui/icons'
+import {
+    Box,
+    Button,
+    Divider,
+    Flex,
+    IconButton,
+    SimpleGrid,
+    Spinner,
+    Stack,
+    Text,
+    TabList,
+    TabPanels,
+    Tabs,
+    Tab,
+    TabPanel,
+    Image
+} from '@chakra-ui/react'
 import { Card } from 'components/Card'
 import { HelperToolTip } from 'components/HelperTooltip'
 import { Row } from 'components/Row'
@@ -8,14 +24,15 @@ import { useFormContext } from 'react-hook-form'
 import { RouterProps, useHistory, useParams } from 'react-router-dom'
 import { AssetToAsset } from './AssetToAsset'
 import { useWallet } from "../../../context/WalletProvider/WalletProvider";
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Page } from 'components/Layout/Page'
+import ELEPHANT from 'assets/png/elephant.png'
 
 export const TradeStatus = () => {
     const history = useHistory()
     const { invocationId } = useParams<{ invocationId: string }>()
 
-
+    const [tabIndex, setTabIndex] = React.useState(0)
     const { state, updateInvocation, dispatch } = useWallet()
 
 
@@ -38,6 +55,11 @@ export const TradeStatus = () => {
         }
     }, [])
 
+    const handleTabsChange = (index) => {
+        console.log("index: ",index)
+        setTabIndex(index)
+    }
+
     if (!state.invocation || !state.invocationId) return (
         <>
             Fetching Invocation
@@ -57,18 +79,23 @@ export const TradeStatus = () => {
         //Open Select modal.
         updateInvocation()
 
+        if(state.invocation.state === 'broadcasted'){
+            console.log("STATE IS BROADCASTED!")
+            handleTabsChange(2)
+        }
+
         //get txid
-        let payload = {
-            noBroadcast:false,
-            sync:true,
-            invocationId:state.invocationId
-        }
-        try{
-            let resultBroadcast = await state.pioneer.broadcast(payload)
-            console.log("resultBroadcast: ",resultBroadcast)
-        }catch(e){
-            console.error("status page can not broadcast: e: ",e)
-        }
+        // let payload = {
+        //     noBroadcast:false,
+        //     sync:true,
+        //     invocationId:state.invocationId
+        // }
+        // try{
+        //     let resultBroadcast = await state.pioneer.broadcast(payload)
+        //     console.log("resultBroadcast: ",resultBroadcast)
+        // }catch(e){
+        //     console.error("status page can not broadcast: e: ",e)
+        // }
 
 
 
@@ -91,10 +118,53 @@ export const TradeStatus = () => {
                                             isRound
                                             onClick={() => history.push('/trade/input')}
                                         />
-                                        <Card.Heading textAlign='center'>Trade Status {tradeStatus}<small>{invocationContext}</small></Card.Heading>
-
+                                        <Card.Heading textAlign='center'>type: {state.invocation.invocation.type}
+                                        </Card.Heading>
                                     </SimpleGrid>
-                                    {/* <AssetToAsset
+                                </Card.Header>
+
+                                <br/>
+                                <small>invocation: {state.invocationId}</small>
+                                <br/>
+                                <br />
+                                <br />
+                                <small>state: {state.invocation.state}</small>
+                                <br />
+                                <Row>
+                                    <Row.Label>network:{state.invocation.invocation.network}</Row.Label>
+                                </Row>
+                                <br />
+                                <br />
+                                <Image src={ELEPHANT} />
+                                {state.invocation.invocation.type === 'sendToAddress' && <div>
+                                        <Tabs align='center' variant='soft' colorScheme='green' index={tabIndex} onChange={handleTabsChange}>
+                                            <TabList>
+                                                <Tab bg='green.500'>TX built</Tab>
+                                                <Tab _selected={{ color: 'white', bg: 'yellow.500' }}>TX signed</Tab>
+                                                <Tab _selected={{ color: 'white', bg: 'blue.500' }}>TX confirmed</Tab>
+                                            </TabList>
+                                            <TabPanels>
+                                                <TabPanel>
+                                                    <p>one!</p>
+                                                </TabPanel>
+                                                <TabPanel>
+                                                    <p>two!</p>
+                                                </TabPanel>
+                                                <TabPanel>
+                                                    <p>
+                                                        Transaction is confirmed!
+                                                        <br/>
+                                                        You can view your transaction here:
+                                                    </p>
+                                                </TabPanel>
+                                            </TabPanels>
+                                        </Tabs>
+                                    </div>}
+
+                                    {state.invocation.invocation.type === 'swap' && <div>
+
+
+                                        {/* <AssetToAsset
                                         buyAsset={{
                                             symbol: buyAsset?.currency?.symbol,
                                             amount: buyAsset.amount,
@@ -106,12 +176,39 @@ export const TradeStatus = () => {
                                             icon: sellAsset?.currency?.image
                                         }}
                                         mt={6}
-                                    /> */}
-                                </Card.Header>
+                                        /> */}
+
+                                        <Tabs variant='soft-rounded' colorScheme='green'>
+                                            <TabList>
+                                                <Tab _selected={{ color: 'white', bg: 'green.500' }}>Deposit Received</Tab>
+                                                <Tab _selected={{ color: 'white', bg: 'yellow.500' }}>Awaiting Exchange</Tab>
+                                                <Tab _selected={{ color: 'white', bg: 'blue.500' }}>Complete</Tab>
+                                            </TabList>
+                                            <TabPanels>
+                                                <TabPanel>
+                                                    <p>one!</p>
+                                                </TabPanel>
+                                                <TabPanel>
+                                                    <p>two!</p>
+                                                </TabPanel>
+                                                <TabPanel>
+                                                    <p>
+                                                        Fullfilled!:
+
+                                                        {fullfillmentTxid &&
+                                                            <small>fullfillment txid: {fullfillmentTxid}</small>
+                                                        }
+                                                    </p>
+                                                </TabPanel>
+                                            </TabPanels>
+                                        </Tabs>
+                                    </div>}
+
+
+
                                 <Divider />
                                 <Button
-                                    size='lg'
-                                    width='full'
+                                    size='sm'
                                     colorScheme='green'
                                     onClick={() => onUpdate()}
                                 >
@@ -119,17 +216,7 @@ export const TradeStatus = () => {
                                 </Button>
                                 <Card.Body pb={0} px={0}>
                                     <Stack spacing={4}>
-                                        <br />
-                                        <small>invocation: {state.invocationId}</small>
-                                        <br />
-                                        <small>state: {state.invocation.state}</small>
-                                        <br />
-                                        <Row>
-                                            <Row.Label>type:{state.invocation.invocation.type}</Row.Label>
-                                        </Row>
-                                        <Row>
-                                            <Row.Label>network:{state.invocation.invocation.network}</Row.Label>
-                                        </Row>
+
                                         {/*    {state.invocation.invocation.route.result.swaps.map((value, i) => {*/}
                                         {/*        return <>*/}
                                         {/*            <HelperToolTip label='protocol used to complete the swap'>*/}
@@ -154,13 +241,9 @@ export const TradeStatus = () => {
                                         {/*        </>*/}
                                         {/*    })}*/}
                                         {/*<small> txid: {state.invocation.signedTx?.txid}</small>*/}
-                                        <small>txid: {state.invocation.broadcast?.txid}</small>
                                         {/*<small>is confirmed: {state.invocation.isConfirmed}</small>*/}
                                         {/*<small>is fullfilled: {state.invocation.isFullfilled}</small>*/}
                                         <br />
-                                        {fullfillmentTxid &&
-                                            <small>fullfillment txid: {fullfillmentTxid}</small>
-                                        }
                                     </Stack>
                                 </Card.Body>
                                 <Card.Footer px={0} py={0}>
