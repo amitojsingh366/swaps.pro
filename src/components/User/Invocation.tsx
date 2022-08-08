@@ -36,6 +36,11 @@ export const Invocation: FC<{ invocation: InvocationType }> = ({ invocation }) =
     return (
         <Accordion allowMultiple allowToggle alignItems='center' justifyContent='center' w="100%" spacing={8} p={2} bgColor={"gray.700"} borderRadius="50px">
             <AccordionItem border="none">
+                {
+                    invocation.date && <HStack>
+                        <Text>Date: </Text>
+                        <Text> {moment(invocation.date).format('MMMM Do YYYY, h:mm:ss a')}</Text>
+                    </HStack>}
                 <AccordionButton p={0} _focus={{ outline: 'none' }}>
                     <HStack alignItems='center' justifyContent='center' w="100%" spacing={8}>
                         <Tooltip label={invocation.state}>

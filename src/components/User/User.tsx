@@ -60,9 +60,10 @@ export const User = () => {
                     {/*    </Stack>*/}
                     {/*</Card.Body>*/}
                     <Card.Body pb={0} px={0}>
-                        <Stack spacing={4}>
+                        <Stack align="center" spacing={4}>
                             <br />
-                            <small>invocations: {state.pioneer.invocations.length}</small>
+                            {/*<small>invocations: {state.pioneer.invocations.length}</small>*/}
+                            <h4>Your Transactions</h4>
                             <br />
                         </Stack>
                         <VStack spacing={2}>
@@ -94,21 +95,21 @@ export const User = () => {
                     {/*    </Stack>*/}
                     {/*</Card.Body>*/}
                     <Card.Body pb={0} px={0}>
-                        <Stack spacing={4}>
-                            <br />
-                            <small>wallets: {state.pioneer.wallets.toString()}</small>
-                            <br />
-                        </Stack>
+                        {/*<Stack spacing={4}>*/}
+                        {/*    <br />*/}
+                        {/*    <small>wallets: {state.pioneer.wallets.toString()}</small>*/}
+                        {/*    <br />*/}
+                        {/*</Stack>*/}
                     </Card.Body>
                     <Card.Footer px={0} py={0}>
-                        <Button
-                            colorScheme='blue'
-                            size='lg'
-                            mt={6}
-                        // onClick={() => history.push('/trade/input')}
-                        >
+                        {/*<Button*/}
+                        {/*    colorScheme='blue'*/}
+                        {/*    size='lg'*/}
+                        {/*    mt={6}*/}
+                        {/*// onClick={() => history.push('/trade/input')}*/}
+                        {/*>*/}
 
-                        </Button>
+                        {/*</Button>*/}
                     </Card.Footer>
                 </Card>
             </div>

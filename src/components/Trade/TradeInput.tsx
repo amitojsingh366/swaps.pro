@@ -143,14 +143,14 @@ export const TradeInput = ({ history }: RouterProps) => {
       {/*>*/}
       {/*  Clear*/}
       {/*</Button>*/}
-      <Button
-        // size='lg'
-        // width='full'
-        colorScheme='yellow'
-        onClick={() => onUpdate()}
-      >
-        update
-      </Button>
+      {/*<Button*/}
+      {/*  // size='lg'*/}
+      {/*  // width='full'*/}
+      {/*  colorScheme='yellow'*/}
+      {/*  onClick={() => onUpdate()}*/}
+      {/*>*/}
+      {/*  update*/}
+      {/*</Button>*/}
       <Box as='form' onSubmit={handleSubmit(onSubmit)}>
         <FormControl isInvalid={!!errors.fiatAmount}>
           {/*<Controller*/}

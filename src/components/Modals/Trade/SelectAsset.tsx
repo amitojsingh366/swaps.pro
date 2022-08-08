@@ -113,7 +113,7 @@ export const SelectAssetModal = ({ liveOnly = true, selectType }: SelectAssetMod
             <ModalOverlay />
             <ModalContent justifyContent='center' px={3} pt={3} pb={6} height='75%' overflow='scroll'>
                 <ModalHeader textAlign='center'>
-                    <h2>Select an  {selectType.replace(selectType[0], selectType[0].toUpperCase())} currency</h2>
+                    {/*<h2>Select an  {selectType.replace(selectType[0], selectType[0].toUpperCase())} currency</h2>*/}
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody alignItems='center' justifyContent='center'>
