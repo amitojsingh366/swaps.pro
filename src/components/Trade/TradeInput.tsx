@@ -19,7 +19,7 @@ import { Pioneer } from 'hooks/usePioneerSdk/usePioneerSdk'
 import NumberFormat from 'react-number-format'
 import { RouterProps } from 'react-router-dom'
 import { useWallet, WalletActions } from "context/WalletProvider/WalletProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import KEEPKEY_ICON from "../../assets/png/keepkey.png";
 import { useModal } from 'hooks/useModal/useModal'
 
@@ -37,8 +37,12 @@ const FiatInput = (props: InputProps) => (
 
 export const TradeInput = ({ history }: RouterProps) => {
   const { state, dispatch, setRoutePath, updateInvocation } = useWallet()
-  const { assetContext, balances, tradeOutput, exchangeContext, pioneer } = state
-  const { getCryptoQuote, getFiatQuote, reset, switchAssets, update, setMaxInput } = Pioneer()
+  const { assetContext, balances, exchangeContext, pioneer } = state
+  const { getCryptoQuote, getFiatQuote, reset, switchAssets, setMaxInput } = Pioneer()
+  const [inputAmount, setInputAmount] = useState(0)
+  const [outputAmount, setOutputAmount] = useState(0)
+  const [loading, setLoading] = useState(false)
+
   let {
     control,
     handleSubmit,
@@ -63,7 +67,7 @@ export const TradeInput = ({ history }: RouterProps) => {
       console.log("wallet NOT connected!")
       return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     }
-    selectAsset.open({ selectType: 'input' })
+    selectAsset.open({ selectType: 'input', extra: () => { setInputAmount(0) } })
     //set balance input
 
   }
@@ -80,7 +84,7 @@ export const TradeInput = ({ history }: RouterProps) => {
       console.log("wallet NOT connected!")
       return dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
     }
-    selectAsset.open({ selectType: 'output' })
+    selectAsset.open({ selectType: 'output', extra: () => { setOutputAmount(0) } })
   }
 
   const onClear = () => {
@@ -94,7 +98,7 @@ export const TradeInput = ({ history }: RouterProps) => {
   const onUpdate = () => {
     //Open Select modal.
     updateInvocation()
-    update()
+    // update()
     if (state?.invocation?.state === 'created') {
       history.push('/trade/confirm')
     }
@@ -104,15 +108,95 @@ export const TradeInput = ({ history }: RouterProps) => {
   }
 
   useEffect(() => {
-    onUpdate()
-    update()
-  }, [balances, assetContext, tradeOutput])
+    //  onUpdate()
+    // update()
+  }, [balances, assetContext])
 
   useEffect(() => {
-    console.log('Trade Input: ', state.tradeInput)
-    console.log('Trade Output: ', state.tradeOutput)
-    
-  }, [state.tradeInput, state.tradeOutput])
+    console.log('Trade Input: ', state.tradeState?.input)
+    console.log('Trade Output: ', state.tradeState?.output)
+  }, [state.tradeState])
+
+  useEffect(() => {
+    if (!state.tradeState || !state.tradeState.input || !state.pioneer) return
+    if (!state.tradeState.output) return
+    setLoading(true)
+    let swap: any = {
+      input: {
+        blockchain: state.tradeState.input.bal.blockchain,
+        asset: state.tradeState.input.bal.symbol,
+      },
+      output: {
+        blockchain: state.tradeState.output?.bal.blockchain,
+        asset: state.tradeState.output?.bal.symbol,
+      },
+      amount: state.tradeState.input.amount,
+      noBroadcast: true
+    }
+    console.log("HOOK: swap", swap)
+    //TODO
+    console.log("pioneer: ", state.pioneer)
+    if (state.pioneer) {
+      let tx = {
+        type: 'swap',
+        payload: swap
+      }
+      state.pioneer.build(tx).then((invocationId) => {
+        if (invocationId) {
+          //SET_INVOCATION_ID
+          dispatch({ type: WalletActions.SET_INVOCATION_ID, payload: invocationId })
+          //TODO context is wallet?
+          setValue('invocationContext', invocationId)
+          setValue('invocationId', invocationId)
+
+          if (!state.pioneer || !state.tradeState) return
+          state.pioneer.getInvocation(invocationId).then((invocation) => {
+            if (invocation) {
+              dispatch({ type: WalletActions.SET_INVOCATION, payload: invocation })
+              console.log("invocation: ", invocation)
+              //Set outAmount
+              if (!state.tradeState) return
+              dispatch({
+                type: WalletActions.SET_TRADE_STATE, payload: {
+                  ...state.tradeState,
+                  output: { bal: state.tradeState.output?.bal, amount: Number(invocation.invocation.tx.amountOut) }
+                }
+              })
+              setOutputAmount(Number(invocation.invocation.tx.amountOut))
+              setLoading(false)
+            } else {
+              console.error("Failed to get invocation!")
+              setLoading(false)
+            }
+          })
+
+        } else {
+          setLoading(false)
+        }
+
+
+      })
+
+    } else {
+      console.log("Pioneer not set into state!")
+    }
+  }, [dispatch, setValue, state.pioneer, state.tradeState])
+
+  useEffect(() => {
+    if (!state.tradeState || !state.tradeState.input) return
+    if (inputAmount === 0) {
+      let amt = state.tradeState.input.bal.balance - 0.002
+      if (amt === inputAmount) return
+      dispatch({
+        type: WalletActions.SET_TRADE_STATE, payload: {
+          ...state.tradeState,
+          input: { ...state.tradeState.input, amount: amt }
+        }
+      })
+      setInputAmount(amt)
+      return
+    }
+  }, [dispatch, inputAmount, state.tradeState])
 
   return (
     <SlideTransition>
@@ -180,14 +264,18 @@ export const TradeInput = ({ history }: RouterProps) => {
         </FormControl>
         <FormControl>
           <TokenRow
+            value={inputAmount}
+            setValue={setInputAmount}
             control={control}
             fieldName='sellAsset.amount'
             rules={{ required: true }}
+            loading={loading}
             inputLeftElement={
               <TokenButton
                 onClick={onSelectModalInput}
-                logo={state.tradeInput?.image ?? ""}
-                symbol={state.tradeInput?.symbol ?? ""}
+                logo={state.tradeState?.input?.bal.image ?? ""}
+                symbol={state.tradeState?.input?.bal.symbol ?? ""}
+                disabled={loading}
               />
             }
             inputRightElement={
@@ -197,12 +285,13 @@ export const TradeInput = ({ history }: RouterProps) => {
                 variant='ghost'
                 colorScheme='blue'
                 onClick={setMaxInput}
+                disabled={loading}
               >
                 Max
               </Button>
             }
           />
-          <small>balance: {state.tradeInput?.symbol}: {Number(state.tradeInput?.balance)?.toFixed(6)} {Number(state.tradeInput?.valueUsd)?.toFixed(2)}(USD)</small>
+          <small>balance: {state.tradeState?.input?.bal.symbol}: {Number(state.tradeState?.input?.bal.balance)?.toFixed(6)} {Number(state.tradeState?.input?.bal.valueUsd)?.toFixed(2)}(USD)</small>
         </FormControl>
         <FormControl
           rounded=''
@@ -215,20 +304,24 @@ export const TradeInput = ({ history }: RouterProps) => {
         >
           <IconButton onClick={switchAssets} aria-label='Switch' isRound icon={<ArrowDownIcon />} />
           <Box display='flex' alignItems='center' color='gray.500'>
-            <Text fontSize='sm'>{state.tradeInput?.priceUsd}</Text>
+            <Text fontSize='sm'>{state.tradeState?.input?.bal.priceUsd}</Text>
             <HelperToolTip label='The price is ' />
           </Box>
         </FormControl>
         <FormControl mb={6}>
           <TokenRow
+            value={outputAmount}
+            setValue={setOutputAmount}
             control={control}
             fieldName='buyAsset.amount'
             rules={{ required: true }}
+            loading={loading}
             inputLeftElement={
               <TokenButton
                 onClick={onSelectModalOutput}
-                logo={state.tradeOutput?.image ?? ""}
-                symbol={state.tradeOutput?.symbol ?? ""}
+                isLoading={loading}
+                logo={state.tradeState?.output?.bal.image ?? ""}
+                symbol={state.tradeState?.output?.bal.symbol ?? ""}
               />
             }
           />
@@ -239,6 +332,7 @@ export const TradeInput = ({ history }: RouterProps) => {
           size='lg'
           width='full'
           colorScheme='green'
+          isLoading={loading}
         // isDisabled={isDirty || !isValid}
         >
           Preview Trade
