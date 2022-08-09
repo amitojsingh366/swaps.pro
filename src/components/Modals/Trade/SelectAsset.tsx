@@ -27,9 +27,9 @@ import { useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 import { SwapCurrency } from 'lib/assets/getTokenList'
 import { Balance } from 'context/WalletProvider/types'
 
-export type SelectAssetModalProps = { liveOnly?: boolean, selectType: 'input' | 'output' }
+export type SelectAssetModalProps = { liveOnly?: boolean, selectType: 'input' | 'output', extra?: any }
 
-export const SelectAssetModal = ({ liveOnly = true, selectType }: SelectAssetModalProps) => {
+export const SelectAssetModal = ({ liveOnly = true, selectType, extra }: SelectAssetModalProps) => {
     const initRef = useRef<HTMLInputElement | null>(null)
     const finalRef = useRef<HTMLDivElement | null>(null)
 
@@ -66,11 +66,23 @@ export const SelectAssetModal = ({ liveOnly = true, selectType }: SelectAssetMod
         close()
         dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: asset })
         if (selectType === 'input') {
-            dispatch({ type: WalletActions.SET_TRADE_INPUT, payload: asset })
-            // update()
+            dispatch({
+                type: WalletActions.SET_TRADE_STATE, payload:
+                    state.tradeState ? {
+                        ...state.tradeState,
+                        input: { ...state.tradeState.input, bal: asset, amount: 0 }
+                    } : { input: { bal: asset } }
+            })
+            if (extra) extra()
         } else {
-            dispatch({ type: WalletActions.SET_TRADE_OUTPUT, payload: asset })
-            // update()
+            dispatch({
+                type: WalletActions.SET_TRADE_STATE, payload:
+                    state.tradeState ? {
+                        ...state.tradeState,
+                        output: { ...state.tradeState.output, bal: asset, amount: 0 }
+                    } : { output: { bal: asset } }
+            })
+            if (extra) extra()
         }
         dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
     }
@@ -113,7 +125,7 @@ export const SelectAssetModal = ({ liveOnly = true, selectType }: SelectAssetMod
             <ModalOverlay />
             <ModalContent justifyContent='center' px={3} pt={3} pb={6} height='75%' overflow='scroll'>
                 <ModalHeader textAlign='center'>
-                    {/*<h2>Select an  {selectType.replace(selectType[0], selectType[0].toUpperCase())} currency</h2>*/}
+                    <h2>Select an {selectType} currency</h2>
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody alignItems='center' justifyContent='center'>

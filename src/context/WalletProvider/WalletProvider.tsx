@@ -110,8 +110,7 @@ export enum WalletActions {
   SET_INVOCATION = 'SET_INVOCATION',
   SET_INVOCATION_ID = 'SET_INVOCATION_ID',
   SET_INVOCATION_CONTEXT = 'SET_INVOCATION_CONTEXT',
-  SET_TRADE_INPUT = 'SET_TRADE_INPUT',
-  SET_TRADE_OUTPUT = 'SET_TRADE_OUTPUT',
+  SET_TRADE_STATE = 'SET_TRADE_STATE',
   SET_TRADE_STATUS = 'SET_TRADE_STATUS',
   SET_TRADE_FULLFILLMENT_TXID = 'SET_TRADE_FULLFILLMENT_TXID',
   SET_INVOCATION_TXID = 'SET_INVOCATION_TXID',
@@ -162,8 +161,17 @@ export interface InitialState {
   context: any
   exchangeContext: string | null
   totalValueUsd: string | null
-  tradeOutput: Balance | null
-  tradeInput: Balance | null
+  tradeState: {
+    input?: {
+      bal: Balance,
+      amount?: number
+    }
+    output?: {
+      bal: Balance,
+      amount?: number
+    }
+    fiatAmount?: number
+  } | null
   exchangeInfo: any
   selectType: any
   tradeStatus: string | null,
@@ -215,8 +223,7 @@ const initialState: InitialState = {
   context: null,
   invocation: null,
   totalValueUsd: null,
-  tradeInput: null,
-  tradeOutput: null,
+  tradeState: null,
   tradeStatus: null,
   fullfillmentTxid: null,
   invocationTxid: null,
@@ -253,9 +260,19 @@ export type ActionTypes =
   | { type: WalletActions.SET_KEEPKEY; payload: any | null }
   | { type: WalletActions.SET_PAIRING_CODE; payload: String | null }
   | { type: WalletActions.SET_USERNAME; payload: String | null }
-  | { type: WalletActions.SET_TRADE_INPUT; payload: Balance | null }
-  | { type: WalletActions.SET_TRADE_OUTPUT; payload: Balance | null }
-  | { type: WalletActions.SET_TRADE_STATUS; payload: string }
+  | {
+    type: WalletActions.SET_TRADE_STATE; payload: {
+      input?: {
+        bal: Balance,
+        amount?: number
+      }
+      output?: {
+        bal: Balance,
+        amount?: number
+      }
+      fiatAmount?: number
+    } | null
+  } | { type: WalletActions.SET_TRADE_STATUS; payload: string }
   | { type: WalletActions.SET_TRADE_FULLFILLMENT_TXID; payload: string }
   | { type: WalletActions.SET_KEEPKEY_STATUS; payload: string }
   | { type: WalletActions.SET_KEEPKEY_STATE; payload: number }
@@ -360,10 +377,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, modal: action.payload }
     case WalletActions.SET_SELECT_MODAL_TYPE:
       return { ...state, selectType: action.payload }
-    case WalletActions.SET_TRADE_INPUT:
-      return { ...state, tradeInput: action.payload }
-    case WalletActions.SET_TRADE_OUTPUT:
-      return { ...state, tradeOutput: action.payload }
+    case WalletActions.SET_TRADE_STATE:
+      return { ...state, tradeState: action.payload }
     case WalletActions.SET_TRADE_STATUS:
       return { ...state, tradeStatus: action.payload }
     case WalletActions.SET_KEEPKEY_STATUS:
