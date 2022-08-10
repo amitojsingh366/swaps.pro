@@ -19,9 +19,10 @@ import { Pioneer } from 'hooks/usePioneerSdk/usePioneerSdk'
 import NumberFormat from 'react-number-format'
 import { RouterProps } from 'react-router-dom'
 import { useWallet, WalletActions } from "context/WalletProvider/WalletProvider";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import KEEPKEY_ICON from "../../assets/png/keepkey.png";
 import { useModal } from 'hooks/useModal/useModal'
+import { Balance } from 'context/WalletProvider/types'
 
 const FiatInput = (props: InputProps) => (
   <Input
@@ -38,10 +39,20 @@ const FiatInput = (props: InputProps) => (
 export const TradeInput = ({ history }: RouterProps) => {
   const { state, dispatch, setRoutePath, updateInvocation } = useWallet()
   const { assetContext, balances, exchangeContext, pioneer } = state
-  const { getCryptoQuote, getFiatQuote, reset, switchAssets, setMaxInput } = Pioneer()
+  const { getCryptoQuote, getFiatQuote, reset, setMaxInput } = Pioneer()
   const [inputAmount, setInputAmount] = useState(0)
   const [outputAmount, setOutputAmount] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [lastSwapQuote, setLastSwapQuote] = useState<{
+    input?: {
+      bal: Balance,
+      amount?: number
+    }
+    output?: {
+      bal: Balance,
+      amount?: number
+    }
+  }>()
 
   let {
     control,
@@ -117,9 +128,29 @@ export const TradeInput = ({ history }: RouterProps) => {
     console.log('Trade Output: ', state.tradeState?.output)
   }, [state.tradeState])
 
+  const switchAssets = useCallback(() => {
+    if (!state.tradeState || !state.tradeState.input || !state.tradeState.output) return
+    dispatch({
+      type: WalletActions.SET_TRADE_STATE, payload: {
+        ...state.tradeState,
+        input: { ...state.tradeState.output, amount: 0 },
+        output: { ...state.tradeState.input, amount: 0 }
+      }
+    })
+    setInputAmount(0)
+    setOutputAmount(0)
+  }, [dispatch, state.tradeState])
+
   useEffect(() => {
-    if (!state.tradeState || !state.tradeState.input || !state.pioneer) return
-    if (!state.tradeState.output) return
+    if (!state.tradeState || !state.tradeState.input || !state.tradeState.output || !state.pioneer) return
+    if (lastSwapQuote) {
+      if (lastSwapQuote.input && lastSwapQuote.output &&
+        lastSwapQuote.input.bal.blockchain === state.tradeState.input.bal.blockchain &&
+        lastSwapQuote.input.bal.symbol === state.tradeState.input.bal.symbol &&
+        lastSwapQuote.input.amount === state.tradeState.input.amount &&
+        lastSwapQuote.output.bal.blockchain === state.tradeState.output.bal.blockchain &&
+        lastSwapQuote.output.bal.symbol === state.tradeState.output.bal.symbol) return
+    }
     setLoading(true)
     let swap: any = {
       input: {
@@ -141,46 +172,53 @@ export const TradeInput = ({ history }: RouterProps) => {
         type: 'swap',
         payload: swap
       }
-      state.pioneer.build(tx).then((invocationId) => {
-        if (invocationId) {
-          //SET_INVOCATION_ID
-          dispatch({ type: WalletActions.SET_INVOCATION_ID, payload: invocationId })
-          //TODO context is wallet?
-          setValue('invocationContext', invocationId)
-          setValue('invocationId', invocationId)
+      try {
+        state.pioneer.build(tx).then((invocationId) => {
+          if (invocationId) {
+            //SET_INVOCATION_ID
+            dispatch({ type: WalletActions.SET_INVOCATION_ID, payload: invocationId })
+            //TODO context is wallet?
+            setValue('invocationContext', invocationId)
+            setValue('invocationId', invocationId)
 
-          if (!state.pioneer || !state.tradeState) return
-          state.pioneer.getInvocation(invocationId).then((invocation) => {
-            if (invocation) {
-              dispatch({ type: WalletActions.SET_INVOCATION, payload: invocation })
-              console.log("invocation: ", invocation)
-              //Set outAmount
-              if (!state.tradeState) return
-              dispatch({
-                type: WalletActions.SET_TRADE_STATE, payload: {
-                  ...state.tradeState,
-                  output: { bal: state.tradeState.output?.bal, amount: Number(invocation.invocation.tx.amountOut) }
+            if (!state.pioneer || !state.tradeState) return
+            try {
+              state.pioneer.getInvocation(invocationId).then((invocation) => {
+                if (invocation) {
+                  dispatch({ type: WalletActions.SET_INVOCATION, payload: invocation })
+                  console.log("invocation: ", invocation)
+                  //Set outAmount
+                  if (!state.tradeState) return
+                  dispatch({
+                    type: WalletActions.SET_TRADE_STATE, payload: {
+                      ...state.tradeState,
+                      output: { bal: state.tradeState.output?.bal, amount: Number(invocation.invocation.tx.amountOut) }
+                    }
+                  })
+                  setLastSwapQuote(state.tradeState)
+                  setOutputAmount(Number(invocation.invocation.tx.amountOut))
+                  setLoading(false)
+                } else {
+                  console.error("Failed to get invocation!")
+                  setLoading(false)
                 }
               })
-              setOutputAmount(Number(invocation.invocation.tx.amountOut))
-              setLoading(false)
-            } else {
-              console.error("Failed to get invocation!")
+            } catch (e) {
               setLoading(false)
             }
-          })
+          } else {
+            setLoading(false)
+          }
+        })
+      } catch (e) {
+        setLoading(false)
+      }
 
-        } else {
-          setLoading(false)
-        }
-
-
-      })
 
     } else {
       console.log("Pioneer not set into state!")
     }
-  }, [dispatch, setValue, state.pioneer, state.tradeState])
+  }, [dispatch, lastSwapQuote, setValue, state.pioneer, state.tradeState])
 
   useEffect(() => {
     if (!state.tradeState || !state.tradeState.input) return
@@ -302,7 +340,7 @@ export const TradeInput = ({ history }: RouterProps) => {
           alignItems='center'
           justifyContent='space-between'
         >
-          <IconButton onClick={switchAssets} aria-label='Switch' isRound icon={<ArrowDownIcon />} />
+          <IconButton onClick={switchAssets} isLoading={loading} aria-label='Switch' isRound icon={<ArrowDownIcon />} />
           <Box display='flex' alignItems='center' color='gray.500'>
             <Text fontSize='sm'>{state.tradeState?.input?.bal.priceUsd}</Text>
             <HelperToolTip label='The price is ' />

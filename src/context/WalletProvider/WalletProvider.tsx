@@ -940,6 +940,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           dispatch({ type: WalletActions.SET_WALLET_INFO, payload: { name: 'pioneer', icon: 'Pioneer' } })
         } else {
           console.log("app is not paired! can not start. please connect a wallet")
+          dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
         }
 
         //@TODO get wallets
