@@ -67,7 +67,7 @@ export const User = () => {
                             <br />
                         </Stack>
                         <VStack spacing={2}>
-                            {state.pioneer.invocations.map((invocation: any) => <Invocation invocation={invocation} />)}
+                            {state.pioneer.invocations.sort((a: any, b: any) => Number(b.date) - Number(a.date)).map((invocation: any) => <Invocation invocation={invocation} />)}
                         </VStack>
 
 
