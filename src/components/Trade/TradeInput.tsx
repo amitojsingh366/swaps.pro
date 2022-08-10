@@ -66,6 +66,7 @@ export const TradeInput = ({ history }: RouterProps) => {
   } = useLocaleFormatter({ fiatType: 'USD' })
 
   const onSubmit = () => {
+    console.log("onSubmit called! ")
     history.push('/trade/confirm')
   }
 
@@ -371,6 +372,7 @@ export const TradeInput = ({ history }: RouterProps) => {
           width='full'
           colorScheme='green'
           isLoading={loading}
+          onClick={onSubmit}
         // isDisabled={isDirty || !isValid}
         >
           Preview Trade

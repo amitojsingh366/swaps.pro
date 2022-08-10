@@ -38,9 +38,8 @@ export const TradeConfirm = ({ history }: RouterProps) => {
       let executionResp = await state.pioneer.broadcast(payload)
       console.log("executionResp: ",executionResp)
 
-      //TODO update txid
-
-      history.push('/trade/status')
+      //open invocation!
+      history.push(`/status/${state.invocation.invocationId}`)
     }catch(e){
       console.error(e)
     }

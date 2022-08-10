@@ -14,7 +14,8 @@ import {
     Tabs,
     Tab,
     TabPanel,
-    Image
+    Image,
+    Progress
 } from '@chakra-ui/react'
 import { Card } from 'components/Card'
 import { HelperToolTip } from 'components/HelperTooltip'
@@ -140,8 +141,8 @@ export const TradeStatus = () => {
                                         <Tabs align='center' variant='soft' colorScheme='green' index={tabIndex} onChange={handleTabsChange}>
                                             <TabList>
                                                 <Tab bg='green.500'>TX built</Tab>
-                                                <Tab _selected={{ color: 'white', bg: 'yellow.500' }}>TX signed</Tab>
-                                                <Tab _selected={{ color: 'white', bg: 'blue.500' }}>TX confirmed</Tab>
+                                                <Tab bg='yellow.500'>TX signed</Tab>
+                                                <Tab bg='blue.500'>TX confirmed</Tab>
                                             </TabList>
                                             <TabPanels>
                                                 <TabPanel>
