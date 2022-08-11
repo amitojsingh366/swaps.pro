@@ -42,6 +42,7 @@ export const TradeInput = ({ history }: RouterProps) => {
   const { getCryptoQuote, getFiatQuote, reset, setMaxInput } = Pioneer()
   const [inputAmount, setInputAmount] = useState(0)
   const [outputAmount, setOutputAmount] = useState(0)
+  const [enteringAmount, setEnteringAmount] = useState(false)
   const [loading, setLoading] = useState(false)
   const [lastSwapQuote, setLastSwapQuote] = useState<{
     input?: {
@@ -107,22 +108,17 @@ export const TradeInput = ({ history }: RouterProps) => {
     dispatch({ type: WalletActions.RESET_STATE, payload: true })
   }
 
-  const onUpdate = () => {
-    //Open Select modal.
-    updateInvocation()
-    // update()
-    if (state?.invocation?.state === 'created') {
-      history.push('/trade/confirm')
-    }
-    if (state?.invocation?.state === 'broadcasted') {
-      history.push('/trade/status')
-    }
-  }
 
   useEffect(() => {
-    //  onUpdate()
-    // update()
-  }, [balances, assetContext])
+    // //  onUpdate()
+    // // update()
+    // if (state?.invocation?.state === 'created') {
+    //   history.push('/trade/confirm')
+    // }
+    // if (state?.invocation?.state === 'broadcasted') {
+    //   history.push('/trade/status')
+    // }
+  }, [history, state?.invocation])
 
   useEffect(() => {
     console.log('Trade Input: ', state.tradeState?.input)
@@ -234,8 +230,16 @@ export const TradeInput = ({ history }: RouterProps) => {
       })
       setInputAmount(amt)
       return
+    } else {
+      if (enteringAmount || state.tradeState.input.amount === inputAmount) return
+      dispatch({
+        type: WalletActions.SET_TRADE_STATE, payload: {
+          ...state.tradeState,
+          input: { ...state.tradeState.input, amount: inputAmount }
+        }
+      })
     }
-  }, [dispatch, inputAmount, state.tradeState])
+  }, [dispatch, inputAmount, enteringAmount, state.tradeState])
 
   return (
     <SlideTransition>
@@ -305,6 +309,7 @@ export const TradeInput = ({ history }: RouterProps) => {
           <TokenRow
             value={inputAmount}
             setValue={setInputAmount}
+            setEnteringAmount={setEnteringAmount}
             control={control}
             fieldName='sellAsset.amount'
             rules={{ required: true }}

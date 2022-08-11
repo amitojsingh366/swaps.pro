@@ -1,4 +1,4 @@
-import {ArrowBackIcon} from '@chakra-ui/icons'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 import {
     Box,
     Button,
@@ -39,25 +39,27 @@ export const TradeStatus = () => {
 
 
     useEffect(() => {
-        if (!invocationId || !state.pioneer) return
+        if (!invocationId) return
+        let invoId = invocationId
+        if (state.invocationId) invoId = state.invocationId
+        if (!invoId) return
+        if (!state.pioneer) return
 
-        state.pioneer.getInvocation(invocationId).then((invocation: any) => {
-            console.log("setting invocation: ", invocation)
+        state.pioneer.getInvocation(invoId).then((invocation: any) => {
             dispatch({ type: 'SET_INVOCATION', payload: invocation })
-            console.log("setting invocation context: ", invocationId)
-            dispatch({ type: 'SET_INVOCATION_ID', payload: invocationId })
+            dispatch({ type: 'SET_INVOCATION_ID', payload: invoId })
         })
-    }, [invocationId, state.pioneer])
+    }, [dispatch, invocationId, state.invocationId, state.pioneer])
 
     useEffect(() => {
         return () => {
             dispatch({ type: 'SET_INVOCATION', payload: null })
             dispatch({ type: 'SET_INVOCATION_ID', payload: null })
         }
-    }, [])
+    }, [dispatch])
 
     const handleTabsChange = (index) => {
-        console.log("index: ",index)
+        console.log("index: ", index)
         setTabIndex(index)
     }
 
@@ -76,11 +78,11 @@ export const TradeStatus = () => {
     const { invocationContext, fullfillmentTxid, invocationTxid, tradeStatus } = state
     console.log("invocation: ", state.invocation)
 
-    const onUpdate = async function() {
+    const onUpdate = async function () {
         //Open Select modal.
         updateInvocation()
 
-        if(state.invocation.state === 'broadcasted'){
+        if (state.invocation.state === 'broadcasted') {
             console.log("STATE IS BROADCASTED!")
             handleTabsChange(2)
         }
@@ -124,9 +126,9 @@ export const TradeStatus = () => {
                                     </SimpleGrid>
                                 </Card.Header>
 
-                                <br/>
+                                <br />
                                 <small>invocation: {state.invocationId}</small>
-                                <br/>
+                                <br />
                                 <br />
                                 <br />
                                 <small>state: {state.invocation.state}</small>
@@ -138,34 +140,34 @@ export const TradeStatus = () => {
                                 <br />
                                 <Image src={ELEPHANT} />
                                 {state.invocation.invocation.type === 'sendToAddress' && <div>
-                                        <Tabs align='center' variant='soft' colorScheme='green' index={tabIndex} onChange={handleTabsChange}>
-                                            <TabList>
-                                                <Tab bg='green.500'>TX built</Tab>
-                                                <Tab bg='yellow.500'>TX signed</Tab>
-                                                <Tab bg='blue.500'>TX confirmed</Tab>
-                                            </TabList>
-                                            <TabPanels>
-                                                <TabPanel>
-                                                    <p>one!</p>
-                                                </TabPanel>
-                                                <TabPanel>
-                                                    <p>two!</p>
-                                                </TabPanel>
-                                                <TabPanel>
-                                                    <p>
-                                                        Transaction is confirmed!
-                                                        <br/>
-                                                        You can view your transaction here:
-                                                    </p>
-                                                </TabPanel>
-                                            </TabPanels>
-                                        </Tabs>
-                                    </div>}
+                                    <Tabs align='center' variant='soft' colorScheme='green' index={tabIndex} onChange={handleTabsChange}>
+                                        <TabList>
+                                            <Tab bg='green.500'>TX built</Tab>
+                                            <Tab bg='yellow.500'>TX signed</Tab>
+                                            <Tab bg='blue.500'>TX confirmed</Tab>
+                                        </TabList>
+                                        <TabPanels>
+                                            <TabPanel>
+                                                <p>one!</p>
+                                            </TabPanel>
+                                            <TabPanel>
+                                                <p>two!</p>
+                                            </TabPanel>
+                                            <TabPanel>
+                                                <p>
+                                                    Transaction is confirmed!
+                                                    <br />
+                                                    You can view your transaction here:
+                                                </p>
+                                            </TabPanel>
+                                        </TabPanels>
+                                    </Tabs>
+                                </div>}
 
-                                    {state.invocation.invocation.type === 'swap' && <div>
+                                {state.invocation.invocation.type === 'swap' && <div>
 
 
-                                        {/* <AssetToAsset
+                                    {/* <AssetToAsset
                                         buyAsset={{
                                             symbol: buyAsset?.currency?.symbol,
                                             amount: buyAsset.amount,
@@ -179,31 +181,31 @@ export const TradeStatus = () => {
                                         mt={6}
                                         /> */}
 
-                                        <Tabs variant='soft-rounded' colorScheme='green'>
-                                            <TabList>
-                                                <Tab _selected={{ color: 'white', bg: 'green.500' }}>Deposit Received</Tab>
-                                                <Tab _selected={{ color: 'white', bg: 'yellow.500' }}>Awaiting Exchange</Tab>
-                                                <Tab _selected={{ color: 'white', bg: 'blue.500' }}>Complete</Tab>
-                                            </TabList>
-                                            <TabPanels>
-                                                <TabPanel>
-                                                    <p>one!</p>
-                                                </TabPanel>
-                                                <TabPanel>
-                                                    <p>two!</p>
-                                                </TabPanel>
-                                                <TabPanel>
-                                                    <p>
-                                                        Fullfilled!:
+                                    <Tabs variant='soft-rounded' colorScheme='green'>
+                                        <TabList>
+                                            <Tab _selected={{ color: 'white', bg: 'green.500' }}>Deposit Received</Tab>
+                                            <Tab _selected={{ color: 'white', bg: 'yellow.500' }}>Awaiting Exchange</Tab>
+                                            <Tab _selected={{ color: 'white', bg: 'blue.500' }}>Complete</Tab>
+                                        </TabList>
+                                        <TabPanels>
+                                            <TabPanel>
+                                                <p>one!</p>
+                                            </TabPanel>
+                                            <TabPanel>
+                                                <p>two!</p>
+                                            </TabPanel>
+                                            <TabPanel>
+                                                <p>
+                                                    Fullfilled!:
 
-                                                        {fullfillmentTxid &&
-                                                            <small>fullfillment txid: {fullfillmentTxid}</small>
-                                                        }
-                                                    </p>
-                                                </TabPanel>
-                                            </TabPanels>
-                                        </Tabs>
-                                    </div>}
+                                                    {fullfillmentTxid &&
+                                                        <small>fullfillment txid: {fullfillmentTxid}</small>
+                                                    }
+                                                </p>
+                                            </TabPanel>
+                                        </TabPanels>
+                                    </Tabs>
+                                </div>}
 
 
 
