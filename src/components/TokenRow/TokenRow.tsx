@@ -30,6 +30,7 @@ type TokenRowProps = {
   inputLeftElement?: React.ReactNode
   inputRightElement?: React.ReactNode
   setValue: React.Dispatch<React.SetStateAction<number>>
+  setEnteringAmount?: React.Dispatch<React.SetStateAction<boolean>>
   value: number
   loading: boolean
 } & InputGroupProps
@@ -41,6 +42,7 @@ export const TokenRow = ({
   inputLeftElement,
   inputRightElement,
   setValue,
+  setEnteringAmount,
   value,
   loading,
   ...rest
@@ -73,6 +75,8 @@ export const TokenRow = ({
             inputMode='decimal'
             thousandSeparator={localeParts.group}
             decimalSeparator={localeParts.decimal}
+            onFocus={() => setEnteringAmount && setEnteringAmount(true)}
+            onBlur={() => setEnteringAmount && setEnteringAmount(false)}
             value={value}
             customInput={CryptoInput}
             onValueChange={onTextChangeNative}
