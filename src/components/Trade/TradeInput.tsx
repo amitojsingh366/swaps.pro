@@ -7,7 +7,8 @@ import {
   IconButton, Image,
   Input,
   InputProps, MenuGroup, MenuItem,
-  Text
+  Text,
+  VStack
 } from '@chakra-ui/react'
 import { HelperToolTip } from 'components/HelperTooltip'
 import { SlideTransition } from 'components/SlideTransition'
@@ -23,6 +24,7 @@ import { useCallback, useEffect, useState } from "react";
 import KEEPKEY_ICON from "../../assets/png/keepkey.png";
 import { useModal } from 'hooks/useModal/useModal'
 import { Balance } from 'context/WalletProvider/types'
+import CalculatingGif from 'assets/gif/calculating.gif'
 
 const FiatInput = (props: InputProps) => (
   <Input
@@ -137,6 +139,15 @@ export const TradeInput = ({ history }: RouterProps) => {
     setInputAmount(0)
     setOutputAmount(0)
   }, [dispatch, state.tradeState])
+
+  const cancelQuote = () => {
+    setLoading(false)
+    dispatch({
+      type: WalletActions.SET_TRADE_STATE, payload: null
+    })
+    setInputAmount(0)
+    setOutputAmount(0)
+  }
 
   useEffect(() => {
     if (!state.tradeState || !state.tradeState.input || !state.tradeState.output || !state.pioneer) return
@@ -278,7 +289,7 @@ export const TradeInput = ({ history }: RouterProps) => {
       {/*>*/}
       {/*  update*/}
       {/*</Button>*/}
-      <Box as='form' onSubmit={handleSubmit(onSubmit)}>
+      <Box as='form' onSubmit={handleSubmit(onSubmit)} display={loading ? 'none' : 'block'}>
         <FormControl isInvalid={!!errors.fiatAmount}>
           {/*<Controller*/}
           {/*  render={({ field: { value } }) => (*/}
@@ -383,6 +394,13 @@ export const TradeInput = ({ history }: RouterProps) => {
           Preview Trade
         </Button>
       </Box>
+
+      <VStack display={loading ? 'flex': 'none'} alignItems='center' justifyContent='center' w="100%">
+        <Text fontWeight='bold' fontSize='xl'>Generating a Quote</Text>
+        <Image borderRadius='5%' src={CalculatingGif} />
+        <Button onClick={cancelQuote} colorScheme='red'>Cancel</Button>
+      </VStack>
+
     </SlideTransition>
   )
 }
