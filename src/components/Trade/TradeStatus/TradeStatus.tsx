@@ -8,26 +8,23 @@ import {
     SimpleGrid,
     Spinner,
     Stack,
-    Text,
     TabList,
     TabPanels,
     Tabs,
     Tab,
     TabPanel,
     Image,
-    Progress
+    HStack,
+    Center
 } from '@chakra-ui/react'
 import { Card } from 'components/Card'
-import { HelperToolTip } from 'components/HelperTooltip'
 import { Row } from 'components/Row'
-import { SlideTransition } from 'components/SlideTransition'
-import { useFormContext } from 'react-hook-form'
-import { RouterProps, useHistory, useParams } from 'react-router-dom'
-import { AssetToAsset } from './AssetToAsset'
-import { useWallet } from "../../../context/WalletProvider/WalletProvider";
-import React, { useEffect } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
+import { useWallet, WalletActions } from "../../../context/WalletProvider/WalletProvider";
+import React, { useEffect, useState } from 'react'
 import { Page } from 'components/Layout/Page'
 import ELEPHANT from 'assets/png/elephant.png'
+import { StackedProgressBar } from './StackedProgressBar'
 
 export const TradeStatus = () => {
     const history = useHistory()
@@ -35,6 +32,7 @@ export const TradeStatus = () => {
 
     const [tabIndex, setTabIndex] = React.useState(0)
     const { state, updateInvocation, dispatch } = useWallet()
+    const [step, setStep] = useState(0)
 
 
 
@@ -46,15 +44,15 @@ export const TradeStatus = () => {
         if (!state.pioneer) return
 
         state.pioneer.getInvocation(invoId).then((invocation: any) => {
-            dispatch({ type: 'SET_INVOCATION', payload: invocation })
-            dispatch({ type: 'SET_INVOCATION_ID', payload: invoId })
+            dispatch({ type: WalletActions.SET_INVOCATION, payload: invocation })
+            dispatch({ type: WalletActions.SET_INVOCATION_ID, payload: invoId })
         })
     }, [dispatch, invocationId, state.invocationId, state.pioneer])
 
     useEffect(() => {
         return () => {
-            dispatch({ type: 'SET_INVOCATION', payload: null })
-            dispatch({ type: 'SET_INVOCATION_ID', payload: null })
+            dispatch({ type: WalletActions.SET_INVOCATION, payload: null })
+            dispatch({ type: WalletActions.SET_INVOCATION_ID, payload: null })
         }
     }, [dispatch])
 
@@ -82,10 +80,25 @@ export const TradeStatus = () => {
         //Open Select modal.
         updateInvocation()
 
-        if (state.invocation.state === 'broadcasted') {
-            console.log("STATE IS BROADCASTED!")
-            handleTabsChange(2)
+        // signedTx/broadcasted/complete/fullfilled
+        switch (state.invocation.state) {
+            case 'signedTx':
+                setStep(1)
+                break;
+            case 'broadcasted':
+                setStep(2)
+                break;
+            case 'complete':
+                setStep(3)
+                break;
+            case 'fullfilled':
+                setStep(4)
+                break;
+
+            default:
+                break;
         }
+
 
         //get txid
         // let payload = {
@@ -181,30 +194,7 @@ export const TradeStatus = () => {
                                         mt={6}
                                         /> */}
 
-                                    <Tabs variant='soft-rounded' colorScheme='green'>
-                                        <TabList>
-                                            <Tab _selected={{ color: 'white', bg: 'green.500' }}>Deposit Received</Tab>
-                                            <Tab _selected={{ color: 'white', bg: 'yellow.500' }}>Awaiting Exchange</Tab>
-                                            <Tab _selected={{ color: 'white', bg: 'blue.500' }}>Complete</Tab>
-                                        </TabList>
-                                        <TabPanels>
-                                            <TabPanel>
-                                                <p>one!</p>
-                                            </TabPanel>
-                                            <TabPanel>
-                                                <p>two!</p>
-                                            </TabPanel>
-                                            <TabPanel>
-                                                <p>
-                                                    Fullfilled!:
-
-                                                    {fullfillmentTxid &&
-                                                        <small>fullfillment txid: {fullfillmentTxid}</small>
-                                                    }
-                                                </p>
-                                            </TabPanel>
-                                        </TabPanels>
-                                    </Tabs>
+                                    <StackedProgressBar step={step} />
                                 </div>}
 
 
