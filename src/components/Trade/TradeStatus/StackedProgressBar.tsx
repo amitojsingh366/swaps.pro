@@ -5,7 +5,7 @@ import { HStack, Flex } from "@chakra-ui/react";
 
 export const StackedProgressBar: FC<{ step: number }> = ({ step = 0 }) => {
     return (
-        <HStack spacing={0} textColor='black' textAlign='center'>
+        <HStack spacing={0} textColor='white' textAlign='center'>
             <div className={`progress ${step >= 1 ? step === 1 ? 'progress-striped active' : '' : 'inactive'}`} style={{ width: '100%' }}>
                 { // eslint-disable-next-line jsx-a11y/aria-role
                 }
