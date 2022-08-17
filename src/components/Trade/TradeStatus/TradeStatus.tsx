@@ -23,8 +23,10 @@ import { useHistory, useParams } from 'react-router-dom'
 import { useWallet, WalletActions } from "../../../context/WalletProvider/WalletProvider";
 import React, { useEffect, useState } from 'react'
 import { Page } from 'components/Layout/Page'
-import ELEPHANT from 'assets/png/elephant.png'
 import { StackedProgressBar } from './StackedProgressBar'
+import CalculatingGif from 'assets/gif/calculating.gif'
+import ShiftingGif from 'assets/gif/shifting.gif'
+import CompletedGif from 'assets/gif/completed.gif'
 
 export const TradeStatus = () => {
     const history = useHistory()
@@ -33,6 +35,7 @@ export const TradeStatus = () => {
     const [tabIndex, setTabIndex] = React.useState(0)
     const { state, updateInvocation, dispatch } = useWallet()
     const [step, setStep] = useState(0)
+    const [imageSrc, setImageSrc] = useState(CalculatingGif)
 
 
 
@@ -61,6 +64,12 @@ export const TradeStatus = () => {
         setTabIndex(index)
     }
 
+    useEffect(() => {
+        if (step <= 1) setImageSrc(CalculatingGif)
+        else if (step <= 2) setImageSrc(ShiftingGif)
+        else if (step <= 4) setImageSrc(CompletedGif)
+    }, [step])
+
     if (!state.invocation || !state.invocationId) return (
         <>
             Fetching Invocation
@@ -75,6 +84,7 @@ export const TradeStatus = () => {
 
     const { invocationContext, fullfillmentTxid, invocationTxid, tradeStatus } = state
     console.log("invocation: ", state.invocation)
+
 
     const onUpdate = async function () {
         //Open Select modal.
@@ -151,7 +161,7 @@ export const TradeStatus = () => {
                                 </Row>
                                 <br />
                                 <br />
-                                <Image src={ELEPHANT} />
+                                <Image maxH='50vh' src={imageSrc} />
                                 {state.invocation.invocation.type === 'sendToAddress' && <div>
                                     <Tabs align='center' variant='soft' colorScheme='green' index={tabIndex} onChange={handleTabsChange}>
                                         <TabList>
