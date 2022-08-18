@@ -37,7 +37,8 @@ import * as core from "@shapeshiftoss/hdwallet-core";
 import { PinMatrixRequestType } from './KeepKey/KeepKeyTypes'
 import { useKeepKeyEventHandler } from './KeepKey/hooks/useKeepKeyEventHandler'
 import { useModal } from 'hooks/useModal/useModal'
-import { Balance } from './types'
+import { Balance, Invocation } from './types'
+
 
 let {
   baseAmountToNative,
@@ -156,7 +157,7 @@ export interface InitialState {
   username: any
   assetContext: Balance | null
   invocationId: string | null
-  invocation: any
+  invocation: Invocation | null
   invocationContext: string | null
   context: any
   exchangeContext: string | null
