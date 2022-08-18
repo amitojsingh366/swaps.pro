@@ -14,8 +14,9 @@ import {
     Tab,
     TabPanel,
     Image,
+    Text,
     HStack,
-    Center
+    VStack
 } from '@chakra-ui/react'
 import { Card } from 'components/Card'
 import { Row } from 'components/Row'
@@ -27,6 +28,8 @@ import { StackedProgressBar } from './StackedProgressBar'
 import CalculatingGif from 'assets/gif/calculating.gif'
 import ShiftingGif from 'assets/gif/shifting.gif'
 import CompletedGif from 'assets/gif/completed.gif'
+import { FaClipboard } from 'react-icons/fa'
+import { CopyIconButton } from './CopyIconButton'
 
 export const TradeStatus = () => {
     const history = useHistory()
@@ -37,6 +40,8 @@ export const TradeStatus = () => {
     const [step, setStep] = useState(0)
     const [imageSrc, setImageSrc] = useState(CalculatingGif)
 
+    const [fromAddress, setFromAddress] = useState("")
+    const [toAddress, setToAddress] = useState("")
 
 
     useEffect(() => {
@@ -58,6 +63,16 @@ export const TradeStatus = () => {
             dispatch({ type: WalletActions.SET_INVOCATION_ID, payload: null })
         }
     }, [dispatch])
+
+    useEffect(() => {
+        if (!state.invocation || !state.balances) return
+        if (state.invocation.type !== "swap") return
+        let fAddress = state.balances.find((b) => state.invocation && b.symbol === state.invocation.invocation.swap.input.asset && b.blockchain === state.invocation.invocation.swap.input.blockchain)?.address
+        let tAddress = state.balances.find((b) => state.invocation && b.symbol === state.invocation.invocation.swap.output.asset && b.blockchain === state.invocation.invocation.swap.output.blockchain)?.address
+
+        if (fAddress) setFromAddress(fAddress)
+        if (tAddress) setToAddress(tAddress)
+    }, [state.balances, state.invocation])
 
     const handleTabsChange = (index) => {
         console.log("index: ", index)
@@ -90,6 +105,7 @@ export const TradeStatus = () => {
         //Open Select modal.
         updateInvocation()
 
+        if (!state.invocation) return
         // signedTx/broadcasted/complete/fullfilled
         switch (state.invocation.state) {
             case 'signedTx':
@@ -133,7 +149,7 @@ export const TradeStatus = () => {
                 <Page>
                     <Flex maxWidth={{ base: 'auto', '2xl': '1464px' }} mx='auto' px={16}>
                         <Stack flex={1} spacing={4} justifyContent='center' alignItems='center'>
-                            <Card maxW="460px" mx="auto" flex={1} justifyContent='center' alignItems='center'>
+                            <Card mx="auto" flex={1} justifyContent='center' alignItems='center' p={2}>
                                 <Card.Header px={0} pt={0}>
                                     <SimpleGrid gridTemplateColumns='25px 1fr 25px' alignItems='center' mx={-2}>
                                         <IconButton
@@ -144,25 +160,38 @@ export const TradeStatus = () => {
                                             isRound
                                             onClick={() => history.push('/trade/input')}
                                         />
-                                        <Card.Heading textAlign='center'>type: {state.invocation.invocation.type}
+                                        <Card.Heading textAlign='center'>type: {state.invocation.type}
                                         </Card.Heading>
                                     </SimpleGrid>
                                 </Card.Header>
 
-                                <br />
-                                <small>invocation: {state.invocationId}</small>
-                                <br />
-                                <br />
-                                <br />
-                                <small>state: {state.invocation.state}</small>
-                                <br />
-                                <Row>
-                                    <Row.Label>network:{state.invocation.invocation.network}</Row.Label>
-                                </Row>
-                                <br />
-                                <br />
-                                <Image maxH='50vh' src={imageSrc} />
-                                {state.invocation.invocation.type === 'sendToAddress' && <div>
+                                <VStack alignItems='left' justifyContent='left' spacing={4} py={2}>
+                                    <HStack>
+                                        <Text>Invocation ID: {state.invocation.invocationId}</Text>
+                                        <CopyIconButton copyString={state.invocation.invocationId} />
+                                    </HStack>
+                                    <Text>State: {state.invocation.state}</Text>
+                                    <HStack>
+                                        <Text>Network:</Text>
+                                        <Image h={6} src={`https://static.coincap.io/assets/icons/${state.invocation.network.toLowerCase()}@2x.png`} />
+                                        <Text>{state.invocation.network}</Text>
+                                    </HStack>
+                                    {state.invocation.type === 'swap' && <HStack>
+                                        <Text>From Address:</Text>
+                                        <Image h={6} src={`https://static.coincap.io/assets/icons/${state.invocation.invocation.swap.input.asset.toLowerCase()}@2x.png`} />
+                                        <Text>{fromAddress}</Text>
+                                        <CopyIconButton copyString={fromAddress} />
+                                    </HStack>}
+                                    {state.invocation.type === 'swap' && <HStack>
+                                        <Text>To Address:</Text>
+                                        <Image h={6} src={`https://static.coincap.io/assets/icons/${state.invocation.invocation.swap.output.asset.toLowerCase()}@2x.png`} />
+                                        <Text>{toAddress}</Text>
+                                        <CopyIconButton copyString={toAddress} />
+                                    </HStack>}
+                                </VStack>
+
+                                <Image w='90vh' src={imageSrc} />
+                                {state.invocation.type === 'sendToAddress' && <div>
                                     <Tabs align='center' variant='soft' colorScheme='green' index={tabIndex} onChange={handleTabsChange}>
                                         <TabList>
                                             <Tab bg='green.500'>TX built</Tab>
@@ -187,7 +216,7 @@ export const TradeStatus = () => {
                                     </Tabs>
                                 </div>}
 
-                                {state.invocation.invocation.type === 'swap' && <div>
+                                {state.invocation.type === 'swap' && <div>
 
 
                                     {/* <AssetToAsset

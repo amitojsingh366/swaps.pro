@@ -17,6 +17,7 @@ export const TradeConfirm = () => {
 
   console.log("state.invocation: ", state.invocation)
   let onSubmit = async function () {
+    if (!state.invocation) return
     try {
       console.log("onSubmit")
       //TODO show *Look down at keepkey icon!
@@ -40,6 +41,8 @@ export const TradeConfirm = () => {
       console.error(e)
     }
   }
+
+  if (!state.invocation) return <div>Loading...</div>
 
 
   return (
