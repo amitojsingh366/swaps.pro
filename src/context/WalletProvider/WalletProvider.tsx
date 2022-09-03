@@ -837,10 +837,15 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   useEffect(() => {
 
-    const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(state.keyring);
-    keepkeyAdapter.initialize().then(() => {
-      dispatch({ type: WalletActions.SET_KEEPKEY_ADAPTER, payload: keepkeyAdapter })
-    })
+    try {
+      const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(state.keyring);
+      keepkeyAdapter.initialize().then(() => {
+        dispatch({ type: WalletActions.SET_KEEPKEY_ADAPTER, payload: keepkeyAdapter })
+      })
+    } catch (e) {
+      console.log('HAHA', e)
+    }
+
 
     //Start Onboard.js
     let networkId = 1
